@@ -1,0 +1,470 @@
+<div class="profile-layout">
+  <!-- Sidebar -->
+  <app-manager></app-manager>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <h2 class="topbar-title">Travel <span>Management</span></h2>
+
+      <div class="topbar-actions">
+        <div class="search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            placeholder="Search..."
+            class="search-input"
+          />
+        </div>
+
+        <div class="action-buttons">
+          <button class="icon-btn">
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <button class="icon-btn">
+            <span class="material-symbols-outlined">help_outline</span>
+          </button>
+          <div class="user-avatar">
+            <img [src]="userProfile.avatar" [alt]="userProfile.fullName" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Profile Header -->
+      <section class="profile-header">
+        <div class="header-content">
+          <div class="header-info">
+            <h1 class="profile-title">Manager Profile</h1>
+            <div class="role-badge" [style.background-color]="getRoleColor()">
+              {{ userProfile.role }}
+            </div>
+          </div>
+          <div class="header-actions">
+            <span class="last-login">Last login: {{ userProfile.lastLogin }}</span>
+            <div class="status-indicator" [class.online]="userProfile.isOnline">
+              <span class="status-dot"></span>
+              {{ userProfile.isOnline ? 'Online' : 'Offline' }}
+            </div>
+            <button class="btn-secondary">
+              <span class="material-symbols-outlined">settings</span>
+              Settings
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation Tabs -->
+      <nav class="profile-tabs">
+        <button
+          (click)="switchTab('overview')"
+          [class.active]="activeTab === 'overview'"
+          class="tab-button">
+          Overview
+        </button>
+        <button
+          (click)="switchTab('personal')"
+          [class.active]="activeTab === 'personal'"
+          class="tab-button">
+          Personal Info
+        </button>
+        <button
+          (click)="switchTab('security')"
+          [class.active]="activeTab === 'security'"
+          class="tab-button">
+          Security
+        </button>
+        <button
+          (click)="switchTab('preferences')"
+          [class.active]="activeTab === 'preferences'"
+          class="tab-button">
+          Preferences
+        </button>
+        <button
+          (click)="switchTab('notifications')"
+          [class.active]="activeTab === 'notifications'"
+          class="tab-button">
+          Notifications
+        </button>
+        <button
+          (click)="switchTab('activity')"
+          [class.active]="activeTab === 'activity'"
+          class="tab-button">
+          Activity
+        </button>
+        <button
+          (click)="switchTab('documents')"
+          [class.active]="activeTab === 'documents'"
+          class="tab-button">
+          Documents
+        </button>
+      </nav>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Overview Tab -->
+        @if (activeTab === 'overview') {
+          <div class="overview-grid">
+            <!-- Profile Card -->
+            <div class="profile-card">
+              <div class="card-header">
+                <div class="avatar-section">
+                  <img [src]="userProfile.avatar" [alt]="userProfile.fullName" class="avatar" />
+                  <div class="verification-badge" [class.verified]="userProfile.verificationStatus === 'verified'">
+                    <span class="material-symbols-outlined">verified</span>
+                  </div>
+                </div>
+                <div class="user-info">
+                  <h3 class="user-name">{{ userProfile.fullName }}</h3>
+                  <p class="user-role" [style.color]="getRoleColor()">{{ userProfile.role }}</p>
+                  <p class="user-id">ID: {{ userProfile.employeeId }}</p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="info-row">
+                  <span class="label">Department:</span>
+                  <span class="value">{{ userProfile.department }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Email:</span>
+                  <span class="value">{{ userProfile.email }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Phone:</span>
+                  <span class="value">{{ userProfile.phone }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Reports to:</span>
+                  <span class="value">{{ userProfile.reportingManager }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="label">Location:</span>
+                  <span class="value">{{ userProfile.officeLocation }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-section">
+              <h3 class="section-title">Team Management Stats</h3>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <span class="material-symbols-outlined">group</span>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value">{{ quickStats.teamRequestsHandled }}</span>
+                    <span class="stat-label">Requests Handled</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <span class="material-symbols-outlined">check_circle</span>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value">{{ quickStats.approvedRequests }}</span>
+                    <span class="stat-label">Approved</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <span class="material-symbols-outlined">schedule</span>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value">{{ quickStats.pendingReviews }}</span>
+                    <span class="stat-label">Pending Reviews</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <span class="material-symbols-outlined">arrow_upward</span>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value">{{ quickStats.escalatedRequests }}</span>
+                    <span class="stat-label">Escalated</span>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">
+                    <span class="material-symbols-outlined">attach_money</span>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-value">${{ quickStats.teamBudgetOverview }}</span>
+                    <span class="stat-label">Budget Overview</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <!-- Personal Info Tab -->
+        @if (activeTab === 'personal') {
+          <div class="form-section">
+            <h3 class="section-title">Personal Information</h3>
+            <form [formGroup]="personalInfoForm" class="personal-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" formControlName="fullName" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Phone</label>
+                  <input type="tel" formControlName="phone" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Emergency Contact</label>
+                  <input type="text" formControlName="emergencyContact" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Address</label>
+                  <input type="text" formControlName="address" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">City</label>
+                  <input type="text" formControlName="city" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">State</label>
+                  <input type="text" formControlName="state" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Country</label>
+                  <input type="text" formControlName="country" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Postal Code</label>
+                  <input type="text" formControlName="postalCode" class="form-input" />
+                </div>
+              </div>
+              <div class="readonly-info">
+                <div class="info-item">
+                  <label class="info-label">Employee ID</label>
+                  <span class="info-value">{{ userProfile.employeeId }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">Company Email</label>
+                  <span class="info-value">{{ userProfile.email }}</span>
+                </div>
+                <div class="info-item">
+                  <label class="info-label">Role</label>
+                  <span class="info-value">{{ userProfile.role }}</span>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" (click)="onSavePersonalInfo()" class="btn-primary" [disabled]="!personalInfoForm.valid">
+                  Save Changes
+                </button>
+                <button type="button" class="btn-secondary">Cancel</button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Security Tab -->
+        @if (activeTab === 'security') {
+          <div class="form-section">
+            <h3 class="section-title">Security Settings</h3>
+            <form [formGroup]="securityForm" class="security-form">
+              <div class="form-group">
+                <label class="form-label">Current Password</label>
+                <input type="password" formControlName="currentPassword" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">New Password</label>
+                <input type="password" formControlName="newPassword" class="form-input" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" formControlName="confirmPassword" class="form-input" />
+              </div>
+              <div class="form-actions">
+                <button type="button" (click)="onSaveSecurity()" class="btn-primary" [disabled]="!securityForm.valid">
+                  Change Password
+                </button>
+              </div>
+            </form>
+            <div class="security-info">
+              <p>Last password change: 2024-01-01</p>
+              <button class="btn-link">View active sessions</button>
+            </div>
+          </div>
+        }
+
+        <!-- Preferences Tab -->
+        @if (activeTab === 'preferences') {
+          <div class="form-section">
+            <h3 class="section-title">Travel Preferences</h3>
+            <form [formGroup]="preferencesForm" class="preferences-form">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label">Preferred Transport</label>
+                  <select formControlName="preferredTransport" class="form-select">
+                    <option value="flight">Flight</option>
+                    <option value="train">Train</option>
+                    <option value="car">Car</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Preferred Class</label>
+                  <select formControlName="preferredClass" class="form-select">
+                    <option value="economy">Economy</option>
+                    <option value="business">Business</option>
+                    <option value="first">First Class</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Meal Preference</label>
+                  <select formControlName="mealPreference" class="form-select">
+                    <option value="standard">Standard</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="halal">Halal</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Hotel Preference</label>
+                  <select formControlName="hotelPreference" class="form-select">
+                    <option value="budget">Budget</option>
+                    <option value="business">Business</option>
+                    <option value="luxury">Luxury</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Preferred Departure City</label>
+                  <input type="text" formControlName="preferredDepartureCity" class="form-input" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Seat Preference</label>
+                  <select formControlName="seatPreference" class="form-select">
+                    <option value="window">Window</option>
+                    <option value="aisle">Aisle</option>
+                    <option value="middle">Middle</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" (click)="onSavePreferences()" class="btn-primary">
+                  Save Preferences
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Notifications Tab -->
+        @if (activeTab === 'notifications') {
+          <div class="form-section">
+            <h3 class="section-title">Notification Settings</h3>
+            <form [formGroup]="notificationsForm" class="notifications-form">
+              <div class="toggle-group">
+                <div class="toggle-item">
+                  <label class="toggle-label">Email Notifications</label>
+                  <label class="toggle-switch">
+                    <input type="checkbox" formControlName="emailNotifications" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-item">
+                  <label class="toggle-label">Approval Updates</label>
+                  <label class="toggle-switch">
+                    <input type="checkbox" formControlName="approvalUpdates" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-item">
+                  <label class="toggle-label">Finance Updates</label>
+                  <label class="toggle-switch">
+                    <input type="checkbox" formControlName="financeUpdates" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-item">
+                  <label class="toggle-label">Travel Reminders</label>
+                  <label class="toggle-switch">
+                    <input type="checkbox" formControlName="travelReminders" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="toggle-item">
+                  <label class="toggle-label">SMS Alerts</label>
+                  <label class="toggle-switch">
+                    <input type="checkbox" formControlName="smsAlerts" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button type="button" (click)="onSaveNotifications()" class="btn-primary">
+                  Save Settings
+                </button>
+              </div>
+            </form>
+          </div>
+        }
+
+        <!-- Activity Tab -->
+        @if (activeTab === 'activity') {
+          <div class="activity-section">
+            <h3 class="section-title">Recent Activity</h3>
+            <div class="activity-timeline">
+              @for (activity of activityTimeline; track activity.id) {
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <span class="material-symbols-outlined">{{ activity.icon }}</span>
+                  </div>
+                  <div class="activity-content">
+                    <p class="activity-description">{{ activity.description }}</p>
+                    <span class="activity-timestamp">{{ activity.timestamp }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Documents Tab -->
+        @if (activeTab === 'documents') {
+          <div class="documents-section">
+            <h3 class="section-title">Documents & Verification</h3>
+            <div class="documents-grid">
+              <div class="document-card">
+                <div class="document-icon">
+                  <span class="material-symbols-outlined">passport</span>
+                </div>
+                <div class="document-info">
+                  <h4 class="document-title">Passport</h4>
+                  <span class="document-status verified">Verified</span>
+                </div>
+                <button class="btn-link">View</button>
+              </div>
+              <div class="document-card">
+                <div class="document-icon">
+                  <span class="material-symbols-outlined">badge</span>
+                </div>
+                <div class="document-info">
+                  <h4 class="document-title">Government ID</h4>
+                  <span class="document-status verified">Verified</span>
+                </div>
+                <button class="btn-link">View</button>
+              </div>
+              <div class="document-card">
+                <div class="document-icon">
+                  <span class="material-symbols-outlined">credit_card</span>
+                </div>
+                <div class="document-info">
+                  <h4 class="document-title">Employee ID</h4>
+                  <span class="document-status verified">Verified</span>
+                </div>
+                <button class="btn-link">View</button>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </main>
+  </div>
+</div>

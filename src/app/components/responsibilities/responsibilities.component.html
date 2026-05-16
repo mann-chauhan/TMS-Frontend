@@ -1,0 +1,232 @@
+<!-- SideNavBar -->
+<!-- <nav class="sidenav">
+  <div class="sidenav__brand">
+    <h1 class="sidenav__title">Travel Concierge</h1>
+    <p class="sidenav__subtitle">Elite Management</p>
+  </div>
+
+  <div class="sidenav__links">
+    <a class="sidenav__link" routerLink="/dashboard" routerLinkActive="sidenav__link--active">
+      <span class="material-symbols-outlined">grid_view</span>
+      <span>Dashboard</span>
+    </a>
+    <a class="sidenav__link" routerLink="/bookings" routerLinkActive="sidenav__link--active">
+      <span class="material-symbols-outlined">confirmation_number</span>
+      <span>Bookings</span>
+    </a>
+    <a class="sidenav__link sidenav__link--active" routerLink="/accountability" routerLinkActive="sidenav__link--active">
+      <span class="material-symbols-outlined filled">account_balance_wallet</span>
+      <span>Accountability</span>
+    </a>
+    <a class="sidenav__link" routerLink="/travelers" routerLinkActive="sidenav__link--active">
+      <span class="material-symbols-outlined">group</span>
+      <span>Travelers</span>
+    </a>
+    <a class="sidenav__link" routerLink="/reports" routerLinkActive="sidenav__link--active">
+      <span class="material-symbols-outlined">analytics</span>
+      <span>Reports</span>
+    </a>
+  </div>
+
+  <div class="sidenav__footer">
+    <a class="sidenav__link sidenav__link--logout" href="#">
+      <span class="material-symbols-outlined">logout</span>
+      <span>Logout</span>
+    </a>
+  </div>
+</nav> -->
+
+<!-- Main Content -->
+<main class="main">
+  <app-employee></app-employee>
+  <!-- Top App Bar -->
+  <header class="topbar">
+    <h2 class="topbar__title">My <span>Accountability</span></h2>
+    <div class="topbar__actions">
+      <div class="topbar__search">
+        <span class="material-symbols-outlined topbar__search-icon">search</span>
+        <input class="topbar__search-input" type="text" placeholder="SEARCH REPORTS..." [(ngModel)]="searchQuery" />
+      </div>
+      <div class="topbar__icons">
+        <button class="topbar__icon-btn">
+          <span class="material-symbols-outlined">notifications</span>
+        </button>
+        <button class="topbar__icon-btn">
+          <span class="material-symbols-outlined">settings</span>
+        </button>
+        <div class="topbar__avatar">
+          <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlXQqYO5ySKSREgleZq9YHovI7HI5s3rXh-WqutF-cmXvULFQ4SDqtm522-CQSWDrpjaNrdzLCEWspd2VNz-RYDGzGx02uNby_--R-vRiSUld44qkybkPbRLiAuG96U71dnhlDpDSjU40fVb2qMD05TQpetbI7XtwsCmtYw7oTI_TzFOhJ5WApMtrfPEHYcbe12Im7SbQhdpDwWEKFdazUgApywFQ-TGa1wFxDwZTYxpodWaySxdHWY1ukLHznMXVeuqbt8cgdHfnM" alt="User profile" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="content">
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-card__label">Total Trips Completed</span>
+        <div class="stat-card__value-row">
+          <span class="stat-card__value">124</span>
+          <span class="stat-card__badge stat-card__badge--green">+12%</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--orange">
+        <span class="stat-card__label">Pending Submission</span>
+        <div class="stat-card__value-row">
+          <span class="stat-card__value">08</span>
+          <span class="stat-card__badge stat-card__badge--orange">Action Needed</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--blue">
+        <span class="stat-card__label">Submitted</span>
+        <div class="stat-card__value-row">
+          <span class="stat-card__value">14</span>
+          <span class="stat-card__badge stat-card__badge--blue">In Review</span>
+        </div>
+      </div>
+      <div class="stat-card stat-card--green">
+        <span class="stat-card__label">Approved</span>
+        <div class="stat-card__value-row">
+          <span class="stat-card__value">102</span>
+          <span class="stat-card__badge stat-card__badge--green">Verified</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <div class="filters__left">
+        <div class="filters__group">
+          <label class="filters__label">FILTER STATUS</label>
+          <select class="filters__select" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="submitted">Submitted</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="filters__group">
+          <label class="filters__label">DATE RANGE</label>
+          <button class="filters__date-btn">
+            <span class="material-symbols-outlined">calendar_month</span>
+            Last 30 Days
+          </button>
+        </div>
+      </div>
+      <button class="btn-primary" (click)="openSubmitModal()">
+        <span class="material-symbols-outlined">add</span>
+        Submit Accountability
+      </button>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+      <div class="table-card__header">
+        <h3 class="table-card__title">Expense Reports</h3>
+        <div class="table-card__actions">
+          <button class="table-card__action-btn">
+            <span class="material-symbols-outlined">filter_list</span>
+          </button>
+          <button class="table-card__action-btn" (click)="downloadReport()">
+            <span class="material-symbols-outlined">download</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="expense-table">
+          <thead>
+            <tr>
+              <th>REQUEST ID</th>
+              <th>DESTINATION</th>
+              <th>TRAVEL DATES</th>
+              <th class="text-right">BUDGET</th>
+              <th class="text-right">ACTUAL</th>
+              <th class="text-center">STATUS</th>
+              <th class="text-right">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let report of filteredReports" class="expense-table__row">
+              <td class="expense-table__id">{{ report.id }}</td>
+              <td>
+                <div class="destination">
+                  <img class="destination__img" [src]="report.image" [alt]="report.destination" />
+                  <div>
+                    <div class="destination__name">{{ report.destination }}</div>
+                    <div class="destination__type">{{ report.type }}</div>
+                  </div>
+                </div>
+              </td>
+              <td class="expense-table__dates">{{ report.dates }}</td>
+              <td class="text-right expense-table__amount">{{ report.budget | currency }}</td>
+              <td class="text-right expense-table__amount" [ngClass]="getActualClass(report)">
+                {{ report.actual ? (report.actual | currency) : '-' }}
+              </td>
+              <td class="text-center">
+                <span class="status-badge" [ngClass]="'status-badge--' + report.status.toLowerCase()">
+                  {{ report.status }}
+                </span>
+              </td>
+              <td class="text-right">
+                <button class="action-link" [ngClass]="{'action-link--primary': report.status === 'Rejected'}"
+                  (click)="onAction(report)">
+                  {{ getActionLabel(report.status) }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <p class="pagination__info">Showing {{ paginationInfo }}</p>
+        <div class="pagination__controls">
+          <button class="pagination__btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button *ngFor="let page of pages" class="pagination__btn pagination__btn--num"
+            [class.pagination__btn--active]="page === currentPage" (click)="changePage(page)">
+            {{ page }}
+          </button>
+          <button class="pagination__btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Insights -->
+    <div class="insights">
+      <div class="insights__streak">
+        <div class="insights__streak-content">
+          <h4 class="insights__streak-title">Elite Compliance Streak</h4>
+          <p class="insights__streak-body">
+            You've submitted 98% of your reports on time this quarter. Maintaining this streak grants access to premium
+            lounge upgrades for your next 3 bookings.
+          </p>
+          <button class="insights__streak-btn">View Compliance Badges</button>
+        </div>
+        <span class="material-symbols-outlined insights__streak-icon">verified</span>
+      </div>
+
+      <div class="insights__help">
+        <span class="insights__help-label">QUICK HELP</span>
+        <h5 class="insights__help-title">Missing a Receipt?</h5>
+        <p class="insights__help-body">
+          Our new AI-scanning tool can reconstruct missing transaction data from your bank statements automatically.
+        </p>
+        <a class="insights__help-link" href="#">
+          Launch Scanner
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</main>

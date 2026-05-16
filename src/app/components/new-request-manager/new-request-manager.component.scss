@@ -1,0 +1,524 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+$black:     #0a0a0a;
+$white:     #ffffff;
+$gray-100:  #f5f5f4;
+$gray-200:  #e8e8e6;
+$gray-300:  #d1d0cc;
+$gray-400:  #a8a8a4;
+$gray-600:  #6b6b67;
+$gray-800:  #2a2a28;
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  
+  font-family: 'Syne', sans-serif;
+  background: $gray-100;
+  color: $black;
+  -webkit-font-smoothing: antialiased;
+}
+
+.main-layout {
+  
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell {
+  align-self: center;
+  display: flex;
+  flex: 1;
+  max-width: 900px;
+  margin-left: 240px;
+  width: calc(100% - 240px);
+  padding: 0 1.5rem;
+}
+
+.form-main {
+  flex: 1;
+  background: $white;
+  padding: 3rem 3.5rem 6rem;
+}
+
+// ── HEADER
+.form-header { margin-bottom: 3rem; }
+
+.form-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: $black;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  em { font-style: italic; color: $gray-600; }
+}
+
+.form-subtitle {
+  font-size: 14px;
+  color: $gray-600;
+  line-height: 1.65;
+}
+
+.header-rule {
+  height: 1px;
+  background: $gray-200;
+  margin-top: 2rem;
+  position: relative;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 60px; height: 1px;
+    background: $black;
+  }
+}
+
+// ── SECTIONS
+.form-section {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid $gray-200;
+  &:last-of-type { border-bottom: none; }
+}
+
+.section-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.section-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: $gray-400;
+  letter-spacing: 0.06em;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.section-title-block {
+  h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: $black;
+    margin-bottom: 0.2rem;
+  }
+  p {
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ── GRID
+.field-grid {
+  display: grid;
+  gap: 1.25rem;
+  &.two-col { grid-template-columns: 1fr 1fr; }
+}
+
+.field-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  &.full { grid-column: 1 / -1; }
+  &.center-v { justify-content: center; }
+}
+
+// ── LABELS
+label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: $gray-800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.req { color: $black; font-size: 13px; font-weight: 400; }
+.optional { font-size: 11px; font-weight: 400; text-transform: none; color: $gray-400; letter-spacing: 0; }
+
+// ── INPUTS
+%input-base {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  color: $black;
+  background: $gray-100;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  outline: none;
+  appearance: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+
+  &::placeholder { color: $gray-400; }
+  &:hover { border-color: $gray-300; }
+  &:focus {
+    background: $white;
+    border-color: $black;
+    box-shadow: 0 0 0 3px rgba(10,10,10,0.07);
+  }
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"] { @extend %input-base; }
+
+textarea {
+  @extend %input-base;
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+}
+
+select {
+  @extend %input-base;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%236b6b67' stroke-width='1.5'%3E%3Cpath d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 18px;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+// ── PREFIX INPUT
+.input-prefix-wrap {
+  position: relative;
+  .prefix-symbol {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $gray-600;
+    font-size: 15px;
+    pointer-events: none;
+  }
+  input { padding-left: 2.25rem; }
+}
+
+// ── ERROR
+.err-msg {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: $gray-800;
+  padding: 0.35rem 0.6rem;
+  background: $gray-100;
+  border-left: 2px solid $black;
+  border-radius: 0 4px 4px 0;
+}
+
+// ── RADIO CARDS
+.radio-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.radio-card {
+  flex: 1;
+  cursor: pointer;
+
+  input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .radio-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1rem;
+    border: 1px solid $gray-200;
+    border-radius: 10px;
+    background: $gray-100;
+    transition: all 0.2s;
+    user-select: none;
+
+    span {
+      font-size: 13px;
+      font-weight: 600;
+      color: $gray-600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    &:hover {
+      border-color: $gray-300;
+      background: #ededeb;
+    }
+  }
+
+  input[type="radio"]:checked + .radio-box {
+    border: 2px solid $black;
+    background: $white;
+    span { color: $black; }
+  }
+}
+
+// ── FLIGHT CLASS
+.flight-class-wrap {
+  margin-top: 1.25rem;
+  animation: slideDown 0.2s ease;
+  select { max-width: 320px; }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── CHECKBOX
+.check-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  user-select: none;
+
+  input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 1.5px solid $gray-300;
+    border-radius: 4px;
+    background: $white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+
+    &::after {
+      content: '';
+      width: 9px; height: 5px;
+      border-left: 2px solid $white;
+      border-bottom: 2px solid $white;
+      transform: rotate(-45deg) translateY(-1px);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+  }
+
+  .check-label {
+    font-size: 14px;
+    color: $gray-800;
+  }
+
+  input[type="checkbox"]:checked + .check-box {
+    background: $black;
+    border-color: $black;
+    &::after { opacity: 1; }
+  }
+
+  &:hover .check-box { border-color: $black; }
+}
+
+// ── POLICY BOX
+.policy-box {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: $gray-100;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  margin-bottom: 1.25rem;
+
+  .policy-icon {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    background: $white;
+    border: 1px solid $gray-200;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    svg { width: 16px; height: 16px; color: $gray-600; }
+  }
+
+  p {
+    font-size: 13px;
+    color: $gray-600;
+    line-height: 1.65;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+}
+
+// ── ACTIONS
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid $gray-200;
+  margin-top: 1rem;
+}
+
+.btn-ghost {
+  font-family: 'Syne', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $gray-600;
+  background: transparent;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  &:hover { color: $black; border-color: $gray-300; background: $gray-100; }
+}
+
+.btn-primary {
+  font-family: 'Syne', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $white;
+  background: $black;
+  border: 1px solid $black;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+
+  svg { width: 15px; height: 15px; }
+  &:hover { background: $gray-800; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+}
+
+
+// ─────────────────────────────────────────
+// ── RESPONSIVE BREAKPOINTS
+// ─────────────────────────────────────────
+
+// ── Tablet landscape (sidebar still visible but tighter)
+@media (max-width: 1024px) {
+  .shell {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    max-width: 100%;
+  }
+
+  .form-main {
+    padding: 2.5rem 2.5rem 5rem;
+  }
+}
+
+// ── Tablet portrait (sidebar collapses, full width)
+@media (max-width: 768px) {
+  .shell {
+    margin-left: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .form-main {
+    padding: 2rem 1.75rem 4rem;
+  }
+
+  .form-title {
+    font-size: 2rem;
+  }
+
+  .field-grid.two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .flight-class-wrap select {
+    max-width: 100%;
+  }
+
+  .form-actions {
+    gap: 0.75rem;
+  }
+}
+
+// ── Mobile (≤ 480px)
+@media (max-width: 480px) {
+  .shell {
+    padding: 0 0.75rem;
+  }
+
+  .form-main {
+    padding: 1.5rem 1rem 3.5rem;
+  }
+
+  .form-title {
+    font-size: 1.625rem;
+  }
+
+  .form-subtitle {
+    font-size: 13px;
+  }
+
+  .section-title-row {
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-title-block h2 {
+    font-size: 0.9375rem;
+  }
+
+  .radio-row {
+    flex-direction: column;
+  }
+
+  .radio-card {
+    flex: unset;
+    width: 100%;
+  }
+
+  .policy-box {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    padding-top: 1.75rem;
+  }
+
+  .btn-ghost,
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .flight-class-wrap select {
+    max-width: 100%;
+  }
+
+  .input-prefix-wrap input {
+    font-size: 16px; // prevents iOS auto-zoom on focus
+  }
+}
+
+// ── Very small (≤ 360px)
+@media (max-width: 360px) {
+  .form-title {
+    font-size: 1.375rem;
+  }
+
+  .form-main {
+    padding: 1.25rem 0.875rem 3rem;
+  }
+}

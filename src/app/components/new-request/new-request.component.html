@@ -1,0 +1,396 @@
+
+<div class="main-layout">
+  <app-employee></app-employee>
+  <div class="shell">
+  
+    <!-- <aside class="sidebar">
+      <div class="sidebar-top">
+        <div class="brand-mark">TR</div>
+        <p class="brand-label">Travel<br>Request</p>
+      </div>
+      <nav class="section-nav">
+        <a href="#travel-details" class="nav-item">
+          <span class="nav-num">01</span>
+          <span class="nav-text">Travel Details</span>
+        </a>
+        <a href="#schedule" class="nav-item">
+          <span class="nav-num">02</span>
+          <span class="nav-text">Schedule</span>
+        </a>
+        <a href="#transport" class="nav-item">
+          <span class="nav-num">03</span>
+          <span class="nav-text">Transport</span>
+        </a>
+        <a href="#accommodation" class="nav-item">
+          <span class="nav-num">04</span>
+          <span class="nav-text">Accommodation</span>
+        </a>
+        <a href="#expense" class="nav-item active">
+          <span class="nav-num">05</span>
+          <span class="nav-text">Expense</span>
+        </a>
+        <a href="#declaration" class="nav-item">
+          <span class="nav-num">06</span>
+          <span class="nav-text">Declaration</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p class="sidebar-policy-hint">All fields marked <span class="req">*</span> are required.</p>
+      </div>
+    </aside>
+   -->
+    <main class="form-main">
+  
+      <header class="form-header">
+        <div class="form-header-inner">
+          <!-- <span class="form-tag">CORPORATE TRAVEL MANAGEMENT</span> -->
+          <h1 class="form-title">New Travel <em>Request</em></h1>
+          <p class="form-subtitle">Submit this form to initiate the travel approval workflow. Your details will be reviewed by your reporting manager.</p>
+        </div>
+
+        <div class="header-rule"></div>
+      </header>
+  
+      <form id="travelForm" novalidate="" autocomplete="off">
+  
+        <!-- 01 TRAVEL DETAILS -->
+        <section class="form-section" id="travel-details">
+          <div class="section-title-row">
+            <span class="section-num">01</span>
+            <div class="section-title-block">
+              <h2>Travel Details</h2>
+              <p>Origin, destination, and the reason for travel</p>
+            </div>
+          </div>
+  
+          <div class="field-grid two-col">
+            <div class="field-wrap">
+              <label for="fromLocation">From Location <span class="req">*</span></label>
+              <input type="text" id="fromLocation" name="fromLocation" placeholder="e.g. Mumbai, Maharashtra">
+              <span class="err-msg" id="err-fromLocation"></span>
+            </div>
+            <div class="field-wrap">
+              <label for="destination">Destination <span class="req">*</span></label>
+              <input type="text" id="destination" name="destination" placeholder="e.g. New Delhi, NCR">
+              <span class="err-msg" id="err-destination"></span>
+            </div>
+            <div class="field-wrap full">
+              <label for="purpose">Purpose of Travel <span class="req">*</span></label>
+              <textarea id="purpose" name="purpose" rows="4" placeholder="Describe the business objective and expected outcomes of this trip..."></textarea>
+              <span class="err-msg" id="err-purpose"></span>
+            </div>
+          </div>
+        </section>
+  
+        <!-- 02 SCHEDULE -->
+        <section class="form-section" id="schedule">
+          <div class="section-title-row">
+            <span class="section-num">02</span>
+            <div class="section-title-block">
+              <h2>Schedule</h2>
+              <p>Travel start and end dates</p>
+            </div>
+          </div>
+  
+          <div class="field-grid two-col">
+            <div class="field-wrap">
+              <label for="startDate">Start Date <span class="req">*</span></label>
+              <input type="date" id="startDate" name="startDate">
+              <span class="err-msg" id="err-startDate"></span>
+            </div>
+            <div class="field-wrap">
+              <label for="endDate">End Date <span class="req">*</span></label>
+              <input type="date" id="endDate" name="endDate">
+              <span class="err-msg" id="err-endDate"></span>
+            </div>
+          </div>
+        </section>
+  
+        <!-- 03 TRANSPORT -->
+        <section class="form-section" id="transport">
+          <div class="section-title-row">
+            <span class="section-num">03</span>
+            <div class="section-title-block">
+              <h2>Transport</h2>
+              <p>Preferred mode of travel</p>
+            </div>
+          </div>
+  
+          <div class="field-wrap">
+            <label>Mode of Transport <span class="req">*</span></label>
+            <div class="radio-row" id="transportGroup">
+              <label class="radio-card">
+                <input type="radio" name="transportMode" value="Train">
+                <span class="radio-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="14" rx="2"></rect><path d="M4 11h16M9 17l-2 3M15 17l2 3M9 7h6"></path></svg>
+                  <span>Train</span>
+                </span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" name="transportMode" value="Road">
+                <span class="radio-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="20" height="10" rx="2"></rect><path d="M6 18v2M18 18v2M2 12h2M20 12h2"></path><circle cx="7" cy="18" r="1"></circle><circle cx="17" cy="18" r="1"></circle></svg>
+                  <span>Road</span>
+                </span>
+              </label>
+              <!-- <label class="radio-card">
+                <input type="radio" name="transportMode" value="Air">
+                <span class="radio-box">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16l-9-4L3 8l4 2V4l2 1v6l2 1V5l2 1v6l5 2.5L21 16z"></path></svg>
+                  <span>Air</span>
+                </span>
+              </label> -->
+            </div>
+            <span class="err-msg" id="err-transportMode"></span>
+          </div>
+  
+          <!-- <div class="field-wrap flight-class-wrap" id="flightClassWrap">
+            <label for="flightClass">Flight Class</label>
+            <select id="flightClass" name="flightClass">
+              <option value="Economy">Economy</option>
+              <option value="Business">Business</option>
+            </select>
+          </div> -->
+        </section>
+  
+        <!-- 04 ACCOMMODATION -->
+        <section class="form-section" id="accommodation">
+          <div class="section-title-row">
+            <span class="section-num">04</span>
+            <div class="section-title-block">
+              <h2>Accommodation</h2>
+              <p>Hotel requirements and preferences</p>
+            </div>
+          </div>
+  
+          <div class="field-wrap">
+            <label class="check-toggle">
+              <input type="checkbox" id="hotelRequired" name="hotelRequired">
+              <span class="check-box"></span>
+              <span class="check-label">Hotel accommodation required</span>
+            </label>
+          </div>
+  
+          <div class="field-wrap hidden" id="hotelPrefWrap">
+            <label for="hotelPreference">Hotel Preference <span class="optional">(optional)</span></label>
+            <input type="text" id="hotelPreference" name="hotelPreference" placeholder="e.g. 4-star, near conference venue, specific brand...">
+          </div>
+        </section>
+  
+        <!-- 05 EXPENSE -->
+        <section class="form-section" id="expense">
+          <div class="section-title-row">
+            <span class="section-num">05</span>
+            <div class="section-title-block">
+              <h2>Expense</h2>
+              <p>Budget estimate and payment requirements</p>
+            </div>
+          </div>
+  
+          <div class="field-grid two-col">
+            <div class="field-wrap">
+              <label for="estimatedBudget">Estimated Budget (INR) <span class="req">*</span></label>
+              <div class="input-prefix-wrap">
+                <span class="prefix-symbol">₹</span>
+                <input type="number" id="estimatedBudget" name="estimatedBudget" placeholder="Minimum 100" min="100">
+              </div>
+              <span class="err-msg" id="err-estimatedBudget"></span>
+            </div>
+  
+            <div class="field-wrap center-v">
+              <label class="check-toggle">
+                <input type="checkbox" id="advancePayment" name="advancePayment">
+                <span class="check-box"></span>
+                <span class="check-label">Advance payment required</span>
+              </label>
+            </div>
+  
+            <div class="field-wrap full">
+              <label for="additionalNotes">Additional Notes <span class="optional">(optional)</span></label>
+              <textarea id="additionalNotes" name="additionalNotes" rows="3" placeholder="Any other information relevant to this travel request..."></textarea>
+            </div>
+          </div>
+        </section>
+  
+        <!-- 06 DECLARATION -->
+        <section class="form-section" id="declaration">
+          <div class="section-title-row">
+            <span class="section-num">06</span>
+            <div class="section-title-block">
+              <h2>Declaration</h2>
+              <p>Acknowledgement of company travel policy</p>
+            </div>
+          </div>
+  
+          <div class="policy-box">
+            <div class="policy-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"></path></svg>
+            </div>
+            <p>By submitting this request, I confirm that the proposed travel is necessary for official business purposes and complies fully with the company Travel and Expense Policy. I acknowledge that any deviation from the approved itinerary or budget must be disclosed and justified to the finance team.</p>
+          </div>
+  
+          <div class="field-wrap">
+            <label class="check-toggle policy-check" id="policyCheckLabel">
+              <input type="checkbox" id="policyAgreement" name="policyAgreement">
+              <span class="check-box"></span>
+              <span class="check-label">I have read and agree to the Travel and Expense Policy <span class="req">*</span></span>
+            </label>
+            <span class="err-msg" id="err-policyAgreement"></span>
+          </div>
+        </section>
+  
+        <!-- ACTIONS -->
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" id="resetBtn">Clear Form</button>
+          <button type="submit" class="btn-primary" id="submitBtn">
+            Submit Request
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"></path></svg>
+          </button>
+        </div>
+  
+      </form>
+  
+      <!-- SUCCESS STATE -->
+      <div class="success-panel hidden" id="successPanel">
+        <div class="success-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <h2>Request Submitted</h2>
+        <p>Your travel request has been forwarded for managerial review. You will receive a notification once a decision is made.</p>
+        <button class="btn-ghost" id="newRequestBtn">Submit Another Request</button>
+      </div>
+  
+    </main>
+  
+  </div>
+  
+  <script>
+  (function () {
+  
+    const form = document.getElementById('travelForm');
+    const successPanel = document.getElementById('successPanel');
+    const resetBtn = document.getElementById('resetBtn');
+    const newRequestBtn = document.getElementById('newRequestBtn');
+  
+    // Transport → flight class toggle
+    document.querySelectorAll('input[name="transportMode"]').forEach(r => {
+      r.addEventListener('change', () => {
+        const wrap = document.getElementById('flightClassWrap');
+        if (r.value === 'Air' && r.checked) {
+          wrap.classList.remove('hidden');
+        } else if (r.checked) {
+          wrap.classList.add('hidden');
+        }
+      });
+    });
+  
+    // Hotel → preference toggle
+    document.getElementById('hotelRequired').addEventListener('change', function () {
+      const wrap = document.getElementById('hotelPrefWrap');
+      this.checked ? wrap.classList.remove('hidden') : wrap.classList.add('hidden');
+    });
+  
+    // Sidebar active state on scroll
+    // const sections = document.querySelectorAll('.form-section');
+    // const navItems = document.querySelectorAll('.nav-item');
+    // window.addEventListener('scroll', () => {
+    //   let current = '';
+    //   sections.forEach(sec => {
+    //     if (window.scrollY >= sec.offsetTop - 160) current = sec.id;
+    //   });
+    //   navItems.forEach(item => {
+    //     item.classList.toggle('active', item.getAttribute('href') === '#' + current);
+    //   });
+    // });
+  
+    // function showErr(id, msg) {
+    //   const el = document.getElementById('err-' + id);
+    //   if (el) { el.textContent = msg; el.classList.add('visible'); }
+    //   const field = document.getElementById(id) || document.getElementById(id + 'Group');
+    //   if (field) field.classList.add('has-error');
+    // }
+  
+    // function clearErr(id) {
+    //   const el = document.getElementById('err-' + id);
+    //   if (el) { el.textContent = ''; el.classList.remove('visible'); }
+    //   const field = document.getElementById(id);
+    //   if (field) field.classList.remove('has-error');
+    // }
+  
+    function validate() {
+      let valid = true;
+      const fields = ['fromLocation', 'destination', 'purpose', 'startDate', 'endDate', 'estimatedBudget'];
+      fields.forEach(id => clearErr(id));
+      clearErr('transportMode');
+      clearErr('policyAgreement');
+  
+      const from = document.getElementById('fromLocation').value.trim();
+      if (!from) { showErr('fromLocation', 'Origin location is required.'); valid = false; }
+      else if (from.length < 2) { showErr('fromLocation', 'Must be at least 2 characters.'); valid = false; }
+  
+      const dest = document.getElementById('destination').value.trim();
+      if (!dest) { showErr('destination', 'Destination is required.'); valid = false; }
+      else if (dest.length < 2) { showErr('destination', 'Must be at least 2 characters.'); valid = false; }
+  
+      const purpose = document.getElementById('purpose').value.trim();
+      if (!purpose) { showErr('purpose', 'Purpose of travel is required.'); valid = false; }
+      else if (purpose.length < 10) { showErr('purpose', 'Minimum 10 characters required.'); valid = false; }
+  
+      const startDate = document.getElementById('startDate').value;
+      if (!startDate) { showErr('startDate', 'Start date is required.'); valid = false; }
+  
+      const endDate = document.getElementById('endDate').value;
+      if (!endDate) { showErr('endDate', 'End date is required.'); valid = false; }
+      else if (startDate && new Date(endDate) <= new Date(startDate)) {
+        showErr('endDate', 'End date must be after the start date.'); valid = false;
+      }
+  
+      const mode = document.querySelector('input[name="transportMode"]:checked');
+      if (!mode) { showErr('transportMode', 'Please select a mode of transport.'); valid = false; }
+  
+      const budget = parseFloat(document.getElementById('estimatedBudget').value);
+      if (!document.getElementById('estimatedBudget').value) {
+        showErr('estimatedBudget', 'Estimated budget is required.'); valid = false;
+      } else if (isNaN(budget) || budget < 100) {
+        showErr('estimatedBudget', 'Budget must be at least \u20B9100.'); valid = false;
+      }
+  
+      if (!document.getElementById('policyAgreement').checked) {
+        showErr('policyAgreement', 'You must agree to the policy before submitting.'); valid = false;
+      }
+  
+      return valid;
+    }
+  
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (validate()) {
+        form.classList.add('hidden');
+        successPanel.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  
+    resetBtn.addEventListener('click', () => {
+      form.reset();
+      document.getElementById('flightClassWrap').classList.add('hidden');
+      document.getElementById('hotelPrefWrap').classList.add('hidden');
+      ['fromLocation','destination','purpose','startDate','endDate','transportMode','estimatedBudget','policyAgreement']
+        .forEach(id => clearErr(id));
+    });
+  
+    newRequestBtn.addEventListener('click', () => {
+      successPanel.classList.add('hidden');
+      form.classList.remove('hidden');
+      form.reset();
+      document.getElementById('flightClassWrap').classList.add('hidden');
+      document.getElementById('hotelPrefWrap').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  
+  })();
+  </script>
+  
+  
+  
+</div>

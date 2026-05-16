@@ -1,0 +1,41 @@
+<div class="sidebar p-3">
+    <!-- Logo -->
+    <div class="logo mb-4">
+      <span class="tms"><b>TMS</b></span>
+    </div>
+  
+    <!-- Menu -->
+    <ul class="menu list-unstyled">
+    
+      <li>
+        <button class="menu-btn" (click)=" navigateToEmployeeDashboard()">Employee Dashboard</button>
+      </li>
+  
+      <li>
+        <button class="menu-btn" (click)="navigateToNewRequest()">New Request</button>
+      </li>
+  
+      <li>
+        <button class="menu-btn" (click)="navigateToMyRequests()">My Requests</button>
+      </li>
+  
+      <li>
+        <button class="menu-btn" (click)="navigateToAccountabilities()">Accountabilities</button>
+      </li>
+  
+      <li class="divider"></li>
+  
+      <li>
+        <button class="menu-btn" (click)="navigateToEmployeeProfile()" >Profile</button>
+      </li>
+  
+      <li>
+        <button class="menu-btn logout" (click)="navigateToLogout()">Logout</button>
+      </li>
+      
+  
+    </ul>
+  
+  </div>
+
+

@@ -1,0 +1,299 @@
+<div class="dashboard-layout">
+  <app-finance></app-finance>
+
+  <!-- ========================================== -->
+  <!-- Main Content Wrapper -->
+  <!-- ========================================== -->
+  <div class="main-wrapper">
+
+    <!-- KPI Grid -->
+    <section class="kpi-grid">
+    <div class="header-content">
+      <h2 class="page-title">Finance Dashboard</h2>
+      <p class="page-subtitle">Global travel expenditure and compliance oversight.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" (click)="downloadSummary()">
+        <span class="icon">download</span>
+        Download Summary
+      </button>
+      <button class="btn btn-primary" (click)="exportReport()">
+        <span class="icon">file_export</span>
+        Export Report
+      </button>
+    </div>
+  </section>
+
+  <!-- KPI Grid -->
+  <section class="kpi-grid">
+    <div 
+      *ngFor="let kpi of kpiData" 
+      class="kpi-card"
+      [class.kpi-card--warning]="kpi.variant === 'warning'"
+      [class.kpi-card--error]="kpi.variant === 'error'"
+    >
+      <div class="kpi-card__header">
+        <p class="kpi-card__label">{{ kpi.label }}</p>
+        <div class="kpi-card__icon" [class.kpi-card__icon--error]="kpi.iconVariant === 'error'">
+          <span class="icon">{{ kpi.icon }}</span>
+        </div>
+      </div>
+      <div class="kpi-card__content">
+        <span class="kpi-card__value" [class.kpi-card__value--error]="kpi.variant === 'error'">
+          {{ kpi.value }}
+        </span>
+        <span 
+          *ngIf="kpi.trend" 
+          class="kpi-card__trend"
+          [class.kpi-card__trend--positive]="kpi.trend.type === 'positive'"
+          [class.kpi-card__trend--negative]="kpi.trend.type === 'negative'"
+          [class.kpi-card__trend--neutral]="kpi.trend.type === 'neutral'"
+        >
+          {{ kpi.trend.value }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chart Section -->
+  <section class="charts-section">
+    <!-- Bar Chart -->
+    <div class="chart-card chart-card--large">
+      <h3 class="card-title">Monthly Travel Spending</h3>
+      <div class="bar-chart">
+        <div 
+          *ngFor="let bar of barChartData" 
+          class="bar"
+          [class.bar--active]="bar.isActive"
+          [style.height.%]="(bar.value / maxBarValue) * 100"
+        >
+          <span class="bar__label">{{ bar.month }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doughnut Chart -->
+    <div class="chart-card">
+      <h3 class="card-title">Approval Status</h3>
+      <div class="doughnut-chart">
+        <div class="chart-visual">
+          <svg class="doughnut-svg" viewBox="0 0 160 160">
+            <circle class="doughnut-bg" cx="80" cy="80" r="60"></circle>
+            <circle 
+              class="doughnut-fill" 
+              cx="80" 
+              cy="80" 
+              r="60"
+              [style.stroke-dashoffset]="getDoughnutOffset()"
+            ></circle>
+          </svg>
+          <div class="chart-center">
+            <p class="chart-value">{{ approvalPercentage }}%</p>
+            <p class="chart-label">Approved</p>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-color legend-color--primary"></span>
+            <span>Approved</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color legend-color--secondary"></span>
+            <span>Pending</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Middle Row: Alerts & Tracker -->
+  <section class="middle-section">
+    <!-- Policy Alerts -->
+    <div class="card policy-alerts">
+      <div class="card__header">
+        <h3 class="card-title">Policy Alerts</h3>
+        <span class="badge badge--error">{{ alertsData.length }} NEW</span>
+      </div>
+      <div class="alerts-list">
+        <div 
+          *ngFor="let alert of alertsData" 
+          class="alert-item"
+          (click)="viewAlertDetails(alert)"
+        >
+          <div class="alert-item__content">
+            <div 
+              class="alert-item__icon"
+              [class.alert-item__icon--error]="alert.iconVariant === 'error'"
+              [class.alert-item__icon--neutral]="alert.iconVariant === 'neutral'"
+            >
+              <span class="icon">{{ alert.icon }}</span>
+            </div>
+            <div>
+              <p class="alert-item__title">{{ alert.title }}</p>
+              <p class="alert-item__subtitle">{{ alert.subtitle }}</p>
+            </div>
+          </div>
+          <span 
+            class="alert-item__badge"
+            [class.alert-item__badge--high]="alert.severity === 'high'"
+            [class.alert-item__badge--medium]="alert.severity === 'medium'"
+          >
+            {{ alert.severity.toUpperCase() }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reimbursement Tracker -->
+    <div class="card reimbursement-tracker">
+      <h3 class="card-title">Reimbursement Tracker</h3>
+      <div class="progress-list">
+        <div *ngFor="let progress of progressData" class="progress-item">
+          <div class="progress-header">
+            <span class="progress-label">{{ progress.label }}</span>
+            <span class="progress-value">{{ progress.value }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div 
+              class="progress-fill" 
+              [style.width.%]="progress.value"
+              [@progressAnimation]
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div class="info-box">
+        <span class="icon icon--primary">info</span>
+        <p>
+          System automated payout scheduled for <strong>Friday, Oct 24th</strong>. 
+          All requests approved before Wednesday will be included.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Table -->
+  <section class="data-table-section">
+    <div class="card">
+      <div class="card__header">
+        <h3 class="card-title">Recent Finance Requests</h3>
+        <div class="header-actions">
+          <button class="icon-btn" (click)="openFilters()">
+            <span class="icon">filter_list</span>
+          </button>
+          <button class="icon-btn" (click)="openTableMenu()">
+            <span class="icon">more_vert</span>
+          </button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Employee</th>
+              <th>Dept</th>
+              <th>Budget</th>
+              <th>Status</th>
+              <th>Manager</th>
+              <th>Finance</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr 
+              *ngFor="let request of requestsData" 
+              (click)="viewRequestDetails(request)"
+            >
+              <td>
+                <span class="request-id">{{ request.id }}</span>
+              </td>
+              <td>
+                <div class="employee-cell">
+                  <div class="employee-avatar">
+                    <img *ngIf="request.employee.avatar" [src]="request.employee.avatar" [alt]="request.employee.name">
+                  </div>
+                  <span class="employee-name">{{ request.employee.name }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="dept-name">{{ request.department }}</span>
+              </td>
+              <td>
+                <strong class="budget-value">{{ request.budget | currency }}</strong>
+              </td>
+              <td>
+                <span 
+                  class="status-badge"
+                  [class.status-badge--active]="request.status === 'active'"
+                  [class.status-badge--flagged]="request.status === 'flagged'"
+                  [class.status-badge--settled]="request.status === 'settled'"
+                >
+                  {{ request.status.toUpperCase() }}
+                </span>
+              </td>
+              <td>
+                <span *ngIf="request.managerApproved" class="status-icon">
+                  <span class="icon">check_circle</span>
+                </span>
+                <span *ngIf="!request.managerApproved" class="status-badge status-badge--pending">
+                  PENDING
+                </span>
+              </td>
+              <td>
+                <span 
+                  *ngIf="request.financeStatus === 'approved'" 
+                  class="status-icon"
+                >
+                  <span class="icon">check_circle</span>
+                </span>
+                <span 
+                  *ngIf="request.financeStatus !== 'approved'" 
+                  class="status-badge"
+                  [class.status-badge--pending]="request.financeStatus === 'pending'"
+                  [class.status-badge--denied]="request.financeStatus === 'denied'"
+                >
+                  {{ request.financeStatus.toUpperCase() }}
+                </span>
+              </td>
+              <td>
+                <span class="date-value">{{ request.date }}</span>
+              </td>
+              <td>
+                <button 
+                  class="row-action" 
+                  (click)="performAction(request, $event)"
+                >
+                  {{ request.action }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-footer">
+        <p class="table-info">
+          Showing {{ requestsData.length }} of {{ totalRequests }} requests
+        </p>
+        <div class="pagination">
+          <button 
+            class="pagination-btn" 
+            [disabled]="currentPage === 1"
+            (click)="previousPage()"
+          >
+            <span class="icon">chevron_left</span>
+          </button>
+          <button 
+            class="pagination-btn"
+            [disabled]="currentPage === totalPages"
+            (click)="nextPage()"
+          >
+            <span class="icon">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  </div>
+</div>

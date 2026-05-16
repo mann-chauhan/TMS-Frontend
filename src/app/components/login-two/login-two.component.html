@@ -1,0 +1,130 @@
+<!-- Main container -->
+<main class="signin-main">
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <h2 class="brand-title">TMS</h2>
+      <p class="brand-subtitle">Premium Management Interface</p>
+    </div>
+  
+    <!-- Login Container -->
+    <div class="login-card">
+      <!-- Card Header -->
+      <div class="card-header">
+        <h1 class="card-title">Sign In</h1>
+        <p class="card-subtitle">
+          Enter your credentials to access the concierge portal.
+        </p>
+      </div>
+  
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        
+        <!-- Email Field -->
+        <div class="form-group">
+          <label for="email" class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="employee@tms.com"
+              class="form-input"
+              [class.input-error]="isFieldInvalid('email')"/>
+          </div>
+          <p class="field-error" *ngIf="isFieldInvalid('email')">
+            Please enter a valid email address
+          </p>
+        </div>
+  
+        <!-- Password Field -->
+        <div class="form-group">
+          <div class="password-header">
+            <label for="password" class="form-label">Password</label>
+            <a href="/forgot-password" class="forgot-link">Forgot?</a>
+          </div>
+          <div class="input-wrapper">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="••••••••"
+              class="form-input"
+              [class.input-error]="isFieldInvalid('password')"/>
+          </div>
+          <p class="field-error" *ngIf="isFieldInvalid('password')">
+            Password is required
+          </p>
+        </div>
+  
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="showError">
+          <span class="material-symbols-outlined error-icon">info</span>
+          <span class="error-text">Please verify your credentials and try again.</span>
+        </div>
+  
+        <!-- Submit Button -->
+        <div class="button-container">
+          <button
+            type="submit"
+            [disabled]="isLoading || !loginForm.valid"
+            class="submit-button"
+            [class.loading]="isLoading">
+            <span *ngIf="!isLoading">
+              Sign In
+              <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+            </span>
+            <span *ngIf="isLoading" class="loading-spinner">
+              <span class="material-symbols-outlined">hourglass_empty</span>
+            </span>
+          </button>
+        </div>
+      </form>
+  
+      <!-- Footer Section -->
+      <div class="card-footer">
+        <p class="footer-text">Authorized personnel only</p>
+        <div class="footer-icons">
+          <button
+            type="button"
+            class="icon-button"
+            title="SSO Login Available"
+            (click)="handleSSO()">
+            <span class="material-symbols-outlined">fingerprint</span>
+          </button>
+          <button
+            type="button"
+            class="icon-button"
+            title="Need help?"
+            (click)="contactSupport()">
+            <span class="material-symbols-outlined">help_outline</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Footer Links -->
+    <footer class="visual-footer">
+      <div class="footer-copyright">
+        © 2026 TravelConcierge Global
+      </div>
+      <div class="footer-links">
+        <a href="/privacy" class="footer-link">Privacy</a>
+        <a href="/terms" class="footer-link">Terms</a>
+      </div>
+    </footer>
+  </main>
+  
+  <!-- Background Decorative Image -->
+  <div class="background-image">
+    <img
+      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJMt1QK-unFLOwkHuC9q0n0Lsq28Cc1uo02_ne4llwdxECxAo4Ob8181azjWgp4kHbOAGBz5Wpq8k8peXMNGZ5Q1tcskAf2s3jwrnqFFIIZFRjlAng9-o1ebl_D-h97ojKqi3i77AZSdrctRnvbxiqZ58EzHkcakLeCnZZLbfHmTCLEmj1KGccAHSoh_kXxdAzfCqMXsz-NPgDAIlP9ZwSe_DuUj2saT3pdB1xB-Q6h2mVCRYaQXCZX4nEV-XhcS8CwtlJFbz8KNZa"
+      alt="Minimal airplane wing"
+      class="image-content"/>
+    <div class="image-gradient"></div>
+  </div>
+  
+  <!-- Background Decorative Elements -->
+  <div class="background-decoration">
+    <div class="decoration-gradient-right"></div>
+    <div class="decoration-blur"></div>
+  </div>

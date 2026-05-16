@@ -1,0 +1,228 @@
+<div class="dashboard-layout">
+    <app-employee></app-employee>
+  
+    <!-- ========================================== -->
+    <!-- Main Content Wrapper -->
+    <!-- ========================================== -->
+    <div class="main-wrapper">
+      <!-- Top Bar -->
+      <header class="topbar">
+        <h2 class="topbar-title">Travel <span>Management</span></h2>
+  
+        <div class="topbar-actions">
+          <div class="search-box">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input
+              type="text"
+              [(ngModel)]="searchQuery"
+              (keyup.enter)="onSearch()"
+              placeholder="Search team members or trips..."
+              class="search-input"
+            />
+          </div>
+  
+          <div class="action-buttons">
+            <button class="icon-btn" [class.has-notification]="hasNotifications">
+              <span class="material-symbols-outlined">notifications</span>
+              <span class="notification-dot" *ngIf="hasNotifications"></span>
+            </button>
+            <button class="icon-btn">
+              <span class="material-symbols-outlined">help_outline</span>
+            </button>
+            <div class="user-avatar">
+              <img [src]="currentUser.avatar" [alt]="currentUser.name" />
+            </div>
+          </div>
+        </div>
+      </header>
+  
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Page Header -->
+        <section class="page-header">
+          <p class="page-label">Operational Overview</p>
+          <h1 class="page-title">Welcome to TMS!!</h1>
+          <p class="page-description">
+            Your team currently has 12 active travelers across 4 time zones. Total travel
+            expenditure is tracking 4% under the quarterly forecast.
+          </p>
+        </section>
+  
+        <!-- KPI Grid -->
+        <section class="kpi-grid">
+          <div class="kpi-card" *ngFor="let metric of kpiMetrics">
+            <div class="kpi-content">
+              <span class="kpi-label">{{ metric.label }}</span>
+              <span class="kpi-value">{{ metric.value }}</span>
+            </div>
+  
+            <div class="kpi-footer">
+              <div *ngIf="metric.trend" class="kpi-trend" [class]="'trend-' + metric.trend.type">
+                <span class="material-symbols-outlined" *ngIf="metric.trend.icon">
+                  {{ metric.trend.icon }}
+                </span>
+                <span>{{ metric.trend.text }}</span>
+              </div>
+  
+              <div *ngIf="metric.badge" class="kpi-badge">{{ metric.badge }}</div>
+  
+              <div *ngIf="metric.avatars" class="avatar-stack">
+                <div class="avatar-item"></div>
+                <div class="avatar-item"></div>
+                <div class="avatar-item"></div>
+                <div class="avatar-count">+{{ metric.avatars }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+  
+        <!-- Analytics Section -->
+        <div class="analytics-layout">
+          <!-- Left Column: Charts -->
+          <div class="analytics-left">
+            <!-- Department Spend Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div class="chart-title-wrapper">
+                  <h3 class="chart-title">Department Spend Breakdown</h3>
+                  <p class="chart-subtitle">Quarter-to-date expenditure by business unit</p>
+                </div>
+                <div class="chart-controls">
+                  <button
+                    (click)="onToggleChartView('weekly')"
+                    [class.active]="activeChartView === 'weekly'"
+                    class="chart-control-btn"
+                  >
+                    Weekly
+                  </button>
+                  <button
+                    (click)="onToggleChartView('monthly')"
+                    [class.active]="activeChartView === 'monthly'"
+                    class="chart-control-btn"
+                  >
+                    Monthly
+                  </button>
+                </div>
+              </div>
+  
+              <div class="bar-chart-wrapper">
+                <div class="bar-chart">
+                  <div
+                    class="bar-item"
+                    *ngFor="let dept of departmentSpending"
+                    [style.height]="getBarHeight(dept.percentage)"
+                    [class.bar-highlight]="dept.name === 'SALES'"
+                    [title]="formatCurrency(dept.amount)"
+                  >
+                    <div class="bar-tooltip">{{ formatCurrency(dept.amount) }}</div>
+                  </div>
+                </div>
+                <div class="chart-labels">
+                  <span *ngFor="let dept of departmentSpending" class="chart-label">
+                    {{ dept.name }}
+                  </span>
+                </div>
+              </div>
+            </div>
+  
+            <!-- Mini Charts Grid -->
+            <div class="mini-charts-grid">
+              <!-- Policy Compliance -->
+              <div class="mini-chart-card">
+                <h3 class="card-title">Policy Compliance</h3>
+                <p class="card-subtitle">Booking through approved channels</p>
+  
+                <div class="donut-chart-wrapper">
+                  <svg viewBox="0 0 36 36" class="donut-chart">
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      stroke="#f3f4f6"
+                      stroke-width="3"
+                    />
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="16"
+                      fill="none"
+                      stroke="#000000"
+                      stroke-width="3"
+                      [attr.stroke-dasharray]="getStrokeDasharray(policyCompliance.percentage)"
+                      transform="rotate(-90 18 18)"
+                    />
+                  </svg>
+                  <div class="donut-center">
+                    <span class="donut-value">{{ policyCompliance.percentage }}%</span>
+                    <span class="donut-label">{{ policyCompliance.rating }}</span>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- Top Destinations -->
+              <div class="mini-chart-card">
+                <h3 class="card-title">Top Destinations</h3>
+                <p class="card-subtitle">Recent volume by city</p>
+  
+                <div class="destination-list">
+                  <div class="destination-item" *ngFor="let dest of topDestinations">
+                    <div class="destination-header">
+                      <span class="destination-city">{{ dest.city }}</span>
+                      <span class="destination-trips">{{ dest.trips }} Trips</span>
+                    </div>
+                    <div class="progress-bar">
+                      <div class="progress-fill" [style.width.%]="dest.percentage"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Right Column: Budget & Activity -->
+          <div class="analytics-right">
+            <!-- Budget Card -->
+            <div class="budget-card">
+              <h3 class="budget-title">Q3 Budget Utilization</h3>
+  
+              <div class="budget-list">
+                <div class="budget-item" *ngFor="let item of budgetItems">
+                  <div class="budget-header">
+                    <span class="budget-label">{{ item.department }}</span>
+                    <span class="budget-percentage">{{ item.percentage }}%</span>
+                  </div>
+                  <div class="budget-bar">
+                    <div class="budget-fill" [style.width.%]="item.percentage"></div>
+                  </div>
+                </div>
+              </div>
+  
+              <button class="budget-action-btn" (click)="onAdjustBudget()">
+                Adjust Limits
+              </button>
+            </div>
+  
+            <!-- Activity Feed -->
+            <div class="activity-card">
+              <h3 class="activity-title">Live Status Feed</h3>
+  
+              <div class="activity-list">
+                <div class="activity-item" *ngFor="let activity of activityFeed">
+                  <div class="activity-dot" [class.highlight]="activity.isHighlight"></div>
+                  <div class="activity-content">
+                    <p class="activity-text">
+                      <strong>{{ activity.employeeName }}</strong>
+                      {{ activity.action }}
+                    </p>
+                    <span class="activity-time">{{ activity.timestamp }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      </main>
+    </div>
+  </div>

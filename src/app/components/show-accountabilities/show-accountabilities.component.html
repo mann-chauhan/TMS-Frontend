@@ -1,0 +1,314 @@
+<!-- Main Container -->
+<div class="accountabilities-wrapper">
+    <app-manager></app-manager>
+  
+    <!-- Header -->
+    <header class="top-header">
+        <h2 class="page-title">Accountabilities</h2>
+      <div class="header-left">
+        <div class="search-container">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="filterAndSort()"
+            class="search-input"
+            placeholder="Search by name, ID, or destination..."
+            aria-label="Search submissions"/>
+        </div>
+      </div>
+  
+      <div class="header-right">
+        <div class="header-actions">
+          <button class="icon-button" title="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="notification-badge"></span>
+          </button>
+          <button class="icon-button" title="Help">
+            <span class="material-symbols-outlined">help_outline</span>
+          </button>
+        </div>
+  
+        <div class="divider"></div>
+  
+        <div class="profile-section">
+          <div class="profile-info">
+            <p class="profile-title">Financial Lead</p>
+            <p class="profile-subtitle">Finance Dept.</p>
+          </div>
+          <img [src]="profileImage" alt="User Profile" class="profile-image"/>
+        </div>
+      </div>
+    </header>
+  
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="page-container">
+        <!-- Headline -->
+        <div class="page-headline">
+          
+          <p class="page-subtitle">Expense Review & Approvals</p>
+        </div>
+  
+        <!-- Summary Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <p class="stat-label">TOTAL SUBMISSIONS</p>
+            <div class="stat-content">
+              <span class="stat-number">{{ totalSubmissions }}</span>
+              <span class="material-symbols-outlined stat-icon">receipt_long</span>
+            </div>
+          </div>
+  
+          <div class="stat-card">
+            <p class="stat-label">PENDING REVIEW</p>
+            <div class="stat-content">
+              <span class="stat-number stat-orange">{{ pendingReview }}</span>
+              <span class="material-symbols-outlined stat-icon stat-orange">pending_actions</span>
+            </div>
+          </div>
+  
+          <div class="stat-card">
+            <p class="stat-label">APPROVED TODAY</p>
+            <div class="stat-content">
+              <span class="stat-number stat-green">{{ approvedToday }}</span>
+              <span class="material-symbols-outlined stat-icon stat-green">verified</span>
+            </div>
+          </div>
+  
+          <div class="stat-card">
+            <p class="stat-label">REJECTED (MTD)</p>
+            <div class="stat-content">
+              <span class="stat-number stat-red">{{ rejectedMTD }}</span>
+              <span class="material-symbols-outlined stat-icon stat-red">cancel</span>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Table & Filters -->
+        <div class="table-wrapper">
+          <!-- Filter Header -->
+          <div class="table-filter-header">
+            <div class="filter-group">
+              <div class="filter-item">
+                <label class="filter-label">FILTER BY STATUS</label>
+                <select 
+                  [(ngModel)]="statusFilter" 
+                  (change)="filterAndSort()"
+                  class="filter-select">
+                  <option value="all">All Submissions</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+  
+              <div class="filter-item">
+                <label class="filter-label">SORT BY</label>
+                <select 
+                  [(ngModel)]="sortBy" 
+                  (change)="filterAndSort()"
+                  class="filter-select">
+                  <option value="newest">Date: Newest First</option>
+                  <option value="oldest">Date: Oldest First</option>
+                  <option value="high-to-low">Amount: High to Low</option>
+                  <option value="low-to-high">Amount: Low to High</option>
+                </select>
+              </div>
+            </div>
+  
+            <button (click)="exportCSV()" class="export-button">
+              <span class="material-symbols-outlined">download</span>
+              Export to CSV
+            </button>
+          </div>
+  
+          <!-- Table -->
+          <div class="table-scroll">
+            <table class="submissions-table">
+              <thead>
+                <tr class="table-header-row">
+                  <th>ID</th>
+                  <th>EMPLOYEE</th>
+                  <th>DESTINATION</th>
+                  <th>TOTAL AMOUNT</th>
+                  <th>SUBMITTED</th>
+                  <th>STATUS</th>
+                  <th>ACTIONS</th>
+                </tr>
+              </thead>
+  
+              <tbody>
+                @for (submission of paginatedSubmissions; track submission.id) {
+                  <tr class="table-body-row">
+                    <td class="cell-id">{{ submission.id }}</td>
+                    <td class="cell-employee">{{ submission.employeeName }}</td>
+                    <td class="cell-destination">{{ submission.destination }}</td>
+                    <td class="cell-amount">₹ {{ submission.totalAmount | number }}</td>
+                    <td class="cell-date">{{ submission.submittedDate | date:'short' }}</td>
+  
+                    <td class="cell-status">
+                      <span 
+                        class="status-badge"
+                        [ngClass]="'status-' + submission.status">
+                        <span class="status-dot"></span>
+                        {{ submission.status | titlecase }}
+                      </span>
+                    </td>
+  
+                    <td class="cell-actions">
+                      <div class="action-buttons">
+                        <button
+                          (click)="viewDetails(submission)"
+                          class="action-button view"
+                          title="View Details">
+                          <span class="material-symbols-outlined">visibility</span>
+                        </button>
+  
+                        @if (submission.status === 'pending') {
+                          <button
+                            (click)="approveSubmission(submission)"
+                            class="action-button approve"
+                            title="Approve">
+                            <span class="material-symbols-outlined">check_circle</span>
+                          </button>
+  
+                          <button
+                            (click)="rejectSubmission(submission)"
+                            class="action-button reject"
+                            title="Reject">
+                            <span class="material-symbols-outlined">cancel</span>
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+  
+          <!-- Pagination -->
+          <div class="table-pagination">
+            <p class="pagination-info">
+              Showing {{ paginationStart }}-{{ paginationEnd }} of {{ filteredSubmissions.length }} Submissions
+            </p>
+  
+            <div class="pagination-controls">
+              <button
+                (click)="previousPage()"
+                [disabled]="currentPage === 1"
+                class="pagination-button">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+  
+              @for (page of pageNumbers; track page) {
+                <button
+                  (click)="goToPage(page)"
+                  [class.active]="page === currentPage"
+                  class="pagination-button page-number">
+                  {{ page }}
+                </button>
+              }
+  
+              <button
+                (click)="nextPage()"
+                [disabled]="currentPage === totalPages"
+                class="pagination-button">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  
+    <!-- Detail Modal -->
+    @if (showDetailModal && selectedSubmission) {
+      <div class="modal-overlay" (click)="closeModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <div>
+              <p class="modal-label">EXPENSE DETAILS</p>
+              <h3 class="modal-title">{{ selectedSubmission.employeeName }} — {{ selectedSubmission.destination }}</h3>
+            </div>
+            <button (click)="closeModal()" class="modal-close-button">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+  
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <!-- Basic Info Grid -->
+            <div class="modal-info-grid">
+              <div class="info-item">
+                <label class="info-label">EMPLOYEE ID</label>
+                <p class="info-value">{{ selectedSubmission.employeeId }}</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">TRIP DATES</label>
+                <p class="info-value">{{ selectedSubmission.tripDates }}</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">PURPOSE</label>
+                <p class="info-value">{{ selectedSubmission.purpose }}</p>
+              </div>
+              <div class="info-item">
+                <label class="info-label">REIMBURSEMENT CURRENCY</label>
+                <p class="info-value">{{ selectedSubmission.currency }}</p>
+              </div>
+            </div>
+  
+            <!-- Itemized Expenses -->
+            <h4 class="modal-section-title">Itemized Expenses</h4>
+            <div class="expenses-list">
+              @for (item of selectedSubmission.items; track item.id) {
+                <div class="expense-item">
+                  <div class="expense-info">
+                    <div class="expense-icon">
+                      <span class="material-symbols-outlined">
+                        {{ getExpenseIcon(item.type) }}
+                      </span>
+                    </div>
+                    <div>
+                      <p class="expense-name">{{ item.name }}</p>
+                      <p class="expense-description">{{ item.description }}</p>
+                    </div>
+                  </div>
+                  <p class="expense-amount">₹ {{ item.amount | number }}</p>
+                </div>
+              }
+            </div>
+  
+            <!-- Total -->
+            <div class="modal-total">
+              <div>
+                <p class="total-label">Grand Total Claim</p>
+                <p class="total-amount">₹ {{ selectedSubmission.totalAmount | number }}</p>
+              </div>
+              <button class="download-button">
+                Download Receipts
+              </button>
+            </div>
+          </div>
+  
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            @if (selectedSubmission.status === 'pending') {
+              <button 
+                (click)="approveSubmission(selectedSubmission); closeModal()"
+                class="modal-approve-button">
+                Approve Submission
+              </button>
+              <button 
+                (click)="rejectSubmission(selectedSubmission); closeModal()"
+                class="modal-reject-button">
+                Reject Claim
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>

@@ -1,0 +1,66 @@
+.sidebar {
+    position: fixed;
+    width: 260px;
+    height: 100vh;
+    background: #000000; // dark modern color
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+  }
+  .tms{
+  font-family: 'Times New Roman', Times, serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px;
+  background: #3c3b3b; // slightly lighter dark color
+  border-radius:15px;
+  font-size: 40px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 1px;
+}
+  
+
+  
+  .menu {
+    flex: 1;
+  }
+  
+  .menu-btn {
+    width: 100%;
+    padding: 10px 15px;
+    margin-bottom: 8px;
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    text-align: left;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+  }
+  
+  .menu-btn:hover {
+    background: #1e293b;
+    color: #fff;
+    transform: translateX(5px);
+  }
+  
+  .logout {
+    color: #f87171;
+  }
+  
+  .logout:hover {
+    background: #7f1d1d;
+    color: #fff;
+  }
+  
+  .divider {
+    height: 1px;
+    background: #334155;
+    margin: 15px 0;
+  }
