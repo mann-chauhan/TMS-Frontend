@@ -19,6 +19,11 @@ import { ManagerProfileComponent } from './components/manager-profile/manager-pr
 import { FinanceProfileComponent } from './components/finance-profile/finance-profile.component';
 import { FinanceDashboardComponent } from './components/finance-dashboard/finance-dashboard.component';
 import { FinanceApprovalCenterComponent } from './components/finance-show-request/finance-show-request.component';
+import { FinanceAcknowledgedComponent } from './components/finance-acknowledged/finance-acknowledged.component';
+import { FinanceShowAccountabilitiesComponent } from './components/finance-show-accountabilities/finance-show-accountabilities.component';
+import { AddUserComponent } from './components/admin-add-user/admin-add-user.component';
+import { AdminAllUsersComponent } from './components/admin-all-users/admin-all-users.component';
+import { AdminProfileComponent } from './components/admin-profile/admin-profile.component';
 
 
 
@@ -116,6 +121,30 @@ export const routes: Routes = [
   {
     path: 'finance-show-requests',
     component: FinanceApprovalCenterComponent
+  },
+  {
+    path: 'finance-acknowledged',
+    component: FinanceAcknowledgedComponent
+  },
+  {
+    path: 'finance-show-accountabilities',
+    component: FinanceShowAccountabilitiesComponent
+  },
+  {
+    path: 'admin',
+    component: AddUserComponent
+  },
+  {
+    path: 'admin-add-user',
+    component: AddUserComponent
+  },
+  {
+    path: 'admin-all-users',
+    component: AdminAllUsersComponent
+  },
+  {
+    path: 'admin-profile',
+    component: AdminProfileComponent
   },
  
 

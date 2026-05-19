@@ -1,0 +1,41 @@
+<div class="dashboard-layout">
+  <app-admin></app-admin>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">Travel <span>Admin</span></div>
+    </header>
+
+    <main class="main-content">
+      <section class="page-header">
+        <p class="page-label">Account</p>
+        <h1 class="page-title">Profile</h1>
+        <p class="page-description">Manage admin identity and access details.</p>
+      </section>
+
+      <section class="profile-card">
+        <div class="avatar">TA</div>
+
+        <div class="profile-details">
+          <h2>{{ admin.name }}</h2>
+          <p>{{ admin.role }}</p>
+
+          <dl>
+            <div>
+              <dt>Email</dt>
+              <dd>{{ admin.email }}</dd>
+            </div>
+            <div>
+              <dt>Department</dt>
+              <dd>{{ admin.department }}</dd>
+            </div>
+            <div>
+              <dt>Status</dt>
+              <dd>{{ admin.status }}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

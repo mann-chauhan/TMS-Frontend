@@ -1,18 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { FinanceShowRequestComponent } from './finance-show-request.component';
+import { FinanceApprovalCenterComponent } from './finance-show-request.component';
 
-describe('FinanceShowRequestComponent', () => {
-  let component: FinanceShowRequestComponent;
-  let fixture: ComponentFixture<FinanceShowRequestComponent>;
+describe('FinanceApprovalCenterComponent', () => {
+  let component: FinanceApprovalCenterComponent;
+  let fixture: ComponentFixture<FinanceApprovalCenterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FinanceShowRequestComponent]
+      imports: [FinanceApprovalCenterComponent, NoopAnimationsModule]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FinanceShowRequestComponent);
+    fixture = TestBed.createComponent(FinanceApprovalCenterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

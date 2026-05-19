@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { FinanceDashboardComponent } from './finance-dashboard.component';
 
@@ -8,7 +9,7 @@ describe('FinanceDashboardComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FinanceDashboardComponent]
+      imports: [FinanceDashboardComponent, NoopAnimationsModule]
     })
     .compileComponents();
 

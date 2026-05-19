@@ -1,0 +1,61 @@
+<div class="dashboard-layout">
+  <app-admin></app-admin>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">Travel <span>Admin</span></div>
+
+      <div class="search-box">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Search users..."
+          class="search-input"
+        />
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="page-header">
+        <p class="page-label">User Management</p>
+        <h1 class="page-title">All User</h1>
+        <p class="page-description">Review employee, manager, finance, and admin accounts.</p>
+      </section>
+
+      <section class="table-card">
+        <div class="table-header">
+          <h2>User Directory</h2>
+          <span>{{ filteredUsers.length }} users</span>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of filteredUsers">
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.department }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                  <span class="status-pill" [class.inactive]="user.status === 'Inactive'">
+                    {{ user.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,140 @@
+<div class="finance-accountabilities">
+  <app-finance></app-finance>
+
+  <main class="page-shell">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Finance</p>
+        <h1>Finance Accountabilities</h1>
+        <p>Monitor finance responsibilities and track executive compliance metrics across the enterprise.</p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-primary">
+          <span class="material-symbols-outlined">ios_share</span>
+          Export Report
+        </button>
+        <button type="button" class="btn btn-secondary">
+          <span class="material-symbols-outlined">download</span>
+          Download PDF
+        </button>
+      </div>
+    </section>
+
+    <section class="metric-grid">
+      <article class="executive-card metric-card" *ngFor="let metric of metrics">
+        <div class="card-top">
+          <span>{{ metric.label }}</span>
+          <span class="material-symbols-outlined">{{ metric.icon }}</span>
+        </div>
+        <div>
+          <strong>{{ metric.value }}</strong>
+          <p [class]="'metric-note ' + (metric.tone || '')">{{ metric.note }}</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="executive-card table-card">
+        <div class="section-header">
+          <h2>Finance Responsibilities</h2>
+          <div class="icon-actions">
+            <button type="button" class="icon-btn" aria-label="Search">
+              <span class="material-symbols-outlined">search</span>
+            </button>
+            <button type="button" class="icon-btn" aria-label="Filter">
+              <span class="material-symbols-outlined">filter_list</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Responsibility</th>
+                <th>Deadline</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of responsibilities">
+                <td>
+                  <div class="employee-cell">
+                    <span class="avatar">{{ item.initials }}</span>
+                    <span>{{ item.employee }}</span>
+                  </div>
+                </td>
+                <td>{{ item.department }}</td>
+                <td>{{ item.responsibility }}</td>
+                <td>{{ item.deadline }}</td>
+                <td>
+                  <span class="status-pill" [ngClass]="getStatusClass(item.status)">
+                    {{ item.status }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="table-footer">
+          <button type="button">View All Accountabilities</button>
+        </footer>
+      </article>
+
+      <aside class="side-stack">
+        <article class="executive-card summary-card">
+          <h2>Accountability Summary</h2>
+
+          <div class="progress-ring">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle class="ring-bg" cx="50" cy="50" r="42"></circle>
+              <circle class="ring-fill" cx="50" cy="50" r="42"></circle>
+            </svg>
+            <div>
+              <strong>86%</strong>
+              <span>Completion</span>
+            </div>
+          </div>
+
+          <div class="progress-list">
+            <div class="progress-item" *ngFor="let item of progressItems">
+              <div>
+                <span>{{ item.label }}</span>
+                <b>{{ item.value }}%</b>
+              </div>
+              <div class="bar">
+                <span [style.width.%]="item.value"></span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="insight-card">
+          <h2>Executive Insights</h2>
+          <p>Financial risk profile has decreased by 12% following the latest audit realignments.</p>
+          <button type="button">View Detailed Insights</button>
+        </article>
+      </aside>
+    </section>
+
+    <section class="executive-card timeline-card">
+      <h2>Recent Finance Actions</h2>
+      <div class="timeline">
+        <article class="timeline-item" *ngFor="let item of timeline" [class.error]="item.isError">
+          <span class="timeline-dot"></span>
+          <div>
+            <div class="timeline-head">
+              <h3>{{ item.title }}</h3>
+              <time>{{ item.time }}</time>
+            </div>
+            <p>{{ item.description }}</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>

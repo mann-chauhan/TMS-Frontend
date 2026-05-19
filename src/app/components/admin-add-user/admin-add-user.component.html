@@ -1,0 +1,173 @@
+<div class="dashboard-layout">
+  <app-admin></app-admin>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">Travel <span>Admin</span></div>
+
+      <div class="topbar-actions">
+        <div class="search-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search users or departments..."
+            class="search-input"
+          />
+        </div>
+
+        <div class="action-buttons">
+          <button class="icon-btn" type="button" aria-label="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Help">
+            <span class="material-symbols-outlined">help_outline</span>
+          </button>
+          <div class="user-avatar">
+            <img alt="Admin User Avatar" [src]="adminAvatar" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="page-header">
+        <p class="page-label">User Management</p>
+        <h1 class="page-title">Add New User</h1>
+        <p class="page-description">
+          Create a new employee, manager, or finance account for the travel management system.
+        </p>
+      </section>
+
+      <section class="form-section">
+        <div class="form-card">
+          <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-grid">
+            <div class="col-span-full profile-row">
+              <div class="profile-upload-container">
+                <input
+                  type="file"
+                  #fileInput
+                  accept="image/jpeg,image/png"
+                  (change)="onFileSelected($event)"
+                />
+                <div class="profile-preview" (click)="fileInput.click()">
+                  <img *ngIf="profileImagePreview" [src]="profileImagePreview" alt="Profile Preview" />
+                  <span *ngIf="!profileImagePreview" class="material-symbols-outlined">add_a_photo</span>
+                </div>
+              </div>
+
+              <div class="profile-copy">
+                <p class="profile-label">Profile Image</p>
+                <p class="profile-description">Upload a professional photo (JPG, PNG). Max 2MB.</p>
+              </div>
+
+              <div class="status-card">
+                <span class="status-label">Active Status</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" formControlName="isActive" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Full Name</label>
+              <input
+                type="text"
+                formControlName="fullName"
+                placeholder="e.g. Julian Vane"
+                [class.border-error]="userForm.get('fullName')?.invalid && userForm.get('fullName')?.touched"
+              />
+              <p *ngIf="userForm.get('fullName')?.invalid && userForm.get('fullName')?.touched" class="text-error">
+                Full name is required
+              </p>
+            </div>
+
+            <div class="input-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                formControlName="email"
+                placeholder="julian@voyage.elite"
+                [class.border-error]="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+              />
+              <p *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-error">
+                Valid email is required
+              </p>
+            </div>
+
+            <div class="input-group password-group">
+              <label>Password</label>
+              <div class="password-wrapper">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  placeholder="••••••••"
+                  [class.border-error]="userForm.get('password')?.invalid && userForm.get('password')?.touched"
+                />
+                <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+                  {{ showPassword ? 'visibility_off' : 'visibility' }}
+                </button>
+              </div>
+              <p *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="text-error">
+                Password must be at least 8 characters
+              </p>
+            </div>
+
+            <div class="input-group">
+              <label>Phone Number</label>
+              <input
+                type="tel"
+                formControlName="phone"
+                placeholder="+1 (555) 000-0000"
+                [class.border-error]="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
+              />
+              <p *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="text-error">
+                Phone number is required
+              </p>
+            </div>
+
+            <div class="input-group">
+              <label>Department</label>
+              <div class="select-wrapper">
+                <select formControlName="department">
+                  <option value="">Select Department</option>
+                  <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+                </select>
+                <span class="material-symbols-outlined select-icon">expand_more</span>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Access Role</label>
+              <div class="select-wrapper">
+                <select formControlName="role">
+                  <option value="">Select Role</option>
+                  <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+                </select>
+                <span class="material-symbols-outlined select-icon">expand_more</span>
+              </div>
+            </div>
+
+            <div class="col-span-full action-row">
+              <button type="submit" class="btn-primary" [disabled]="userForm.invalid || isSubmitting">
+                <span *ngIf="!isSubmitting">Save User</span>
+                <span *ngIf="isSubmitting">Saving...</span>
+              </button>
+              <button type="button" class="btn-secondary" (click)="onUpdate()" [disabled]="userForm.invalid || isUpdating">
+                <span *ngIf="!isUpdating">Update User</span>
+                <span *ngIf="isUpdating">Updating...</span>
+              </button>
+              <button type="button" class="btn-text" (click)="onReset()">Reset Form</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <span>Security Level: Tier 3 AES-256</span>
+        <span>Voyage Elite Systems v4.2.0</span>
+      </footer>
+    </main>
+  </div>
+</div>

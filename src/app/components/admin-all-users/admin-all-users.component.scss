@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+$black: #000000;
+$white: #ffffff;
+$gray-50: #fafafa;
+$gray-100: #f5f5f5;
+$gray-200: #e5e5e5;
+$gray-300: #d4d4d4;
+$gray-400: #a3a3a3;
+$gray-500: #737373;
+$gray-600: #525252;
+$gray-700: #404040;
+$gray-900: #171717;
+$sidebar-width: 260px;
+$topbar-height: 64px;
+$font-serif: 'Noto Serif', Georgia, serif;
+$font-sans: 'Manrope', sans-serif;
+$transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+* {
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #f9f9f9;
+  font-family: $font-sans;
+  color: $gray-900;
+}
+
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+.main-wrapper {
+  flex: 1;
+  margin-left: $sidebar-width;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: $sidebar-width;
+  right: 0;
+  height: $topbar-height;
+  background: $white;
+  border-bottom: 1px solid $gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 40px;
+  z-index: 90;
+}
+
+.topbar-title {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: $black;
+
+  span {
+    color: $gray-500;
+  }
+}
+
+.search-box {
+  position: relative;
+  width: min(280px, 100%);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $gray-500;
+  font-size: 18px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  border: 1px solid $gray-200;
+  border-radius: 14px;
+  background: $gray-50;
+  color: $black;
+  font-size: 14px;
+  transition: $transition;
+
+  &:focus {
+    outline: none;
+    border-color: $black;
+    background: $white;
+    box-shadow: 0 0 0 1px rgba($black, 0.08);
+  }
+}
+
+.main-content {
+  padding: 160px 64px 64px;
+  max-width: 1400px;
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 48px;
+}
+
+.page-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $gray-500;
+  margin-bottom: 8px;
+}
+
+.page-title {
+  font-family: $font-serif;
+  font-size: 42px;
+  font-weight: 400;
+  color: $black;
+  margin-bottom: 16px;
+}
+
+.page-description {
+  font-size: 15px;
+  color: $gray-600;
+}
+
+.table-card {
+  background: $white;
+  border: 1px solid $gray-200;
+  padding: 32px;
+  box-shadow: 0 12px 32px rgba($black, 0.04);
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $black;
+  }
+
+  span {
+    color: $gray-500;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 16px 12px;
+  border-bottom: 1px solid $gray-200;
+  font-size: 14px;
+}
+
+th {
+  color: $gray-500;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+td {
+  color: $gray-700;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: $black;
+  color: $white;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &.inactive {
+    background: $gray-100;
+    color: $gray-600;
+    border: 1px solid $gray-200;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: 16px 20px;
+  }
+
+  .topbar-title {
+    font-size: 32px;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .main-content {
+    padding: 160px 20px 40px;
+  }
+
+  .table-card {
+    padding: 24px;
+  }
+}

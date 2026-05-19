@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { trigger, transition, style, animate, state } from '@angular/animations';
+import { FinanceComponent } from '../finance/finance.component';
 
 // ============================================
 // INTERFACES
@@ -87,6 +88,8 @@ interface Filters {
   budgetMax: number | null;
 }
 
+const avatarPlaceholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"%3E%3Crect width="96" height="96" rx="48" fill="%23e5e5e5"/%3E%3Ccircle cx="48" cy="38" r="16" fill="%23737373"/%3E%3Cpath d="M22 82c4-18 16-28 26-28s22 10 26 28" fill="%23737373"/%3E%3C/svg%3E';
+
 // ============================================
 // COMPONENT
 // ============================================
@@ -94,7 +97,7 @@ interface Filters {
 @Component({
   selector: 'app-finance-approval-center',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FinanceComponent],
   templateUrl: './finance-show-request.component.html',
   styleUrls: ['./finance-show-request.component.scss'],
   animations: [
@@ -129,7 +132,7 @@ export class FinanceApprovalCenterComponent implements OnInit {
   // Current User
   currentUser: User = {
     name: 'Admin',
-    avatar: 'assets/images/admin-avatar.jpg'
+    avatar: avatarPlaceholder
   };
 
   // Search
@@ -288,7 +291,7 @@ export class FinanceApprovalCenterComponent implements OnInit {
   selectedRequest: TravelRequest | null = null;
   approvedAmount: number = 0;
   decisionRemarks: string = '';
-  defaultAvatar: string = 'assets/images/default-avatar.jpg';
+  defaultAvatar: string = avatarPlaceholder;
 
   // ============================================
   // LIFECYCLE HOOKS

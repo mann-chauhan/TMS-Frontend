@@ -232,7 +232,7 @@ $transition-easing-ease-out: cubic-bezier(0.0, 0, 0.2, 1);
     display: flex;
     gap: 16px;
     padding-right: 24px;
-    border-right: 1px solid -300;
+    border-right: 1px solid $gray-300;
   }
 
   &__user {

@@ -1,0 +1,26 @@
+<div class="sidebar p-3">
+  <div class="logo mb-4">
+    <span class="tms"><b>TMS</b></span>
+  </div>
+
+  <ul class="menu list-unstyled">
+    <li>
+      <button class="menu-btn" (click)="navigateToAddUser()">Add User</button>
+    </li>
+
+    <li>
+      <button class="menu-btn" (click)="navigateToAllUsers()">All User</button>
+    </li>
+
+    <li class="divider"></li>
+
+    <li>
+      <button class="menu-btn" (click)="navigateToProfile()">Profile</button>
+    </li>
+
+    <li>
+      <button class="menu-btn logout" (click)="navigateToLogout()">Logout</button>
+    </li>
+  </ul>
+</div>
+
