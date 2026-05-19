@@ -15,7 +15,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
 import { ManagerComponent } from '../manager/manager.component';
 
 // ================================================
@@ -54,8 +53,7 @@ interface TravelRequest {
   styleUrls: ['./view-requests.component.scss']
 })
 export class ViewRequestsComponent implements OnInit, OnDestroy {
-  
-  private destroy$ = new Subject<void>();
+  private readonly timeoutIds: number[] = [];
   private readonly ANSWERED_REQUESTS_KEY = 'answeredRequests';
   private readonly PENDING_REQUESTS_KEY = 'pendingRequests';
 
@@ -171,8 +169,7 @@ export class ViewRequestsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.timeoutIds.forEach(timeoutId => window.clearTimeout(timeoutId));
   }
 
   /**
@@ -334,7 +331,7 @@ export class ViewRequestsComponent implements OnInit, OnDestroy {
     this.approvalMessage = `⏳ Approving ${request.id}...`;
 
     // Simulate API delay
-    setTimeout(() => {
+    this.setManagedTimeout(() => {
       // Update request status with metadata
       const approvedRequest: TravelRequest = {
         ...request,
@@ -351,7 +348,7 @@ export class ViewRequestsComponent implements OnInit, OnDestroy {
       this.approvalMessage = `${request.id} has been approved!`;
 
       // Clear message after 2.5 seconds
-      setTimeout(() => {
+      this.setManagedTimeout(() => {
         this.approvalMessage = '';
         this.isProcessing = false;
       }, 2500);
@@ -372,7 +369,7 @@ export class ViewRequestsComponent implements OnInit, OnDestroy {
     // this.approvalMessage = `⏳ Rejecting ${request.id}...`;
 
     // Simulate API delay
-    setTimeout(() => {
+    this.setManagedTimeout(() => {
       // Update request status with metadata
       const rejectedRequest: TravelRequest = {
         ...request,
@@ -389,7 +386,7 @@ export class ViewRequestsComponent implements OnInit, OnDestroy {
       // this.approvalMessage = `✅ ${request.id} has been rejected!`;
 
       // Clear message after 2.5 seconds
-      setTimeout(() => {
+      this.setManagedTimeout(() => {
         // this.approvalMessage = '';
         this.isProcessing = false;
       }, 2500);
@@ -481,6 +478,16 @@ export class ViewRequestsComponent implements OnInit, OnDestroy {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  private setManagedTimeout(callback: () => void, delay: number): void {
+    const timeoutId = window.setTimeout(() => {
+      this.timeoutIds.splice(this.timeoutIds.indexOf(timeoutId), 1);
+      callback();
+    }, delay);
+
+    this.timeoutIds.push(timeoutId);
   }
 
   /**

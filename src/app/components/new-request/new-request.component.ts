@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmployeeComponent } from '../employee/employee.component';
 
 @Component({
@@ -11,6 +12,7 @@ import { EmployeeComponent } from '../employee/employee.component';
   styleUrls: ['./new-request.component.scss']
 })
 export class NewRequestComponent {
+  private readonly destroyRef = inject(DestroyRef);
 
   requestForm = new FormGroup({
 
@@ -54,16 +56,18 @@ export class NewRequestComponent {
     });
 
     // ✅ Show/hide flightClass based on transport
-    group.get('transport')!.valueChanges.subscribe(mode => {
-      const flightClass = group.get('flightClass')!;
-      if (mode === 'Air') {
-        flightClass.setValidators(Validators.required);
-      } else {
-        flightClass.clearValidators();
-        flightClass.setValue('');
-      }
-      flightClass.updateValueAndValidity();
-    });
+    group.get('transport')!.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(mode => {
+        const flightClass = group.get('flightClass')!;
+        if (mode === 'Air') {
+          flightClass.setValidators(Validators.required);
+        } else {
+          flightClass.clearValidators();
+          flightClass.setValue('');
+        }
+        flightClass.updateValueAndValidity();
+      });
 
     return group;
   }

@@ -18,11 +18,13 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
 
-interface LoginCredentials {
+type UserRole = 'employee' | 'manager' | 'finance' | 'admin';
+
+interface LoginUser {
   email: string;
   password: string;
+  route: string;
 }
 
 @Component({
@@ -33,8 +35,7 @@ interface LoginCredentials {
   styleUrls: ['./login-two.component.scss']
 })
 export class LoginComponentTwo implements OnInit, OnDestroy {
-  
-  private destroy$ = new Subject<void>();
+  private readonly timeoutIds: number[] = [];
 
   /* ============ FORM STATE ============ */
   loginForm!: FormGroup;
@@ -43,7 +44,7 @@ export class LoginComponentTwo implements OnInit, OnDestroy {
   showError: boolean = false;
 
   /* ============ MOCK CREDENTIALS ============ */
-  private credentials = {
+  private credentials: Record<UserRole, LoginUser> = {
     employee: {
       email: 'employee@gmail.com',
       password: 'Employee@123',
@@ -76,8 +77,7 @@ export class LoginComponentTwo implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.timeoutIds.forEach(timeoutId => window.clearTimeout(timeoutId));
   }
 
   /**
@@ -117,40 +117,30 @@ export class LoginComponentTwo implements OnInit, OnDestroy {
     this.showError = false;
 
     // Simulate API call
-    setTimeout(() => {
+    this.setManagedTimeout(() => {
       this.authenticateUser();
     }, 800);
   }
 
-  /**
-   * Authenticate user
-   */
-  // private authenticateUser(): void {
-  //   const { email, password } = this.loginForm.value;
+  private authenticateUser(): void {
+    const { email, password } = this.loginForm.value;
+    const roles = Object.keys(this.credentials) as UserRole[];
+    const matchedRole = roles.find(role => {
+      const creds = this.credentials[role];
+      return creds.email === email && creds.password === password;
+    });
 
-    private authenticateUser(): void {
-      const { email, password } = this.loginForm.value;
-    
-      const roles = Object.keys(this.credentials) as Array<keyof typeof this.credentials>;
-    
-      const matchedRole = roles.find(role => {
-        const creds = this.credentials[role];
-        return creds.email === email && creds.password === password;
-      });
-    
-      if (matchedRole) {
-        const user = this.credentials[matchedRole];
-        this.handleSuccessfulLogin(user, matchedRole);
-      } else {
-        this.handleFailedLogin();
-      }
+    if (matchedRole) {
+      this.handleSuccessfulLogin(this.credentials[matchedRole], matchedRole);
+    } else {
+      this.handleFailedLogin();
     }
-
+  }
 
   /**
    * Handle successful login
    */
-  private handleSuccessfulLogin(user: any, role: string): void {
+  private handleSuccessfulLogin(user: LoginUser, role: UserRole): void {
     this.isLoading = false;
   
     console.log('✅ Login success:', role);
@@ -160,7 +150,7 @@ export class LoginComponentTwo implements OnInit, OnDestroy {
     sessionStorage.setItem('authenticated', 'true');
   
     // 🔥 ROUTE FROM OLD LOGIN LOGIC
-    setTimeout(() => {
+    this.setManagedTimeout(() => {
       this.router.navigate([user.route]);
     }, 300);
   }
@@ -176,9 +166,18 @@ export class LoginComponentTwo implements OnInit, OnDestroy {
     this.loginForm.patchValue({ password: '' });
 
     // Auto-hide error
-    setTimeout(() => {
+    this.setManagedTimeout(() => {
       this.showError = false;
     }, 4000);
+  }
+
+  private setManagedTimeout(callback: () => void, delay: number): void {
+    const timeoutId = window.setTimeout(() => {
+      this.timeoutIds.splice(this.timeoutIds.indexOf(timeoutId), 1);
+      callback();
+    }, delay);
+
+    this.timeoutIds.push(timeoutId);
   }
 
   /**
