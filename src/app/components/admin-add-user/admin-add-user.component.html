@@ -84,6 +84,16 @@
             </div>
 
             <div class="input-group">
+            <label>Employee Code</label>
+
+            <input
+              type="text"
+              formControlName="employeeCode"
+              placeholder="e.g. EMP001"
+            />
+          </div>
+
+            <div class="input-group">
               <label>Email Address</label>
               <input
                 type="email"
@@ -130,7 +140,10 @@
             <div class="input-group">
               <label>Department</label>
               <div class="select-wrapper">
-                <select formControlName="department">
+                <select
+  formControlName="department"
+  (change)="onDepartmentChange()"
+>
                   <option value="">Select Department</option>
                   <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
                 </select>
@@ -138,23 +151,37 @@
               </div>
             </div>
 
+            <div class="input-group manager-info" *ngIf="managerName">
+
+  <strong>Department Manager:</strong>
+
+  {{ managerName || 'Not Assigned' }}
+
+</div>
+
+
             <div class="input-group">
               <label>Access Role</label>
               <div class="select-wrapper">
-                <select formControlName="role">
-                  <option value="">Select Role</option>
-                  <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
-                </select>
+<select formControlName="role">
+
+  <option value="">Select Role</option>
+
+  <option *ngFor="let role of roles" [value]="role.id">
+    {{ role.name }}
+  </option>
+
+</select>
                 <span class="material-symbols-outlined select-icon">expand_more</span>
               </div>
             </div>
 
             <div class="col-span-full action-row">
-              <button type="submit" class="btn-primary" [disabled]="userForm.invalid || isSubmitting">
+              <button *ngIf="!isEditMode" type="submit" class="btn-primary" [disabled]="userForm.invalid || isSubmitting">
                 <span *ngIf="!isSubmitting">Save User</span>
                 <span *ngIf="isSubmitting">Saving...</span>
               </button>
-              <button type="button" class="btn-secondary" (click)="onUpdate()" [disabled]="userForm.invalid || isUpdating">
+              <button *ngIf="isEditMode" type="button" class="btn-secondary" (click)="onUpdate()" [disabled]="userForm.invalid || isUpdating">
                 <span *ngIf="!isUpdating">Update User</span>
                 <span *ngIf="isUpdating">Updating...</span>
               </button>

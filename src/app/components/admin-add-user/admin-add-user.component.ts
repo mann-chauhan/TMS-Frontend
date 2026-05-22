@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AdminComponent } from '../admin/admin.component';
+import { UserService } from '../../services/user.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface UserFormData {
   fullName: string;
@@ -12,6 +14,7 @@ interface UserFormData {
   role: string;
   isActive: boolean;
   profileImage?: File;
+  
 }
 
 @Component({
@@ -20,6 +23,7 @@ interface UserFormData {
   imports: [CommonModule, ReactiveFormsModule, FormsModule, AdminComponent],
   templateUrl: './admin-add-user.component.html',
   styleUrls: ['./admin-add-user.component.scss']
+
 })
 export class AddUserComponent implements OnInit {
   userForm!: FormGroup;
@@ -28,13 +32,26 @@ export class AddUserComponent implements OnInit {
   isSubmitting = false;
   isUpdating = false;
   searchQuery = '';
+  managerName: string = '';
+  userId!: number;
+
+isEditMode = false;
   
   adminAvatar = 'https://lh3.googleusercontent.com/aida-public/AB6AXuAvZbudJVibXUOwMasG0qZAP9mS8sU1zYMZfpU5cCyOe9IxsCKoE-qq2dXI0VP-F4OJ_0tQ6grng2jkUg1fnEVvpOQjsBYTvpLuOKCExVdoJNuPtXEsLtlItBt5EaoElYR3lbdqt4O60f8rO0kqXKwV5HS2yIG_0WFKVWKXYuaavCIr4uNAHog_-GKNSjSYW38RkM5OVsgHDQGJM1AvxBiwvXbfxNx2fFHAKOUokroHSiamRmU5AFbzTjCHLknA7dULlVuv-JJTHHvC';
 
-  departments = ['Operations', 'Finance', 'Human Resources', 'Logistics', 'Technology'];
-  roles = ['Employee', 'Manager', 'Finance', 'Admin'];
+  departments = ['Java', '.Net', 'AI_GENAI', 'DE', 'QA'];
+  // roles = ['Employee', 'Manager', 'Finance', 'Admin'];
 
-  constructor(private fb: FormBuilder) {}
+  roles = [
+  { id: 1, name: 'ADMIN' },
+  { id: 2, name: 'EMPLOYEE' },
+  { id: 3, name: 'MANAGER' },
+  { id: 4, name: 'FINANCE' }
+];
+
+
+
+  constructor(private fb: FormBuilder, private userService: UserService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -42,6 +59,7 @@ export class AddUserComponent implements OnInit {
 
   private initializeForm(): void {
     this.userForm = this.fb.group({
+      employeeCode: ['', Validators.required],
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -49,6 +67,13 @@ export class AddUserComponent implements OnInit {
       department: ['', Validators.required],
       role: ['', Validators.required],
       isActive: [true]
+    });
+    this.route.params.subscribe(params => {
+     if(params['id']){
+    this.userId = params['id'];
+    this.isEditMode = true;
+    this.getUserById(this.userId);
+      }
     });
   }
 
@@ -82,41 +107,92 @@ export class AddUserComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  onSubmit(): void {
-    if (this.userForm.valid) {
-      this.isSubmitting = true;
-      
-      const formData: UserFormData = this.userForm.value;
-      
-      console.log('Creating new user:', formData);
-      
-      // Simulate API call
-      setTimeout(() => {
-        this.isSubmitting = false;
-        alert('User created successfully!');
-        this.onReset();
-      }, 1500);
-    } else {
-      this.markFormGroupTouched(this.userForm);
-    }
+onSubmit() {
+
+  if (this.userForm.invalid) {
+    return;
   }
 
-  onUpdate(): void {
-    if (this.userForm.valid) {
-      this.isUpdating = true;
-      
-      const formData: UserFormData = this.userForm.value;
-      
-      console.log('Updating user:', formData);
-      
-      // Simulate API call
-      setTimeout(() => {
-        this.isUpdating = false;
-        alert('User updated successfully!');
-      }, 1500);
-    } else {
-      this.markFormGroupTouched(this.userForm);
-    }
+  const payload = {
+    employeeCode: this.userForm.value.employeeCode,
+    fullName: this.userForm.value.fullName,
+    email: this.userForm.value.email,
+    password: this.userForm.value.password,
+    phone: this.userForm.value.phone,
+    department: this.userForm.value.department,
+    roleId: this.userForm.value.role,
+    isActive: this.userForm.value.isActive,
+    profileImage: 'profile.png'
+  };
+
+  console.log(payload);
+
+  this.userService.addUser(payload)
+    .subscribe({
+
+      next: (response) => {
+
+        console.log(response);
+
+        alert("User Added Successfully");
+
+        this.userForm.reset();
+      },
+
+      error: (error) => {
+
+        console.log(error);
+
+        alert("Something went wrong");
+      }
+    });
+}
+
+onUpdate() {
+
+  if (this.userForm.invalid) {
+    return;
+  }
+
+  const payload = {
+
+    fullName: this.userForm.value.fullName,
+
+    email: this.userForm.value.email,
+
+    password: this.userForm.value.password,
+
+    phone: this.userForm.value.phone,
+
+    department: this.userForm.value.department,
+
+    roleId: this.userForm.value.role,
+
+    isActive: this.userForm.value.isActive,
+
+    profileImage: 'profile.png'
+  };
+
+  console.log(payload);
+
+  this.userService
+    .updateUser(this.userId, payload)
+    .subscribe({
+
+      next: (response) => {
+
+        console.log(response);
+
+        alert('User Updated Successfully');
+      },
+
+      error: (error) => {
+
+        console.log(error);
+
+        alert('Update Failed');
+      }
+    });
   }
 
   onReset(): void {
@@ -126,6 +202,37 @@ export class AddUserComponent implements OnInit {
     this.profileImagePreview = null;
     this.showPassword = false;
   }
+
+  onDepartmentChange() {
+
+  const department = this.userForm.value.department;
+
+  if (!department) {
+
+    this.managerName = '';
+
+    return;
+  }
+
+  
+
+  this.userService
+    .getManagerByDepartment(department)
+    .subscribe({
+
+      next: (response: any) => {
+
+        console.log(response);
+
+        this.managerName = response.fullName;
+      },
+
+      error: () => {
+
+        this.managerName = 'No Manager Assigned';
+      }
+    });
+}
 
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.keys(formGroup.controls).forEach(key => {
@@ -137,4 +244,46 @@ export class AddUserComponent implements OnInit {
       }
     });
   }
+
+  getUserById(id: number){
+
+  this.userService.getUserById(id)
+    .subscribe({
+
+      next: (response: any) => {
+
+        console.log(response);
+
+        this.userForm.patchValue({
+
+          fullName: response.fullName,
+          email: response.email,
+          password: '',
+          phone: response.phone,
+          department: response.department,
+          isActive: response.isActive
+        });
+
+        // role mapping
+
+        const selectedRole = this.roles.find(
+          role => role.name === response.role
+        );
+
+        if(selectedRole){
+
+          this.userForm.patchValue({
+            role: selectedRole.id
+          });
+        }
+
+        this.managerName = response.fullName;
+      },
+
+      error: (error) => {
+
+        console.log(error);
+      }
+    });
+}
 }
