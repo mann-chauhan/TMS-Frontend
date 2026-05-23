@@ -1,46 +1,8 @@
 <!-- Main Container -->
 <div class="view-requests-wrapper">
-    <!-- Approval Status Notification -->
-<!-- <div *ngIf="approvalMessage" 
-class="fixed top-4 right-4 bg-white border-l-4 border-green-500 p-4 rounded shadow-lg z-50 animate-pulse">
-<p class="text-sm font-semibold text-gray-800">{{ approvalMessage }}</p>
-</div> -->
+<!-- Sidebar -->
     <app-manager></app-manager>
-    <!-- Sidebar Navigation
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="logo-container">
-          <div class="logo-icon">
-            <span class="material-symbols-outlined">travel_explore</span>
-          </div>
-          <div class="logo-text">
-            <h1 class="logo-title">TMS Manager</h1>
-            <p class="logo-subtitle">Concierge Pro</p>
-          </div>
-        </div>
-      </div> -->
-  
-      <!-- Navigation Links -->
-      <!-- <nav class="sidebar-nav">
-        <a 
-          *ngFor="let item of navItems; trackBy: trackByNavLabel"
-          [routerLink]="item.route"
-          [class.nav-active]="item.active"
-          [class.nav-inactive]="!item.active"
-          class="nav-link">
-          <span class="material-symbols-outlined nav-icon">{{ item.icon }}</span>
-          <span class="nav-text">{{ item.label }}</span>
-        </a>
-      </nav> -->
-  
-      <!-- Logout Button -->
-      <!-- <div class="sidebar-footer">
-        <button (click)="logout()" class="logout-button">
-          <span class="material-symbols-outlined">logout</span>
-          <span class="nav-text">Logout</span>
-        </button>
-      </div>
-    </aside> -->
+   
   
     <!-- Header -->
     <header class="top-header">
@@ -108,8 +70,8 @@ class="fixed top-4 right-4 bg-white border-l-4 border-green-500 p-4 rounded shad
           <div class="stat-card stat-card-dark">
             <span class="stat-label">PROJECTED BUDGET</span>
             <div class="stat-value">
-              <span class="stat-number">${{ projectedBudget | number:'1.0-0' }}</span>
-              <span class="stat-meta">USD</span>
+              <span class="stat-number">₹{{ projectedBudget | number:'1.0-0' }}</span>
+              <span class="stat-meta">INR</span>
             </div>
           </div>
         </div>
@@ -173,13 +135,15 @@ class="fixed top-4 right-4 bg-white border-l-4 border-green-500 p-4 rounded shad
   
                     <!-- Destination -->
                     <td class="cell-destination">{{ request.destination }}</td>
-  
-                    <!-- Dates -->
-                    <td class="cell-dates">{{ request.dates }}</td>
-  
-                    <!-- Budget -->
-                    <td class="cell-budget">{{ request.budget | currency }}</td>
-  
+                      
+                    <td class="cell-dates">
+                      [{{ request.startDate }}]-[{{ request.endDate }}]
+                    </td>
+
+                    <td class="cell-budget">
+                      {{ request.estimatedBudget | currency:'INR' }}
+                    </td>
+                      
                     <!-- Status Badge -->
                     <td class="cell-status">
                       <span 
@@ -200,7 +164,7 @@ class="fixed top-4 right-4 bg-white border-l-4 border-green-500 p-4 rounded shad
                           <span class="material-symbols-outlined">visibility</span>
                         </button>
   
-                        @if (request.status === 'pending') {
+                        @if (request.status === 'DRFT') {
                           <button
                             (click)="approveRequest(request)"
                             class="action-icon-button approve"
@@ -275,5 +239,157 @@ class="fixed top-4 right-4 bg-white border-l-4 border-green-500 p-4 rounded shad
           </div>
         </div>
       </div>
+
+
+
+<!-- VIEW REQUEST MODAL -->
+
+<div
+  class="modal-overlay"
+  *ngIf="selectedRequest"
+>
+
+  <div class="request-modal">
+
+    <!-- HEADER -->
+
+    <div class="modal-header">
+
+      <div>
+        <h2>Travel Request Details</h2>
+
+        <p class="request-code">
+          {{ selectedRequest.requestCode }}
+        </p>
+      </div>
+
+      <button
+        class="close-btn"
+        (click)="closeModal()"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <!-- BODY -->
+
+    <div class="modal-body">
+
+      <div class="detail-card">
+        <label>Employee Name</label>
+        <p>{{ selectedRequest.employeeName }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Manager Name</label>
+        <p>{{ selectedRequest.managerName }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>From Location</label>
+        <p>{{ selectedRequest.fromLocation }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Destination</label>
+        <p>{{ selectedRequest.destination }}</p>
+      </div>
+
+      <div class="detail-card full">
+        <label>Purpose</label>
+        <p>{{ selectedRequest.purpose }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Start Date</label>
+        <p>{{ selectedRequest.startDate }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>End Date</label>
+        <p>{{ selectedRequest.endDate }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Transport Mode</label>
+        <p>{{ selectedRequest.transportMode }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Estimated Budget</label>
+        <p>₹{{ selectedRequest.estimatedBudget }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Hotel Required</label>
+        <p>
+          {{ selectedRequest.hotelRequired ? 'Yes' : 'No' }}
+        </p>
+      </div>
+
+      <div
+        class="detail-card"
+        *ngIf="selectedRequest.hotelPreference"
+      >
+        <label>Hotel Preference</label>
+        <p>{{ selectedRequest.hotelPreference }}</p>
+      </div>
+
+      <div
+        class="detail-card full"
+        *ngIf="selectedRequest.additionalNotes"
+      >
+        <label>Additional Notes</label>
+        <p>{{ selectedRequest.additionalNotes }}</p>
+      </div>
+
+      <div class="detail-card">
+        <label>Status</label>
+
+        <span
+          class="status-badge"
+          [ngClass]="selectedRequest.status.toLowerCase()"
+        >
+          {{ selectedRequest.status }}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+
+    <div class="modal-footer">
+
+      <button
+        class="approve-btn"
+        *ngIf="selectedRequest.status === 'DRAFT'"
+        (click)="approveRequest(selectedRequest)"
+      >
+        Approve
+      </button>
+
+      <button
+        class="reject-btn"
+        *ngIf="selectedRequest.status === 'DRAFT'"
+        (click)="rejectRequest(selectedRequest)"
+      >
+        Reject
+      </button>
+
+      <button
+        class="close-modal-btn"
+        (click)="closeModal()"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
     </main>
   </div>

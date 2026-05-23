@@ -1,100 +1,268 @@
 <div class="layout">
-    <app-employee></app-employee>
-    <!-- Header -->
-    <div class="topbar">
-      <h2>My <span>Requests</span></h2>
-  
-      <input 
-        type="text" 
-        placeholder="Search by ID or destination..."
-        [(ngModel)]="searchText"
-      >
-    </div>
-  
-    <!-- Stats -->
-    <div class="stats">
-      <div class="card">
-        <p>Total Requests</p>
-        <h3>{{ total }}</h3>
-      </div>
-  
-      <div class="card pending">
-        <p>Pending</p>
-        <h3>{{ pending }}</h3>
-      </div>
-  
-      <div class="card approved">
-        <p>Approved</p>
-        <h3>{{ approved }}</h3>
-      </div>
-  
-      <div class="card rejected">
-        <p>Rejected</p>
-        <h3>{{ rejected }}</h3>
-      </div>
-    </div>
-  
-    <!-- Filters -->
-    <div class="actions">
-      <select [(ngModel)]="filterStatus">
-        <option value="">All Statuses</option>
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="Rejected">Rejected</option>
-      </select>
-  
-      <button class="create-btn">+ Create New Request</button>
-    </div>
-  
-    <!-- Table -->
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Request ID</th>
-            <th>Destination</th>
-            <th>Travel Dates</th>
-            <th>Budget</th>
-            <th>Status</th>
-            <th class="right">Actions</th>
-          </tr>
-        </thead>
-  
-        <tbody>
-          <tr *ngFor="let r of filteredRequests()">
-  
-            <td>{{ r.id }}</td>
-  
-            <td>
-              <div class="destination">
-                <strong>{{ r.destination }}</strong>
-                <small>{{ r.purpose }}</small>
-              </div>
-            </td>
-  
-            <td>{{ r.start }} - {{ r.end }}</td>
-  
-            <td>{{ r.budget }}</td>
-  
-            <td>
-              <span class="badge" [ngClass]="r.status.toLowerCase()">
-                {{ r.status }}
-              </span>
-            </td>
-  
-            <td class="right">
-              <button (click)="view(r)">View</button>
-  
-              <button *ngIf="r.status==='Pending'" (click)="edit(r)">Edit</button>
-  
-              <button *ngIf="r.status==='Pending'" class="danger" (click)="cancel(r)">Cancel</button>
-  
-              <button *ngIf="r.status==='Rejected'" (click)="resubmit(r)">Resubmit</button>
-            </td>
-  
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  
+
+  <app-employee></app-employee>
+
+  <!-- HEADER -->
+
+  <div class="topbar">
+
+    <h2>
+      My <span>Requests</span>
+    </h2>
+
+    <input
+      type="text"
+      placeholder="Search by ID or destination..."
+      [(ngModel)]="searchText"
+    />
+
   </div>
+
+  <!-- STATS -->
+
+  <div class="stats">
+
+    <div class="card">
+      <p>Total Requests</p>
+      <h3>{{ total }}</h3>
+    </div>
+
+    <div class="card pending">
+      <p>Pending</p>
+      <h3>{{ pending }}</h3>
+    </div>
+
+    <div class="card approved">
+      <p>Approved</p>
+      <h3>{{ approved }}</h3>
+    </div>
+
+    <div class="card rejected">
+      <p>Rejected</p>
+      <h3>{{ rejected }}</h3>
+    </div>
+
+  </div>
+
+  <!-- FILTERS -->
+
+  <div class="actions">
+
+    <select [(ngModel)]="filterStatus">
+
+      <option value="">
+        All Statuses
+      </option>
+
+      <option value="DRAFT">
+        Draft
+      </option>
+
+      <option value="PENDING_MANAGER">
+        Pending Manager
+      </option>
+
+      <option value="MANAGER_APPROVED">
+        Manager Approved
+      </option>
+
+      <option value="FINANCE_APPROVED">
+        Finance Approved
+      </option>
+
+      <option value="BOOKED">
+        Booked
+      </option>
+
+      <option value="COMPLETED">
+        Completed
+      </option>
+
+      <option value="REJECTED">
+        Rejected
+      </option>
+
+      <option value="CANCELLED">
+        Cancelled
+      </option>
+
+    </select>
+
+    <button class="create-btn">
+      + Create New Request
+    </button>
+
+  </div>
+
+  <!-- LOADING -->
+
+  <div *ngIf="isLoading" class="loading">
+
+    Loading requests...
+
+  </div>
+
+  <!-- ERROR -->
+
+  <div *ngIf="errorMessage" class="error">
+
+    {{ errorMessage }}
+
+  </div>
+
+  <!-- EMPTY STATE -->
+
+  <div
+    *ngIf="
+      !isLoading &&
+      filteredRequests().length === 0
+    "
+    class="empty-state"
+  >
+
+    No travel requests found.
+
+  </div>
+
+  <!-- TABLE -->
+
+  <div
+    class="table-container"
+    *ngIf="
+      !isLoading &&
+      filteredRequests().length > 0
+    "
+  >
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>Request ID</th>
+
+          <th>Destination</th>
+
+          <th>Travel Dates</th>
+
+          <th>Budget</th>
+
+          <th>Status</th>
+
+          <th class="right">
+            Actions
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+  <tr *ngFor="let r of filteredRequests()">
+
+    <!-- REQUEST CODE -->
+
+    <td>
+
+      {{ r.requestCode }}
+
+    </td>
+
+    <!-- DESTINATION -->
+
+    <td>
+
+      <div class="destination">
+
+        <strong>
+
+          {{ r.destination }}
+
+        </strong>
+
+        <small>
+
+          {{ r.purpose }}
+
+        </small>
+
+      </div>
+
+    </td>
+
+    <!-- DATES -->
+
+    <td>
+
+      {{ r.startDate }}
+      -
+      {{ r.endDate }}
+
+    </td>
+
+    <!-- BUDGET -->
+
+    <td>
+
+      ₹{{ r.estimatedBudget }}
+
+    </td>
+
+    <!-- STATUS -->
+
+    <td>
+
+      {{ r.status }}
+
+    </td>
+
+    <!-- ACTIONS -->
+<td class="right">
+
+  <!-- VIEW -->
+
+  <button (click)="view(r)">
+    View
+  </button>
+
+  <!-- EDIT ONLY IN DRAFT -->
+
+  <button
+    *ngIf="r.status === 'DRAFT'"
+    (click)="edit(r)"
+  >
+    Edit
+  </button>
+
+  <!-- CANCEL ONLY IN DRAFT -->
+
+  <button
+    *ngIf="r.status === 'DRAFT'"
+    class="danger"
+    (click)="cancel(r)"
+  >
+    Cancel
+  </button>
+
+  <!-- RESUBMIT ONLY IF REJECTED -->
+
+  <button
+    *ngIf="r.status === 'REJECTED'"
+    (click)="resubmit(r)"
+  >
+    Resubmit
+  </button>
+
+</td>
+
+  </tr>
+
+</tbody>
+
+    </table>
+
+  </div>
+
+</div>

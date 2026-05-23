@@ -156,6 +156,8 @@ onUpdate() {
 
   const payload = {
 
+    employeeCode: this.userForm.value.employeeCode,
+
     fullName: this.userForm.value.fullName,
 
     email: this.userForm.value.email,
@@ -256,6 +258,7 @@ onUpdate() {
 
         this.userForm.patchValue({
 
+          employeeCode: response.employeeCode,
           fullName: response.fullName,
           email: response.email,
           password: '',

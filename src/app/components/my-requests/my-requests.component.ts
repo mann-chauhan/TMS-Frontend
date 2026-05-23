@@ -1,70 +1,207 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
 import { EmployeeComponent } from '../employee/employee.component';
+
+import { TravelRequestService } from '../../services/travel-request.service';
 
 @Component({
   selector: 'app-my-requests',
   standalone: true,
-  imports: [FormsModule, CommonModule, EmployeeComponent],
+  imports: [
+    FormsModule,
+    CommonModule,
+    EmployeeComponent
+  ],
   templateUrl: './my-requests.component.html',
   styleUrls: ['./my-requests.component.scss']
 })
-export class MyRequestsComponent {
+export class MyRequestsComponent implements OnInit {
 
   searchText = '';
+
   filterStatus = '';
 
-  requests = [
-    {
-      id: 'TRV-88219',
-      destination: 'Paris, France',
-      purpose: 'Business Summit',
-      start: 'Oct 12',
-      end: 'Oct 18',
-      budget: '$4250',
-      status: 'Pending'
-    },
-    {
-      id: 'TRV-88104',
-      destination: 'Tokyo, Japan',
-      purpose: 'Product Launch',
-      start: 'Nov 02',
-      end: 'Nov 09',
-      budget: '$6800',
-      status: 'Approved'
-    },
-    {
-      id: 'TRV-87992',
-      destination: 'New York, USA',
-      purpose: 'Tech Conference',
-      start: 'Sep 20',
-      end: 'Sep 24',
-      budget: '$3100',
-      status: 'Rejected'
-    }
-  ];
+  requests: any[] = [];
 
-  get total() { return this.requests.length; }
-  get pending() { return this.requests.filter(r => r.status === 'Pending').length; }
-  get approved() { return this.requests.filter(r => r.status === 'Approved').length; }
-  get rejected() { return this.requests.filter(r => r.status === 'Rejected').length; }
+  isLoading = false;
+
+  errorMessage = '';
+
+  constructor(
+    private travelRequestService: TravelRequestService
+  ) {}
+
+  ngOnInit(): void {
+
+    this.getEmployeeRequests();
+  }
+
+  // =========================
+  // GET REQUESTS
+  // =========================
+
+  getEmployeeRequests() {
+
+    this.isLoading = true;
+
+    this.travelRequestService
+      .getEmployeeRequests(2)
+      .subscribe({
+
+        next: (response: any) => {
+
+          console.log(response);
+
+          this.requests = response.data || [];
+
+          this.isLoading = false;
+        },
+
+        error: (error) => {
+
+          console.log(error);
+
+          this.errorMessage =
+            'Unable to load requests';
+
+          this.isLoading = false;
+        }
+      });
+  }
+
+  // =========================
+  // STATS
+  // =========================
+
+  get total(): number {
+
+    return this.requests.length;
+  }
+
+  get pending(): number {
+
+    return this.requests.filter(
+
+      r =>
+        r.status === 'DRAFT' ||
+        r.status === 'PENDING_MANAGER'
+
+    ).length;
+  }
+
+  get approved(): number {
+
+    return this.requests.filter(
+
+      r =>
+        r.status === 'MANAGER_APPROVED' ||
+        r.status === 'FINANCE_APPROVED' ||
+        r.status === 'BOOKED' ||
+        r.status === 'COMPLETED'
+
+    ).length;
+  }
+
+  get rejected(): number {
+
+    return this.requests.filter(
+
+      r =>
+        r.status === 'REJECTED' ||
+        r.status === 'CANCELLED'
+
+    ).length;
+  }
+
+  // =========================
+  // FILTER REQUESTS
+  // =========================
 
   filteredRequests() {
+
     return this.requests.filter(r => {
+
       const search =
-        r.id.toLowerCase().includes(this.searchText.toLowerCase()) ||
-        r.destination.toLowerCase().includes(this.searchText.toLowerCase());
+
+        r.requestCode
+          ?.toLowerCase()
+          .includes(this.searchText.toLowerCase())
+
+        ||
+
+        r.destination
+          ?.toLowerCase()
+          .includes(this.searchText.toLowerCase());
 
       const status =
-        this.filterStatus ? r.status === this.filterStatus : true;
+
+        this.filterStatus
+
+          ? r.status === this.filterStatus
+
+          : true;
 
       return search && status;
     });
   }
 
-  view(r: any) { console.log('View', r); }
-  edit(r: any) { console.log('Edit', r); }
-  cancel(r: any) { r.status = 'Cancelled'; }
-  resubmit(r: any) { r.status = 'Pending'; }
+  // =========================
+  // ACTIONS
+  // =========================
+
+  view(r: any) {
+
+    console.log('VIEW REQUEST', r);
+  }
+
+  edit(r: any) {
+
+    console.log('EDIT REQUEST', r);
+  }
+
+  cancel(r: any) {
+
+  const confirmCancel = confirm(
+    'Are you sure you want to cancel this request?'
+  );
+
+  if(!confirmCancel){
+
+    return;
+  }
+
+  this.travelRequestService
+    .cancelRequest(r.id)
+    .subscribe({
+
+      next: (response: any) => {
+
+        console.log(response);
+
+        alert(
+          'Request Cancelled Successfully'
+        );
+
+        // REFRESH LIST
+
+        this.getEmployeeRequests();
+      },
+
+      error: (error) => {
+
+        console.log(error);
+
+        alert(error.error.message);
+      }
+    });
+}
+
+  resubmit(r: any) {
+
+    console.log('RESUBMIT REQUEST', r);
+
+    r.status = 'DRAFT';
+  }
 }

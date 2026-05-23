@@ -1,8 +1,9 @@
 import { Component, DestroyRef, inject } from '@angular/core';
-import { FormGroup, FormControl, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EmployeeComponent } from '../employee/employee.component';
+import { TravelRequestService } from '../../services/travel-request.service';
 
 @Component({
   selector: 'app-new-request',
@@ -12,6 +13,11 @@ import { EmployeeComponent } from '../employee/employee.component';
   styleUrls: ['./new-request.component.scss']
 })
 export class NewRequestComponent {
+
+  constructor(
+  private travelRequestService: TravelRequestService
+) {}
+
   private readonly destroyRef = inject(DestroyRef);
 
   requestForm = new FormGroup({
@@ -25,12 +31,12 @@ export class NewRequestComponent {
     purpose: new FormControl('', Validators.required),
     startDate: new FormControl('', Validators.required),
     endDate: new FormControl('', Validators.required),
-    travelType: new FormControl('Domestic'),
+    fromLocation: new FormControl('', Validators.required),
+    transportMode: new FormControl('', Validators.required),
 
-    // 🛣️ Itinerary (multiple entries)
-    itinerary: new FormArray([
-      this.createItinerary()
-    ]),
+    additionalNotes: new FormControl(''),
+    advancePayment: new FormControl(false),
+    
 
     // 🏨 Accommodation
     hotelRequired: new FormControl(false),
@@ -38,8 +44,7 @@ export class NewRequestComponent {
 
     // 💰 Expense
     estimatedBudget: new FormControl('', [Validators.required, Validators.min(100)]),
-    advanceRequired: new FormControl(false),
-
+    
     // ✅ Declaration
     agreePolicy: new FormControl(false, Validators.requiredTrue)
 
@@ -71,31 +76,103 @@ export class NewRequestComponent {
 
     return group;
   }
+ 
 
-  // 🔹 Add itinerary
-  addItinerary() {
-    this.itinerary.push(this.createItinerary());
+
+
+onSubmit() {
+
+  console.log("SUBMIT CLICKED");
+
+  if (this.requestForm.invalid) {
+
+    this.requestForm.markAllAsTouched();
+
+    return;
   }
 
-  // 🔹 Remove itinerary
-  removeItinerary(index: number) {
-    this.itinerary.removeAt(index);
-  }
+  const payload = {
 
-  // ✅ Check if transport at given index is Air
-  isAir(index: number): boolean {
-    return (this.itinerary.at(index) as FormGroup).get('transport')?.value === 'Air';
-  }
+    employeeId: 2,
 
-  get itinerary() {
-    return this.requestForm.get('itinerary') as FormArray;
-  }
+    fromLocation: this.requestForm.value.fromLocation,
 
-  onSubmit() {
-    if (this.requestForm.valid) {
-      console.log("Full Request:", this.requestForm.value);
-    } else {
-      this.requestForm.markAllAsTouched();
-    }
-  }
+    destination: this.requestForm.value.destination,
+
+    purpose: this.requestForm.value.purpose,
+
+    startDate: this.requestForm.value.startDate,
+
+    endDate: this.requestForm.value.endDate,
+
+    transportMode: this.requestForm.value.transportMode,
+
+    hotelRequired: this.requestForm.value.hotelRequired,
+
+    hotelPreference: this.requestForm.value.hotelPreference,
+
+    estimatedBudget: this.requestForm.value.estimatedBudget,
+
+    advancePayment: this.requestForm.value.advancePayment,
+
+    additionalNotes: this.requestForm.value.additionalNotes
+  };
+
+  console.log(payload);
+
+  this.travelRequestService
+    .createRequest(payload)
+    .subscribe({
+
+      next: (response) => {
+
+        console.log(response);
+
+        alert('Travel Request Submitted Successfully');
+
+this.requestForm.reset({
+
+  fromLocation: '',
+
+  destination: '',
+
+  purpose: '',
+
+  startDate: '',
+
+  endDate: '',
+
+  transportMode: '',
+
+  hotelRequired: false,
+
+  hotelPreference: '',
+
+  estimatedBudget: '',
+
+  advancePayment: false,
+
+  additionalNotes: '',
+
+  agreePolicy: false
+});
+
+Object.keys(this.requestForm.controls).forEach(key => {
+
+  this.requestForm.get(key)?.setErrors(null);
+});
+
+this.requestForm.markAsPristine();
+
+this.requestForm.markAsUntouched();
+      },
+
+      error: (error) => {
+
+        console.log(error);
+
+        alert('Failed To Submit Request');
+      }
+    });
+}
 }

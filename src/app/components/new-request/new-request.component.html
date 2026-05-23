@@ -3,42 +3,7 @@
   <app-employee></app-employee>
   <div class="shell">
   
-    <!-- <aside class="sidebar">
-      <div class="sidebar-top">
-        <div class="brand-mark">TR</div>
-        <p class="brand-label">Travel<br>Request</p>
-      </div>
-      <nav class="section-nav">
-        <a href="#travel-details" class="nav-item">
-          <span class="nav-num">01</span>
-          <span class="nav-text">Travel Details</span>
-        </a>
-        <a href="#schedule" class="nav-item">
-          <span class="nav-num">02</span>
-          <span class="nav-text">Schedule</span>
-        </a>
-        <a href="#transport" class="nav-item">
-          <span class="nav-num">03</span>
-          <span class="nav-text">Transport</span>
-        </a>
-        <a href="#accommodation" class="nav-item">
-          <span class="nav-num">04</span>
-          <span class="nav-text">Accommodation</span>
-        </a>
-        <a href="#expense" class="nav-item active">
-          <span class="nav-num">05</span>
-          <span class="nav-text">Expense</span>
-        </a>
-        <a href="#declaration" class="nav-item">
-          <span class="nav-num">06</span>
-          <span class="nav-text">Declaration</span>
-        </a>
-      </nav>
-      <div class="sidebar-footer">
-        <p class="sidebar-policy-hint">All fields marked <span class="req">*</span> are required.</p>
-      </div>
-    </aside>
-   -->
+    
     <main class="form-main">
   
       <header class="form-header">
@@ -51,7 +16,11 @@
         <div class="header-rule"></div>
       </header>
   
-      <form id="travelForm" novalidate="" autocomplete="off">
+      <form
+        [formGroup]="requestForm"
+        (ngSubmit)="onSubmit()"
+        autocomplete="off"
+      >
   
         <!-- 01 TRAVEL DETAILS -->
         <section class="form-section" id="travel-details">
@@ -66,17 +35,33 @@
           <div class="field-grid two-col">
             <div class="field-wrap">
               <label for="fromLocation">From Location <span class="req">*</span></label>
-              <input type="text" id="fromLocation" name="fromLocation" placeholder="e.g. Mumbai, Maharashtra">
+                <input
+                  type="text"
+                  id="fromLocation"
+                  formControlName="fromLocation"
+                  placeholder="e.g. Mumbai, Maharashtra"
+                />
               <span class="err-msg" id="err-fromLocation"></span>
             </div>
             <div class="field-wrap">
               <label for="destination">Destination <span class="req">*</span></label>
-              <input type="text" id="destination" name="destination" placeholder="e.g. New Delhi, NCR">
+              <input
+                type="text"
+                id="destination"
+                formControlName="destination"
+                placeholder="e.g. New Delhi, NCR"
+              />
               <span class="err-msg" id="err-destination"></span>
             </div>
+
             <div class="field-wrap full">
               <label for="purpose">Purpose of Travel <span class="req">*</span></label>
-              <textarea id="purpose" name="purpose" rows="4" placeholder="Describe the business objective and expected outcomes of this trip..."></textarea>
+              <textarea
+                  id="purpose"
+                  formControlName="purpose"
+                  rows="4"
+                  placeholder="Describe the business objective and expected outcomes of this trip..."
+                ></textarea>
               <span class="err-msg" id="err-purpose"></span>
             </div>
           </div>
@@ -95,12 +80,20 @@
           <div class="field-grid two-col">
             <div class="field-wrap">
               <label for="startDate">Start Date <span class="req">*</span></label>
-              <input type="date" id="startDate" name="startDate">
+              <input
+                type="date"
+                id="startDate"
+                formControlName="startDate"
+              />
               <span class="err-msg" id="err-startDate"></span>
             </div>
             <div class="field-wrap">
               <label for="endDate">End Date <span class="req">*</span></label>
-              <input type="date" id="endDate" name="endDate">
+              <input
+                type="date"
+                id="endDate"
+                formControlName="endDate"
+              />
               <span class="err-msg" id="err-endDate"></span>
             </div>
           </div>
@@ -120,14 +113,22 @@
             <label>Mode of Transport <span class="req">*</span></label>
             <div class="radio-row" id="transportGroup">
               <label class="radio-card">
-                <input type="radio" name="transportMode" value="Train">
-                <span class="radio-box">
+                <input
+                  type="radio"
+                  formControlName="transportMode"
+                  value="Train"
+                />               
+                 <span class="radio-box">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="3" width="16" height="14" rx="2"></rect><path d="M4 11h16M9 17l-2 3M15 17l2 3M9 7h6"></path></svg>
                   <span>Train</span>
                 </span>
               </label>
               <label class="radio-card">
-                <input type="radio" name="transportMode" value="Road">
+                <input
+                    type="radio"
+                    formControlName="transportMode"
+                    value="Road"
+                  />
                 <span class="radio-box">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="20" height="10" rx="2"></rect><path d="M6 18v2M18 18v2M2 12h2M20 12h2"></path><circle cx="7" cy="18" r="1"></circle><circle cx="17" cy="18" r="1"></circle></svg>
                   <span>Road</span>
@@ -144,13 +145,7 @@
             <span class="err-msg" id="err-transportMode"></span>
           </div>
   
-          <!-- <div class="field-wrap flight-class-wrap" id="flightClassWrap">
-            <label for="flightClass">Flight Class</label>
-            <select id="flightClass" name="flightClass">
-              <option value="Economy">Economy</option>
-              <option value="Business">Business</option>
-            </select>
-          </div> -->
+
         </section>
   
         <!-- 04 ACCOMMODATION -->
@@ -165,7 +160,11 @@
   
           <div class="field-wrap">
             <label class="check-toggle">
-              <input type="checkbox" id="hotelRequired" name="hotelRequired">
+              <input
+                type="checkbox"
+                id="hotelRequired"
+                formControlName="hotelRequired"
+              />
               <span class="check-box"></span>
               <span class="check-label">Hotel accommodation required</span>
             </label>
@@ -173,8 +172,11 @@
   
           <div class="field-wrap hidden" id="hotelPrefWrap">
             <label for="hotelPreference">Hotel Preference <span class="optional">(optional)</span></label>
-            <input type="text" id="hotelPreference" name="hotelPreference" placeholder="e.g. 4-star, near conference venue, specific brand...">
-          </div>
+              <input
+                type="text"
+                id="hotelPreference"
+                formControlName="hotelPreference"
+              />          </div>
         </section>
   
         <!-- 05 EXPENSE -->
@@ -192,14 +194,22 @@
               <label for="estimatedBudget">Estimated Budget (INR) <span class="req">*</span></label>
               <div class="input-prefix-wrap">
                 <span class="prefix-symbol">₹</span>
-                <input type="number" id="estimatedBudget" name="estimatedBudget" placeholder="Minimum 100" min="100">
-              </div>
+                  <input
+                    type="number"
+                    id="estimatedBudget"
+                    formControlName="estimatedBudget"
+                    min="100"
+                  />              </div>
               <span class="err-msg" id="err-estimatedBudget"></span>
             </div>
   
             <div class="field-wrap center-v">
               <label class="check-toggle">
-                <input type="checkbox" id="advancePayment" name="advancePayment">
+                <input
+                    type="checkbox"
+                    id="advancePayment"
+                    formControlName="advancePayment"
+                  />
                 <span class="check-box"></span>
                 <span class="check-label">Advance payment required</span>
               </label>
@@ -207,8 +217,11 @@
   
             <div class="field-wrap full">
               <label for="additionalNotes">Additional Notes <span class="optional">(optional)</span></label>
-              <textarea id="additionalNotes" name="additionalNotes" rows="3" placeholder="Any other information relevant to this travel request..."></textarea>
-            </div>
+                <textarea
+                  id="additionalNotes"
+                  formControlName="additionalNotes"
+                  rows="3"
+                ></textarea>            </div>
           </div>
         </section>
   
@@ -231,8 +244,12 @@
   
           <div class="field-wrap">
             <label class="check-toggle policy-check" id="policyCheckLabel">
-              <input type="checkbox" id="policyAgreement" name="policyAgreement">
-              <span class="check-box"></span>
+                <input
+                  type="checkbox"
+                  id="policyAgreement"
+                  formControlName="agreePolicy"
+                />              
+                <span class="check-box"></span>
               <span class="check-label">I have read and agree to the Travel and Expense Policy <span class="req">*</span></span>
             </label>
             <span class="err-msg" id="err-policyAgreement"></span>
@@ -242,7 +259,11 @@
         <!-- ACTIONS -->
         <div class="form-actions">
           <button type="button" class="btn-ghost" id="resetBtn">Clear Form</button>
-          <button type="submit" class="btn-primary" id="submitBtn">
+          <button
+              type="submit"
+              class="btn-primary"
+              [disabled]="requestForm.invalid"
+            >
             Submit Request
             <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"></path></svg>
           </button>
@@ -263,134 +284,5 @@
     </main>
   
   </div>
-  
-  <script>
-  (function () {
-  
-    const form = document.getElementById('travelForm');
-    const successPanel = document.getElementById('successPanel');
-    const resetBtn = document.getElementById('resetBtn');
-    const newRequestBtn = document.getElementById('newRequestBtn');
-  
-    // Transport → flight class toggle
-    document.querySelectorAll('input[name="transportMode"]').forEach(r => {
-      r.addEventListener('change', () => {
-        const wrap = document.getElementById('flightClassWrap');
-        if (r.value === 'Air' && r.checked) {
-          wrap.classList.remove('hidden');
-        } else if (r.checked) {
-          wrap.classList.add('hidden');
-        }
-      });
-    });
-  
-    // Hotel → preference toggle
-    document.getElementById('hotelRequired').addEventListener('change', function () {
-      const wrap = document.getElementById('hotelPrefWrap');
-      this.checked ? wrap.classList.remove('hidden') : wrap.classList.add('hidden');
-    });
-  
-    // Sidebar active state on scroll
-    // const sections = document.querySelectorAll('.form-section');
-    // const navItems = document.querySelectorAll('.nav-item');
-    // window.addEventListener('scroll', () => {
-    //   let current = '';
-    //   sections.forEach(sec => {
-    //     if (window.scrollY >= sec.offsetTop - 160) current = sec.id;
-    //   });
-    //   navItems.forEach(item => {
-    //     item.classList.toggle('active', item.getAttribute('href') === '#' + current);
-    //   });
-    // });
-  
-    // function showErr(id, msg) {
-    //   const el = document.getElementById('err-' + id);
-    //   if (el) { el.textContent = msg; el.classList.add('visible'); }
-    //   const field = document.getElementById(id) || document.getElementById(id + 'Group');
-    //   if (field) field.classList.add('has-error');
-    // }
-  
-    // function clearErr(id) {
-    //   const el = document.getElementById('err-' + id);
-    //   if (el) { el.textContent = ''; el.classList.remove('visible'); }
-    //   const field = document.getElementById(id);
-    //   if (field) field.classList.remove('has-error');
-    // }
-  
-    function validate() {
-      let valid = true;
-      const fields = ['fromLocation', 'destination', 'purpose', 'startDate', 'endDate', 'estimatedBudget'];
-      fields.forEach(id => clearErr(id));
-      clearErr('transportMode');
-      clearErr('policyAgreement');
-  
-      const from = document.getElementById('fromLocation').value.trim();
-      if (!from) { showErr('fromLocation', 'Origin location is required.'); valid = false; }
-      else if (from.length < 2) { showErr('fromLocation', 'Must be at least 2 characters.'); valid = false; }
-  
-      const dest = document.getElementById('destination').value.trim();
-      if (!dest) { showErr('destination', 'Destination is required.'); valid = false; }
-      else if (dest.length < 2) { showErr('destination', 'Must be at least 2 characters.'); valid = false; }
-  
-      const purpose = document.getElementById('purpose').value.trim();
-      if (!purpose) { showErr('purpose', 'Purpose of travel is required.'); valid = false; }
-      else if (purpose.length < 10) { showErr('purpose', 'Minimum 10 characters required.'); valid = false; }
-  
-      const startDate = document.getElementById('startDate').value;
-      if (!startDate) { showErr('startDate', 'Start date is required.'); valid = false; }
-  
-      const endDate = document.getElementById('endDate').value;
-      if (!endDate) { showErr('endDate', 'End date is required.'); valid = false; }
-      else if (startDate && new Date(endDate) <= new Date(startDate)) {
-        showErr('endDate', 'End date must be after the start date.'); valid = false;
-      }
-  
-      const mode = document.querySelector('input[name="transportMode"]:checked');
-      if (!mode) { showErr('transportMode', 'Please select a mode of transport.'); valid = false; }
-  
-      const budget = parseFloat(document.getElementById('estimatedBudget').value);
-      if (!document.getElementById('estimatedBudget').value) {
-        showErr('estimatedBudget', 'Estimated budget is required.'); valid = false;
-      } else if (isNaN(budget) || budget < 100) {
-        showErr('estimatedBudget', 'Budget must be at least \u20B9100.'); valid = false;
-      }
-  
-      if (!document.getElementById('policyAgreement').checked) {
-        showErr('policyAgreement', 'You must agree to the policy before submitting.'); valid = false;
-      }
-  
-      return valid;
-    }
-  
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      if (validate()) {
-        form.classList.add('hidden');
-        successPanel.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
-  
-    resetBtn.addEventListener('click', () => {
-      form.reset();
-      document.getElementById('flightClassWrap').classList.add('hidden');
-      document.getElementById('hotelPrefWrap').classList.add('hidden');
-      ['fromLocation','destination','purpose','startDate','endDate','transportMode','estimatedBudget','policyAgreement']
-        .forEach(id => clearErr(id));
-    });
-  
-    newRequestBtn.addEventListener('click', () => {
-      successPanel.classList.add('hidden');
-      form.classList.remove('hidden');
-      form.reset();
-      document.getElementById('flightClassWrap').classList.add('hidden');
-      document.getElementById('hotelPrefWrap').classList.add('hidden');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  
-  })();
-  </script>
-  
-  
-  
+    
 </div>
