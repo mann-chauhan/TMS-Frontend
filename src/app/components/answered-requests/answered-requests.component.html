@@ -1,188 +1,457 @@
 <!-- Main Container -->
+
 <div class="answered-requests-wrapper">
-    <app-manager></app-manager>
-  
-    <!-- Header -->
-    <header class="top-header">
-      <h2 class="header-title">Answered <span class="setGray">Requests</span></h2>
-      
-      <div class="header-actions">
-        <!-- Search Bar -->
-        <div class="search-container">
-          <span class="material-symbols-outlined search-icon">search</span>
-          <input
-            type="text"
-            [(ngModel)]="searchTerm"
-            (input)="onSearch()"
-            class="search-input"
-            placeholder="Search answered requests..."
-            aria-label="Search answered requests"/>
-        </div>
-  
-        <!-- Right Actions -->
-        <div class="header-buttons">
-          <button 
-            class="icon-button"
-            title="Help"
-            aria-label="Help">
-            <span class="material-symbols-outlined">help_outline</span>
-          </button>
-          <div class="profile-section">
-            <img 
-              [src]="profileImage"
-              alt="Manager Profile"
-              class="profile-image"/>
-          </div>
-        </div>
+
+  <!-- SIDEBAR -->
+
+  <app-manager></app-manager>
+
+  <!-- HEADER -->
+
+  <header class="top-header">
+
+    <h2 class="header-title">
+      Answered
+      <span class="setGray">Requests</span>
+    </h2>
+
+    <div class="header-actions">
+
+      <!-- SEARCH -->
+
+      <div class="search-container">
+
+        <span
+          class="material-symbols-outlined search-icon"
+        >
+          search
+        </span>
+
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          class="search-input"
+          placeholder="Search answered requests..."
+        />
+
       </div>
-    </header>
-  
-    <!-- Main Content -->
-    <main class="main-content">
-      <div class="content-container">
-        <!-- Summary Stats -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <span class="stat-label">TOTAL ANSWERED</span>
-            <div class="stat-value">
-              <span class="stat-number">{{ answeredRequests.length }}</span>
-            </div>
-          </div>
-  
-          <div class="stat-card">
-            <span class="stat-label">APPROVED</span>
-            <div class="stat-value">
-              <span class="stat-number stat-approved">{{ approvedCount }}</span>
-            </div>
-          </div>
-  
-          <div class="stat-card stat-card-dark">
-            <span class="stat-label">REJECTED</span>
-            <div class="stat-value">
-              <span class="stat-number stat-rejected">{{ rejectedCount }}</span>
-            </div>
-          </div>
+
+      <!-- RIGHT -->
+
+      <div class="header-buttons">
+
+        <button
+          class="icon-button"
+        >
+          <span class="material-symbols-outlined">
+            help_outline
+          </span>
+        </button>
+
+        <div class="profile-section">
+
+          <img
+            [src]="profileImage"
+            alt="Manager Profile"
+            class="profile-image"
+          />
+
         </div>
-  
-        <!-- Table Section -->
-        <div class="table-wrapper">
-          <div class="table-header">
-            <h3 class="table-title">Request History</h3>
-            <div class="table-actions">
-              <button (click)="exportCSV()" class="action-button">
-                <span class="material-symbols-outlined">download</span>
-                Export CSV
-              </button>
-              <button (click)="clearAll()" class="action-button delete-btn">
-                <span class="material-symbols-outlined">delete_sweep</span>
-                Clear All
-              </button>
-            </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- MAIN CONTENT -->
+
+  <main class="main-content">
+
+    <div class="content-container">
+
+      <!-- STATS -->
+
+      <div class="stats-grid">
+
+        <!-- TOTAL -->
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            TOTAL ANSWERED
+          </span>
+
+          <div class="stat-value">
+
+            <span class="stat-number">
+              {{ answeredRequests.length }}
+            </span>
+
           </div>
-  
-          <div class="table-scroll">
-            <table class="requests-table">
-              <thead>
-                <tr class="table-head-row">
-                  <th>Request ID</th>
-                  <th>Employee Name</th>
-                  <th>Destination</th>
-                  <th>Dates</th>
-                  <th>Budget</th>
-                  <th>Status</th>
-                  <th>Answered Date</th>
-                  <th>Actions</th>
+
+        </div>
+
+        <!-- APPROVED -->
+
+        <div class="stat-card">
+
+          <span class="stat-label">
+            MANAGER_APPROVED
+          </span>
+
+          <div class="stat-value">
+
+            <span
+              class="stat-number stat-approved"
+            >
+              {{ approvedCount }}
+            </span>
+
+          </div>
+
+        </div>
+
+        <!-- REJECTED -->
+
+        <div class="stat-card stat-card-dark">
+
+          <span class="stat-label">
+            REJECTED
+          </span>
+
+          <div class="stat-value">
+
+            <span
+              class="stat-number stat-rejected"
+            >
+              {{ rejectedCount }}
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- TABLE -->
+
+      <div class="table-wrapper">
+
+        <!-- TABLE HEADER -->
+
+        <div class="table-header">
+
+          <h3 class="table-title">
+            Request History
+          </h3>
+
+          <div class="table-actions">
+
+            <button
+              (click)="exportCSV()"
+              class="action-button"
+            >
+
+              <span
+                class="material-symbols-outlined"
+              >
+                download
+              </span>
+
+              Export CSV
+
+            </button>
+
+            <button
+              (click)="clearAll()"
+              class="action-button delete-btn"
+            >
+
+              <span
+                class="material-symbols-outlined"
+              >
+                delete_sweep
+              </span>
+
+              Clear All
+
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- TABLE SCROLL -->
+
+        <div class="table-scroll">
+
+          <table class="requests-table">
+
+            <!-- HEAD -->
+
+            <thead>
+
+              <tr class="table-head-row">
+
+                <th>Request Code</th>
+
+                <th>Employee Name</th>
+
+                <th>Destination</th>
+
+                <th>Travel Dates</th>
+
+                <th>Budget</th>
+
+                <th>Status</th>
+
+                <th>Answered Date</th>
+
+                <th>Actions</th>
+
+              </tr>
+
+            </thead>
+
+            <!-- BODY -->
+
+            <tbody>
+
+              @if (filteredRequests.length === 0) {
+
+                <tr class="empty-state">
+
+                  <td
+                    colspan="8"
+                    class="empty-message"
+                  >
+
+                    <span
+                      class="material-symbols-outlined"
+                    >
+                      inbox
+                    </span>
+
+                    <p>
+                      No answered requests yet
+                    </p>
+
+                  </td>
+
                 </tr>
-              </thead>
-  
-              <tbody>
-                @if (filteredRequests.length === 0) {
-                  <tr class="empty-state">
-                    <td colspan="8" class="empty-message">
-                      <span class="material-symbols-outlined">inbox</span>
-                      <p>No answered requests yet</p>
+
+              } @else {
+
+                @for (
+                  request of filteredRequests;
+                  track request.id
+                ) {
+
+                  <tr
+                    class="table-body-row"
+                  >
+
+                    <!-- REQUEST CODE -->
+
+                    <td class="cell-id">
+
+                      {{ request.requestCode }}
+
                     </td>
-                  </tr>
-                } @else {
-                  @for (request of filteredRequests; track request.id) {
-                    <tr class="table-body-row" 
-                        [class.approved]="request.status === 'approved'" 
-                        [class.rejected]="request.status === 'rejected'">
-                      <td class="cell-id">{{ request.id }}</td>
-  
-                      <td class="cell-employee">
-                        <div class="employee-info">
-                          @if (request.employeeImage) {
-                            <img 
-                              [src]="request.employeeImage"
-                              [alt]="request.employeeName"
-                              class="employee-avatar"/>
-                          } @else {
-                            <div class="avatar-placeholder">
-                              {{ getInitials(request.employeeName) }}
-                            </div>
-                          }
-                          <span class="employee-name">{{ request.employeeName }}</span>
+
+                    <!-- EMPLOYEE -->
+
+                    <td class="cell-employee">
+
+                      <div class="employee-info">
+
+                        <div
+                          class="avatar-placeholder"
+                        >
+
+                          {{
+                            getInitials(
+                              request.employeeName
+                            )
+                          }}
+
                         </div>
-                      </td>
-  
-                      <td class="cell-destination">{{ request.destination }}</td>
-                      <td class="cell-dates">{{ request.dates }}</td>
-                      <td class="cell-budget">{{ request.budget | currency }}</td>
-  
-                      <td class="cell-status">
-                        <span 
-                          class="status-badge"
-                          [ngClass]="'status-' + request.status">
-                          {{ formatStatus(request.status) }}
+
+                        <span
+                          class="employee-name"
+                        >
+
+                          {{
+                            request.employeeName
+                          }}
+
                         </span>
-                      </td>
-  
-                      <td class="cell-date">
-                        {{ request.approvedAt | date:'short' }}
-                      </td>
-  
-                      <td class="cell-actions">
-                        <div class="action-buttons">
-                          <button
-                            (click)="viewDetails(request)"
-                            class="action-icon-button view"
-                            title="View Details"
-                            aria-label="View request details">
-                            <span class="material-symbols-outlined">visibility</span>
-                          </button>
-  
-                          <button
-                            (click)="deleteRequest(request.id)"
-                            class="action-icon-button delete"
-                            title="Delete"
-                            aria-label="Delete request">
-                            <span class="material-symbols-outlined">delete</span>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  }
+
+                      </div>
+
+                    </td>
+
+                    <!-- DESTINATION -->
+
+                    <td class="cell-destination">
+
+                      {{
+                        request.destination
+                      }}
+
+                    </td>
+
+                    <!-- DATES -->
+
+                    <td class="cell-dates">
+
+                      {{
+                        request.startDate
+                      }}
+
+                      -
+
+                      {{
+                        request.endDate
+                      }}
+
+                    </td>
+
+                    <!-- BUDGET -->
+
+                    <td class="cell-budget">
+
+                      ₹{{
+                        request.estimatedBudget
+                      }}
+
+                    </td>
+
+                    <!-- STATUS -->
+
+                    <td class="cell-status">
+
+                      <span
+                        class="status-badge"
+                        [ngClass]="
+                          'status-' +
+                          request.status.toLowerCase()
+                        "
+                      >
+
+                        {{
+                          formatStatus(
+                            request.status
+                          )
+                        }}
+
+                      </span>
+
+                    </td>
+
+                    <!-- ANSWERED DATE -->
+
+                    <td class="cell-date">
+
+                      {{
+                        request.startDate
+                      }}
+
+                    </td>
+
+                    <!-- ACTIONS -->
+
+                    <td class="cell-actions">
+
+                      <div class="action-buttons">
+
+                        <!-- VIEW -->
+
+                        <button
+                          (click)="viewDetails(request)"
+                          class="action-icon-button view"
+                        >
+
+                          <span
+                            class="material-symbols-outlined"
+                          >
+                            visibility
+                          </span>
+
+                        </button>
+
+                        <!-- DELETE -->
+
+                        <button
+                          (click)="deleteRequest(request.id)"
+                          class="action-icon-button delete"
+                        >
+
+                          <span
+                            class="material-symbols-outlined"
+                          >
+                            delete
+                          </span>
+
+                        </button>
+
+                      </div>
+
+                    </td>
+
+                  </tr>
+
                 }
-              </tbody>
-            </table>
-          </div>
+
+              }
+
+            </tbody>
+
+          </table>
+
         </div>
-  
-        <!-- Footer Section -->
-        <div class="page-footer">
-          <div class="footer-quote">
-            <p class="quote-text">
-              "Complete your travel request review with precision and care. 
-              Every decision impacts employee satisfaction and company policy compliance."
-            </p>
-            <p class="quote-author">— TMS Management Guidelines</p>
-          </div>
-          <div class="footer-meta">
-            <p>Last Data Sync: Today, 09:14 AM</p>
-            <p>Version 4.2.0-PRO</p>
-          </div>
-        </div>
+
       </div>
-    </main>
-  </div>
+
+      <!-- FOOTER -->
+
+      <div class="page-footer">
+
+        <div class="footer-quote">
+
+          <p class="quote-text">
+
+            "Complete your travel request review
+            with precision and care."
+
+          </p>
+
+          <p class="quote-author">
+
+            — TMS Management Guidelines
+
+          </p>
+
+        </div>
+
+        <div class="footer-meta">
+
+          <p>
+            Last Data Sync: Today
+          </p>
+
+          <p>
+            Version 4.2.0-PRO
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
