@@ -1,469 +1,520 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { trigger, transition, style, animate, state } from '@angular/animations';
-import { FinanceComponent } from '../finance/finance.component';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  state
+} from '@angular/animations';
 
-// ============================================
-// INTERFACES
-// ============================================
-
-interface NavItem {
-  id: string;
-  label: string;
-  icon: string;
-  active: boolean;
-}
-
-interface User {
-  name: string;
-  avatar: string;
-}
-
-interface KPICard {
-  label: string;
-  value: string;
-  trend?: {
-    icon: string;
-    value: string;
-    type: 'positive' | 'negative' | 'neutral';
-  };
-}
-
-interface PolicyAlert {
-  id: string;
-  title: string;
-  description: string;
-}
-
-interface BarChartData {
-  month: string;
-  value: number;
-  tooltip: string;
-  isActive?: boolean;
-}
-
-interface DoughnutLegend {
-  label: string;
-  value: number;
-  color: string;
-}
-
-interface TravelRequest {
-  id: string;
-  employee: {
-    name: string;
-    department: string;
-    avatar?: string;
-    position?: string;
-    office?: string;
-    tier?: string;
-  };
-  destination: string;
-  dates: string;
-  budget: number;
-  managerStatus: 'approved' | 'pending' | 'rejected';
-  financeStatus: 'approved' | 'pending' | 'escalated';
-  isFlagged?: boolean;
-  travelDetails?: {
-    destination: string;
-    duration: string;
-    transport: string;
-    accommodation: string;
-  };
-  breakdown?: Array<{ label: string; value: number }>;
-  approvalFlow?: Array<{
-    title: string;
-    timestamp: string;
-    comment?: string;
-    status: 'completed' | 'pending';
-  }>;
-}
-
-interface Filters {
-  status: string;
-  department: string;
-  manager: string;
-  budgetMin: number | null;
-  budgetMax: number | null;
-}
-
-const avatarPlaceholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"%3E%3Crect width="96" height="96" rx="48" fill="%23e5e5e5"/%3E%3Ccircle cx="48" cy="38" r="16" fill="%23737373"/%3E%3Cpath d="M22 82c4-18 16-28 26-28s22 10 26 28" fill="%23737373"/%3E%3C/svg%3E';
-
-// ============================================
-// COMPONENT
-// ============================================
+import { FinanceComponent } from "../finance/finance.component";
+import { TravelRequestService } from '../../services/travel-request.service';
 
 @Component({
-  selector: 'app-finance-approval-center',
+  selector: 'app-finance-show-request',
   standalone: true,
-  imports: [CommonModule, FormsModule, FinanceComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    CurrencyPipe,
+    UpperCasePipe,
+    FinanceComponent
+  ],
   templateUrl: './finance-show-request.component.html',
   styleUrls: ['./finance-show-request.component.scss'],
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(10px)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+        style({
+          opacity: 0,
+          transform: 'translateY(8px)'
+        }),
+        animate(
+          '250ms ease-out',
+          style({
+            opacity: 1,
+            transform: 'translateY(0)'
+          })
+        )
       ])
     ]),
+
     trigger('slideInOut', [
-      state('void', style({ transform: 'translateX(100%)' })),
-      state('*', style({ transform: 'translateX(0)' })),
-      transition('void => *', animate('300ms ease-out')),
-      transition('* => void', animate('300ms ease-in'))
+      state(
+        'void',
+        style({
+          transform: 'translateX(100%)'
+        })
+      ),
+
+      state(
+        '*',
+        style({
+          transform: 'translateX(0)'
+        })
+      ),
+
+      transition(
+        'void => *',
+        animate('280ms ease-out')
+      ),
+
+      transition(
+        '* => void',
+        animate('280ms ease-in')
+      )
     ])
   ]
 })
-export class FinanceApprovalCenterComponent implements OnInit {
+export class FinanceApprovalCenterComponent
+  implements OnInit {
 
-  // ============================================
-  // PROPERTIES
-  // ============================================
+  constructor(
+    private travelRequestService:
+      TravelRequestService
+  ) {}
 
-  // Navigation
-  navItems: NavItem[] = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', active: true },
-    { id: 'requests', label: 'Requests', icon: 'assignment', active: false },
-    { id: 'trips', label: 'Trips', icon: 'flight_takeoff', active: false },
-    { id: 'settings', label: 'Settings', icon: 'settings', active: false }
-  ];
-
-  // Current User
-  currentUser: User = {
-    name: 'Admin',
-    avatar: avatarPlaceholder
+  currentUser = {
+    name: 'Finance Admin',
+    avatar:
+      'https://i.pravatar.cc/150?img=12'
   };
 
-  // Search
-  searchQuery: string = '';
+  searchQuery = '';
 
-  // KPI Cards
-  kpiCards: KPICard[] = [
-    {
-      label: 'Total Requests',
-      value: '1,248',
-      trend: { icon: 'trending_up', value: '12%', type: 'negative' }
-    },
-    {
-      label: 'Pending Finance',
-      value: '42',
-      trend: { icon: 'pause', value: 'Steady', type: 'neutral' }
-    },
-    {
-      label: 'Approved',
-      value: '892',
-      trend: { icon: 'trending_up', value: '5%', type: 'positive' }
-    },
-    {
-      label: 'Rejected',
-      value: '14',
-      trend: { icon: 'trending_down', value: '2%', type: 'negative' }
-    },
-    {
-      label: 'Total Budget',
-      value: '$1.2M',
-      trend: { icon: '', value: 'FY24 Q3', type: 'neutral' }
-    },
-    {
-      label: 'Approved Amount',
-      value: '$742k',
-      trend: { icon: 'trending_up', value: '8%', type: 'positive' }
-    }
-  ];
-
-  // Filters
-  filters: Filters = {
+  filters = {
     status: '',
     department: '',
     manager: '',
-    budgetMin: null,
-    budgetMax: null
+    budgetMin: null as number | null,
+    budgetMax: null as number | null
   };
 
-  // Policy Alerts
-  policyAlerts: PolicyAlert[] = [
+  allRequests: any[] = [];
+  displayedRequests: any[] = [];
+
+  totalRequests = 0;
+
+  currentPage = 1;
+  totalPages = 1;
+
+  isDrawerOpen = false;
+
+  selectedRequest: any = null;
+
+  approvedAmount = 0;
+
+  decisionRemarks = '';
+
+  defaultAvatar =
+    'https://i.pravatar.cc/150?img=3';
+
+  // KPI
+
+  kpiCards = [
+    {
+      label: 'Total Requests',
+      value: '0'
+    },
+
+    {
+      label: 'Pending Finance',
+      value: '0'
+    },
+
+    {
+      label: 'Approved',
+      value: '0'
+    },
+
+    {
+      label: 'Rejected',
+      value: '0'
+    }
+  ];
+
+  // ALERTS
+
+  policyAlerts = [
     {
       id: '1',
-      title: 'Over-budget Request',
-      description: 'TR-8492 exceeds department cap by 15%.'
-    },
-    {
-      id: '2',
-      title: 'Missing Accountability',
-      description: 'TR-9011: No receipt attached for Flight.'
-    },
-    {
-      id: '3',
-      title: 'Duplicate Check',
-      description: 'Potential duplicate found for Emily Watson.'
+      title: 'Budget Monitoring',
+      description:
+        'Finance department monitoring active.'
     }
   ];
 
-  // Bar Chart Data
-  barChartData: BarChartData[] = [
-    { month: 'JAN', value: 40, tooltip: '$42k' },
-    { month: 'FEB', value: 65, tooltip: '$65k' },
-    { month: 'MAR', value: 85, tooltip: '$85k', isActive: true },
-    { month: 'APR', value: 55, tooltip: '$55k' },
-    { month: 'MAY', value: 75, tooltip: '$75k' },
-    { month: 'JUN', value: 60, tooltip: '$60k' }
-  ];
+  // BAR CHART
 
-  maxBarValue: number = 100;
-
-  // Doughnut Chart
-  doughnutValue: number = 64;
-  doughnutLegend: DoughnutLegend[] = [
-    { label: 'Sales', value: 42, color: '#000000' },
-    { label: 'Eng', value: 28, color: '#e2e2e2' }
-  ];
-
-  // Travel Requests
-  allRequests: TravelRequest[] = [
+  barChartData = [
     {
-      id: 'TR-9421',
-      employee: {
-        name: 'Sarah Connor',
-        department: 'Engineering',
-        position: 'Senior Cloud Engineer',
-        office: 'London Office',
-        tier: 'Tier 1 Executive'
-      },
-      destination: 'Berlin, DE',
-      dates: 'Oct 12 - Oct 16',
-      budget: 3450,
-      managerStatus: 'approved',
-      financeStatus: 'pending',
-      travelDetails: {
-        destination: 'Berlin, Germany (Cloud Expo 2024)',
-        duration: 'Oct 12, 2024 - Oct 16, 2024 (5 Days)',
-        transport: 'Business Class Flight (BA241)',
-        accommodation: 'Hotel Adlon Kempinski (4 Nights)'
-      },
-      breakdown: [
-        { label: 'Airfare (Estimate)', value: 1850 },
-        { label: 'Accommodation', value: 1200 },
-        { label: 'Daily Allowance ($80 x 5)', value: 400 }
-      ],
-      approvalFlow: [
-        {
-          title: 'Submitted by Sarah Connor',
-          timestamp: 'Oct 01, 2024 • 09:12 AM',
-          status: 'completed'
-        },
-        {
-          title: 'Approved by Alex Johnson (Manager)',
-          timestamp: 'Oct 01, 2024 • 02:45 PM',
-          comment: 'Critical attendance for Q4 cloud strategy.',
-          status: 'completed'
-        },
-        {
-          title: 'Finance Verification',
-          timestamp: 'Pending',
-          status: 'pending'
-        }
-      ]
+      month: 'JAN',
+      value: 40,
+      tooltip: '$40K'
     },
+
     {
-      id: 'TR-8492',
-      employee: {
-        name: 'John Wick',
-        department: 'Sales'
-      },
-      destination: 'Tokyo, JP',
-      dates: 'Nov 01 - Nov 08',
-      budget: 8120,
-      managerStatus: 'approved',
-      financeStatus: 'escalated',
-      isFlagged: true
+      month: 'FEB',
+      value: 70,
+      tooltip: '$70K',
+      isActive: true
+    },
+
+    {
+      month: 'MAR',
+      value: 50,
+      tooltip: '$50K'
     }
   ];
 
-  displayedRequests: TravelRequest[] = [];
-  totalRequests: number = 42;
-  currentPage: number = 1;
-  totalPages: number = 5;
-  itemsPerPage: number = 10;
+  maxBarValue = 100;
 
-  // Drawer
-  isDrawerOpen: boolean = false;
-  selectedRequest: TravelRequest | null = null;
-  approvedAmount: number = 0;
-  decisionRemarks: string = '';
-  defaultAvatar: string = avatarPlaceholder;
+  // DOUGHNUT
 
-  // ============================================
-  // LIFECYCLE HOOKS
-  // ============================================
+  doughnutValue = 64;
+
+  doughnutLegend = [
+    {
+      label: 'Used',
+      value: 64,
+      color: '#111'
+    },
+
+    {
+      label: 'Remaining',
+      value: 36,
+      color: '#d4d4d4'
+    }
+  ];
 
   ngOnInit(): void {
-    this.calculateMaxBarValue();
+
     this.loadRequests();
   }
 
-  // ============================================
-  // METHODS
-  // ============================================
+  // =========================================
+  // LOAD REQUESTS
+  // =========================================
 
-  calculateMaxBarValue(): void {
-    this.maxBarValue = Math.max(...this.barChartData.map(d => d.value));
+  private loadRequests(): void {
+
+    this.travelRequestService
+      .getFinanceRequests()
+      .subscribe({
+
+        next: (response: any) => {
+
+          console.log(response);
+
+          this.allRequests =
+            response.data || response;
+
+          this.displayedRequests =
+            [...this.allRequests];
+
+          this.totalRequests =
+            this.displayedRequests.length;
+
+          this.updateKpiCards();
+        },
+
+        error: (error: any) => {
+
+          console.log(error);
+        }
+      });
   }
 
-  loadRequests(): void {
-    this.displayedRequests = [...this.allRequests];
+  // =========================================
+  // KPI UPDATE
+  // =========================================
+
+  updateKpiCards(): void {
+
+    const approved =
+      this.allRequests.filter(
+        r => r.status === 'FINANCE_APPROVED'
+      ).length;
+
+    const rejected =
+      this.allRequests.filter(
+        r => r.status === 'REJECTED'
+      ).length;
+
+    this.kpiCards = [
+
+      {
+        label: 'Total Requests',
+        value: this.allRequests.length.toString()
+      },
+
+      {
+        label: 'Pending Finance',
+        value: this.allRequests.length.toString()
+      },
+
+      {
+        label: 'Approved',
+        value: approved.toString()
+      },
+
+      {
+        label: 'Rejected',
+        value: rejected.toString()
+      }
+    ];
   }
 
-  getDoughnutStyle(): { [key: string]: string } {
-    const percentage = this.doughnutValue;
-    const degrees = (percentage / 100) * 360;
-    return {
-      'clip-path': `polygon(50% 50%, 50% 0%, 100% 0%, 100% ${degrees > 90 ? '100%' : '0%'}, ${degrees > 180 ? '100%' : '0%'} 100%, ${degrees > 270 ? '0%' : '100%'} 100%, 0% ${degrees > 270 ? '100%' : '0%'}, 0% 0%, 50% 0%)`
-    };
-  }
-
-  get visiblePages(): number[] {
-    const pages: number[] = [];
-    const maxVisible = 3;
-    
-    for (let i = 1; i <= Math.min(maxVisible, this.totalPages); i++) {
-      pages.push(i);
-    }
-    
-    return pages;
-  }
-
-  // ============================================
-  // EVENT HANDLERS
-  // ============================================
-
-  setActiveNav(id: string): void {
-    this.navItems.forEach(item => {
-      item.active = item.id === id;
-    });
-    console.log('Navigation changed to:', id);
-  }
-
-  logout(): void {
-    if (confirm('Are you sure you want to logout?')) {
-      console.log('Logging out...');
-      // Implement logout logic
-    }
-  }
+  // =========================================
+  // SEARCH
+  // =========================================
 
   onSearch(): void {
-    console.log('Searching for:', this.searchQuery);
-    // Implement search logic
+
+    const q =
+      this.searchQuery
+        .trim()
+        .toLowerCase();
+
+    this.displayedRequests =
+      this.allRequests.filter(r =>
+
+        r.requestCode
+          ?.toLowerCase()
+          .includes(q)
+
+        ||
+
+        r.employeeName
+          ?.toLowerCase()
+          .includes(q)
+      );
   }
 
-  openNotifications(): void {
-    console.log('Opening notifications');
-  }
-
-  openHelp(): void {
-    console.log('Opening help');
-  }
-
-  exportData(): void {
-    console.log('Exporting data');
-    alert('Exporting data...');
-  }
-
-  openFilters(): void {
-    console.log('Opening filters');
-  }
-
-  openReports(): void {
-    console.log('Opening reports');
-  }
+  // =========================================
+  // FILTERS
+  // =========================================
 
   applyFilters(): void {
-    console.log('Applying filters:', this.filters);
-    // Implement filter logic
+
+    this.displayedRequests =
+      this.allRequests.filter(r => {
+
+        if (
+          this.filters.status &&
+          r.status !== this.filters.status
+        ) {
+          return false;
+        }
+
+        if (
+          this.filters.budgetMin != null &&
+          r.estimatedBudget <
+          this.filters.budgetMin
+        ) {
+          return false;
+        }
+
+        if (
+          this.filters.budgetMax != null &&
+          r.estimatedBudget >
+          this.filters.budgetMax
+        ) {
+          return false;
+        }
+
+        return true;
+      });
   }
 
-  viewAlert(policyAlert: PolicyAlert): void {
-    console.log('Viewing alert:', policyAlert);
-    window.alert(`Alert: ${policyAlert.title}\n${policyAlert.description}`);
-  }
+  // =========================================
+  // TABLE ACTIONS
+  // =========================================
 
-  viewDetails(request: TravelRequest, event: Event): void {
+  viewDetails(
+    request: any,
+    event: Event
+  ): void {
+
     event.stopPropagation();
+
     this.openDrawer(request);
   }
 
-  quickApprove(request: TravelRequest, event: Event): void {
-    event.stopPropagation();
-    if (confirm(`Quick approve request ${request.id}?`)) {
-      console.log('Quick approved:', request.id);
-      alert(`Request ${request.id} approved!`);
-    }
-  }
+  quickApprove(
+    request: any,
+    event: Event
+  ): void {
 
-  quickReject(request: TravelRequest, event: Event): void {
     event.stopPropagation();
-    if (confirm(`Quick reject request ${request.id}?`)) {
-      console.log('Quick rejected:', request.id);
-      alert(`Request ${request.id} rejected!`);
-    }
-  }
 
-  openDrawer(request: TravelRequest): void {
     this.selectedRequest = request;
-    this.approvedAmount = request.budget;
-    this.decisionRemarks = '';
+
+    this.approveRequest();
+  }
+
+  quickReject(
+    request: any,
+    event: Event
+  ): void {
+
+    event.stopPropagation();
+
+    this.selectedRequest = request;
+
+    this.rejectRequest();
+  }
+
+  // =========================================
+  // DRAWER
+  // =========================================
+
+  openDrawer(request: any): void {
+
+    this.selectedRequest = request;
+
+    this.approvedAmount =
+      request.estimatedBudget;
+
     this.isDrawerOpen = true;
   }
 
   closeDrawer(): void {
+
     this.isDrawerOpen = false;
+
     setTimeout(() => {
+
       this.selectedRequest = null;
+
     }, 300);
   }
 
-  putOnHold(): void {
-    if (!this.decisionRemarks.trim()) {
-      alert('Please provide remarks for putting the request on hold.');
-      return;
-    }
-    console.log('Put on hold:', this.selectedRequest?.id, this.decisionRemarks);
-    alert(`Request ${this.selectedRequest?.id} put on hold.`);
-    this.closeDrawer();
-  }
+  // =========================================
+  // APPROVE
+  // =========================================
 
   approveRequest(): void {
-    console.log('Approved:', this.selectedRequest?.id, this.approvedAmount);
-    alert(`Request ${this.selectedRequest?.id} approved for $${this.approvedAmount}!`);
-    this.closeDrawer();
-  }
 
-  rejectRequest(): void {
-    if (!this.decisionRemarks.trim()) {
-      alert('Please provide remarks for rejection.');
+    if (!this.selectedRequest) {
       return;
     }
-    console.log('Rejected:', this.selectedRequest?.id, this.decisionRemarks);
-    alert(`Request ${this.selectedRequest?.id} rejected.`);
-    this.closeDrawer();
+
+    this.travelRequestService
+      .financeApproveRequest(
+        this.selectedRequest.id
+      )
+      .subscribe({
+
+        next: () => {
+
+          alert(
+            'Request Approved Successfully'
+          );
+
+          this.closeDrawer();
+
+          this.loadRequests();
+        },
+
+        error: (error: any) => {
+
+          console.log(error);
+
+          alert('Approval Failed');
+        }
+      });
   }
 
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.loadRequests();
+  // =========================================
+  // REJECT
+  // =========================================
+
+  rejectRequest(): void {
+
+    if (!this.selectedRequest) {
+      return;
     }
+
+    this.travelRequestService
+      .financeRejectRequest(
+        this.selectedRequest.id
+      )
+      .subscribe({
+
+        next: () => {
+
+          alert(
+            'Request Rejected Successfully'
+          );
+
+          this.closeDrawer();
+
+          this.loadRequests();
+        },
+
+        error: (error: any) => {
+
+          console.log(error);
+
+          alert('Rejection Failed');
+        }
+      });
   }
 
-  nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-      this.loadRequests();
-    }
+  // =========================================
+  // EXTRA
+  // =========================================
+
+  exportData(): void {
+
+    alert('Export Started');
   }
 
-  goToPage(page: number): void {
-    this.currentPage = page;
-    this.loadRequests();
+  openFilters(): void {
+
+    console.log('Filters');
   }
+
+  openReports(): void {
+
+    console.log('Reports');
+  }
+
+  openNotifications(): void {
+
+    console.log('Notifications');
+  }
+
+  openHelp(): void {
+
+    console.log('Help');
+  }
+
+  viewAlert(alert: any): void {
+
+    alert(alert.description);
+  }
+
+  putOnHold(): void {
+
+    alert('Put On Hold');
+  }
+
+  // =========================================
+  // PAGINATION
+  // =========================================
+
+  get visiblePages(): number[] {
+
+    return [1];
+  }
+
+  previousPage(): void {}
+
+  nextPage(): void {}
+
+  goToPage(page: number): void {}
 }

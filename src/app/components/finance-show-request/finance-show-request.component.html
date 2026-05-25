@@ -2,500 +2,857 @@
 
 <!-- TOP BAR -->
 <header class="topbar">
+
   <div class="topbar__search">
     <span class="icon">search</span>
-    <input 
-      type="text" 
+
+    <input
+      type="text"
       placeholder="Search by Request ID or Employee..."
       [(ngModel)]="searchQuery"
-      (input)="onSearch()"
-    />
+      (input)="onSearch()" />
   </div>
 
   <div class="topbar__actions">
+
     <div class="topbar__icons">
-      <button class="icon-btn" (click)="openNotifications()">
-        <span class="icon">notifications</span>
+
+      <button
+        class="icon-btn"
+        (click)="openNotifications()">
+
+        <span class="icon">
+          notifications
+        </span>
+
       </button>
-      <button class="icon-btn" (click)="openHelp()">
-        <span class="icon">help</span>
+
+      <button
+        class="icon-btn"
+        (click)="openHelp()">
+
+        <span class="icon">
+          help
+        </span>
+
       </button>
+
     </div>
 
     <div class="topbar__user">
-      <span class="user-name">{{ currentUser.name }}</span>
+
+      <span class="user-name">
+        {{ currentUser.name }}
+      </span>
+
       <div class="user-avatar">
-        <img [src]="currentUser.avatar" [alt]="currentUser.name" />
+
+        <img
+          [src]="currentUser.avatar"
+          [alt]="currentUser.name" />
+
       </div>
+
     </div>
+
   </div>
+
 </header>
 
 <!-- MAIN CONTENT -->
+
 <main class="main-content">
-  <!-- HEADER SECTION -->
+
+  <!-- PAGE HEADER -->
+
   <section class="page-header">
+
     <div class="header-info">
-      <h1 class="page-title">Finance Approval Center</h1>
+
+      <h1 class="page-title">
+        Finance Approval Center
+      </h1>
+
       <p class="page-description">
-        Review, verify and approve corporate travel requests with precision and policy compliance.
+        Review, verify and approve corporate travel requests.
       </p>
+
     </div>
 
     <div class="header-actions">
-      <button class="btn btn--outline" (click)="exportData()">
-        <span class="icon">file_download</span>
+
+      <button
+        class="btn btn--outline"
+        (click)="exportData()">
+
+        <span class="icon">
+          file_download
+        </span>
+
         Export
+
       </button>
-      <button class="btn btn--outline" (click)="openFilters()">
-        <span class="icon">filter_list</span>
+
+      <button
+        class="btn btn--outline"
+        (click)="openFilters()">
+
+        <span class="icon">
+          filter_list
+        </span>
+
         Filter
+
       </button>
-      <button class="btn btn--primary" (click)="openReports()">
-        <span class="icon">assessment</span>
+
+      <button
+        class="btn btn--primary"
+        (click)="openReports()">
+
+        <span class="icon">
+          assessment
+        </span>
+
         Reports
+
       </button>
+
     </div>
+
   </section>
 
   <!-- KPI CARDS -->
+
   <section class="kpi-grid">
-    <div 
-      *ngFor="let kpi of kpiCards" 
+
+    <div
+      *ngFor="let kpi of kpiCards"
       class="kpi-card"
-      [@fadeIn]
-    >
-      <span class="kpi-card__label">{{ kpi.label }}</span>
+      [@fadeIn]>
+
+      <span class="kpi-card__label">
+        {{ kpi.label }}
+      </span>
+
       <div class="kpi-card__content">
-        <span class="kpi-card__value">{{ kpi.value }}</span>
-        <span 
-          *ngIf="kpi.trend"
-          class="kpi-card__trend"
-          [ngClass]="{
-            'kpi-card__trend--positive': kpi.trend.type === 'positive',
-            'kpi-card__trend--negative': kpi.trend.type === 'negative',
-            'kpi-card__trend--neutral': kpi.trend.type === 'neutral'
-          }"
-        >
-          <span class="icon">{{ kpi.trend.icon }}</span>
-          {{ kpi.trend.value }}
+
+        <span class="kpi-card__value">
+          {{ kpi.value }}
         </span>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- FILTERS BAR -->
+  <!-- FILTERS -->
+
   <section class="filters-bar">
+
     <div class="filter-group">
+
       <label>Status</label>
-      <select [(ngModel)]="filters.status" (change)="applyFilters()">
-        <option value="">All Statuses</option>
-        <option value="pending">Pending</option>
-        <option value="approved">Approved</option>
-        <option value="rejected">Rejected</option>
+
+      <select
+        [(ngModel)]="filters.status"
+        (change)="applyFilters()">
+
+        <option value="">
+          All Statuses
+        </option>
+
+        <option value="MANAGER_APPROVED">
+          MANAGER APPROVED
+        </option>
+
+        <option value="FINANCE_APPROVED">
+          FINANCE APPROVED
+        </option>
+
+        <option value="REJECTED">
+          REJECTED
+        </option>
+
       </select>
+
     </div>
 
     <div class="filter-group">
-      <label>Department</label>
-      <select [(ngModel)]="filters.department" (change)="applyFilters()">
-        <option value="">All Departments</option>
-        <option value="engineering">Engineering</option>
-        <option value="sales">Sales</option>
-        <option value="marketing">Marketing</option>
-      </select>
-    </div>
 
-    <div class="filter-group">
-      <label>Manager</label>
-      <select [(ngModel)]="filters.manager" (change)="applyFilters()">
-        <option value="">Any Manager</option>
-        <option value="alex">Alex Johnson</option>
-        <option value="sarah">Sarah Miller</option>
-      </select>
-    </div>
-
-    <div class="filter-group">
       <label>Budget Range</label>
+
       <div class="budget-range">
-        <input 
-          type="number" 
-          placeholder="Min" 
-          [(ngModel)]="filters.budgetMin"
-        />
-        <input 
-          type="number" 
-          placeholder="Max" 
-          [(ngModel)]="filters.budgetMax"
-        />
+
+        <input
+          type="number"
+          placeholder="Min"
+          [(ngModel)]="filters.budgetMin" />
+
+        <input
+          type="number"
+          placeholder="Max"
+          [(ngModel)]="filters.budgetMax" />
+
       </div>
+
     </div>
 
-    <button class="btn btn--primary" (click)="applyFilters()">
+    <button
+      class="btn btn--primary"
+      (click)="applyFilters()">
+
       Apply Filters
+
     </button>
+
   </section>
 
-  <!-- CHARTS & POLICY ALERTS -->
+  <!-- DASHBOARD -->
+
   <section class="dashboard-grid">
-    <!-- Policy Alerts -->
+
+    <!-- ALERTS -->
+
     <div class="policy-alerts">
+
       <div class="card">
+
         <h3 class="card__title">
-          <span class="icon icon--error">warning</span>
-          Policy Violations
+
+          <span class="icon icon--warning">
+            warning
+          </span>
+
+          Policy Alerts
+
         </h3>
+
         <div class="alerts-list">
-          <div 
-            *ngFor="let alert of policyAlerts" 
+
+          <div
+            *ngFor="let alert of policyAlerts"
             class="alert-item"
-            (click)="viewAlert(alert)"
-          >
-            <span class="alert-item__title">{{ alert.title }}</span>
-            <span class="alert-item__description">{{ alert.description }}</span>
+            (click)="viewAlert(alert)">
+
+            <span class="alert-item__title">
+              {{ alert.title }}
+            </span>
+
+            <span class="alert-item__description">
+              {{ alert.description }}
+            </span>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
 
-    <!-- Visualizations -->
+    <!-- CHARTS -->
+
     <div class="visualizations">
-      <!-- Bar Chart -->
+
+      <!-- BAR CHART -->
+
       <div class="chart-card chart-card--bar">
-        <h3 class="card__title">Monthly Travel Spending</h3>
+
+        <h3 class="card__title">
+          Monthly Spending
+        </h3>
+
         <div class="bar-chart">
-          <div 
-            *ngFor="let bar of barChartData" 
+
+          <div
+            *ngFor="let bar of barChartData"
             class="bar"
             [class.bar--active]="bar.isActive"
-            [style.height.%]="(bar.value / maxBarValue) * 100"
-          >
-            <div class="bar__tooltip">{{ bar.tooltip }}</div>
+            [style.height.%]="
+              (bar.value / maxBarValue) * 100
+            ">
+
+            <div class="bar__tooltip">
+              {{ bar.tooltip }}
+            </div>
+
           </div>
+
         </div>
+
         <div class="chart-labels">
-          <span *ngFor="let bar of barChartData">{{ bar.month }}</span>
+
+          <span *ngFor="let bar of barChartData">
+            {{ bar.month }}
+          </span>
+
         </div>
+
       </div>
 
-      <!-- Doughnut Chart -->
+      <!-- DOUGHNUT -->
+
       <div class="chart-card">
-        <h3 class="card__title">Dept Budget Usage</h3>
+
+        <h3 class="card__title">
+          Budget Usage
+        </h3>
+
         <div class="doughnut-chart">
+
           <div class="chart-visual">
-            <div 
-              class="chart-fill" 
-              [style]="getDoughnutStyle()"
-            ></div>
+
             <div class="chart-center">
-              <span class="chart-value">{{ doughnutValue }}%</span>
-              <span class="chart-label">Used</span>
+
+              <span class="chart-value">
+                {{ doughnutValue }}%
+              </span>
+
+              <span class="chart-label">
+                Used
+              </span>
+
             </div>
+
           </div>
+
           <div class="chart-legend">
-            <div 
-              *ngFor="let item of doughnutLegend" 
-              class="legend-item"
-            >
-              <span 
-                class="legend-dot" 
-                [style.background-color]="item.color"
-              ></span>
-              <span>{{ item.label }}</span>
-              <span class="legend-value">{{ item.value }}%</span>
+
+            <div
+              *ngFor="let item of doughnutLegend"
+              class="legend-item">
+
+              <span
+                class="legend-dot"
+                [style.background-color]="item.color">
+              </span>
+
+              <span>
+                {{ item.label }}
+              </span>
+
+              <span class="legend-value">
+                {{ item.value }}%
+              </span>
+
             </div>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
 
-  <!-- DATA TABLE -->
+  <!-- TABLE -->
+
   <section class="data-table-section">
-    <div class="card">
+
+    <div class="card card--table">
+
       <div class="card__header">
-        <h3 class="card__title">Pending Travel Requests</h3>
+
+        <h3 class="card__title">
+          Pending Travel Requests
+        </h3>
+
         <span class="table-count">
-          Showing {{ displayedRequests.length }} of {{ totalRequests }} pending
+
+          Showing
+          {{ displayedRequests.length }}
+          Requests
+
         </span>
+
       </div>
 
       <div class="table-wrapper">
+
         <table class="data-table">
+
           <thead>
+
             <tr>
+
               <th>ID</th>
               <th>Employee</th>
               <th>Destination</th>
               <th>Dates</th>
               <th>Budget</th>
-              <th>Manager</th>
+              <th>Status</th>
               <th>Finance</th>
-              <th class="text-right">Actions</th>
+              <th class="text-right">
+                Actions
+              </th>
+
             </tr>
+
           </thead>
+
           <tbody>
-            <tr 
-              *ngFor="let request of displayedRequests"
-              [class.row--flagged]="request.isFlagged"
-              (click)="openDrawer(request)"
-            >
-              <td><strong>{{ request.id }}</strong></td>
+
+            <tr
+              *ngFor="
+                let request of displayedRequests
+              "
+              (click)="openDrawer(request)">
+
+              <!-- REQUEST CODE -->
+
               <td>
-                <div class="employee-cell">
-                  <div class="employee-avatar">
-                    <img 
-                      *ngIf="request.employee.avatar" 
-                      [src]="request.employee.avatar" 
-                      [alt]="request.employee.name"
-                    />
-                  </div>
-                  <div class="employee-info">
-                    <span class="employee-name">{{ request.employee.name }}</span>
-                    <span class="employee-dept">{{ request.employee.department }}</span>
-                  </div>
-                </div>
-              </td>
-              <td>{{ request.destination }}</td>
-              <td class="date-cell">{{ request.dates }}</td>
-              <td>
-                <strong 
-                  [class.text-error]="request.isFlagged"
-                  [class.text-primary]="!request.isFlagged"
-                >
-                  {{ request.budget | currency }}
+
+                <strong>
+                  {{ request.requestCode }}
                 </strong>
+
               </td>
+
+              <!-- EMPLOYEE -->
+
               <td>
-                <span 
-                  class="status-badge"
-                  [ngClass]="'status-badge--' + request.managerStatus"
-                >
-                  {{ request.managerStatus | uppercase }}
-                </span>
-              </td>
-              <td>
-                <span 
-                  class="status-badge"
-                  [ngClass]="'status-badge--' + request.financeStatus"
-                >
-                  {{ request.financeStatus | uppercase }}
-                </span>
-              </td>
-              <td class="text-right">
-                <div class="table-actions">
-                  <button 
-                    class="action-btn" 
-                    (click)="viewDetails(request, $event)"
-                    title="View Details"
-                  >
-                    <span class="icon">visibility</span>
-                  </button>
-                  <button 
-                    *ngIf="!request.isFlagged"
-                    class="action-btn action-btn--approve" 
-                    (click)="quickApprove(request, $event)"
-                    title="Quick Approve"
-                  >
-                    <span class="icon">check_circle</span>
-                  </button>
-                  <button 
-                    class="action-btn action-btn--reject" 
-                    (click)="quickReject(request, $event)"
-                    title="Quick Reject"
-                  >
-                    <span class="icon">cancel</span>
-                  </button>
+
+                <div class="employee-cell">
+
+                  <div class="employee-avatar">
+
+                    <img
+                      [src]="defaultAvatar"
+                      alt="employee" />
+
+                  </div>
+
+                  <div class="employee-info">
+
+                    <span class="employee-name">
+
+                      {{ request.employeeName }}
+
+                    </span>
+
+                    <span class="employee-dept">
+
+                      Finance Department
+
+                    </span>
+
+                  </div>
+
                 </div>
+
               </td>
+
+              <!-- DESTINATION -->
+
+              <td>
+                {{ request.destination }}
+              </td>
+
+              <!-- DATES -->
+
+              <td class="date-cell">
+
+                {{ request.startDate }}
+                -
+                {{ request.endDate }}
+
+              </td>
+
+              <!-- BUDGET -->
+
+              <td>
+
+                <strong>
+
+                  {{
+                    request.estimatedBudget
+                    | currency:'INR'
+                  }}
+
+                </strong>
+
+              </td>
+
+              <!-- STATUS -->
+
+              <td>
+
+                <span class="status-badge">
+
+                  {{ request.status }}
+
+                </span>
+
+              </td>
+
+              <!-- FINANCE -->
+
+              <td>
+
+                <span class="status-badge">
+
+                  PENDING
+
+                </span>
+
+              </td>
+
+              <!-- ACTIONS -->
+
+              <td class="text-right">
+
+                <div class="table-actions">
+
+                  <!-- VIEW -->
+
+                  <button
+                    class="action-btn"
+                    (click)="
+                      viewDetails(
+                        request,
+                        $event
+                      )
+                    ">
+
+                    <span class="icon">
+                      visibility
+                    </span>
+
+                  </button>
+
+                  <!-- APPROVE -->
+
+                  <button
+                    class="action-btn action-btn--approve"
+                    (click)="
+                      quickApprove(
+                        request,
+                        $event
+                      )
+                    ">
+
+                    <span class="icon">
+                      check_circle
+                    </span>
+
+                  </button>
+
+                  <!-- REJECT -->
+
+                  <button
+                    class="action-btn action-btn--reject"
+                    (click)="
+                      quickReject(
+                        request,
+                        $event
+                      )
+                    ">
+
+                    <span class="icon">
+                      cancel
+                    </span>
+
+                  </button>
+
+                </div>
+
+              </td>
+
             </tr>
+
           </tbody>
+
         </table>
+
       </div>
 
-      <!-- Pagination -->
+      <!-- PAGINATION -->
+
       <div class="table-footer">
-        <button 
-          class="pagination-btn" 
+
+        <button
+          class="pagination-btn"
           [disabled]="currentPage === 1"
-          (click)="previousPage()"
-        >
-          <span class="icon">arrow_back</span>
+          (click)="previousPage()">
+
+          <span class="icon">
+            arrow_back
+          </span>
+
           Previous
+
         </button>
 
         <div class="pagination-numbers">
-          <button 
+
+          <button
             *ngFor="let page of visiblePages"
             class="page-number"
-            [class.page-number--active]="page === currentPage"
-            (click)="goToPage(page)"
-          >
+            [class.page-number--active]="
+              page === currentPage
+            "
+            (click)="goToPage(page)">
+
             {{ page }}
+
           </button>
+
         </div>
 
-        <button 
+        <button
           class="pagination-btn"
-          [disabled]="currentPage === totalPages"
-          (click)="nextPage()"
-        >
+          [disabled]="
+            currentPage === totalPages
+          "
+          (click)="nextPage()">
+
           Next
-          <span class="icon">arrow_forward</span>
+
+          <span class="icon">
+            arrow_forward
+          </span>
+
         </button>
+
       </div>
+
     </div>
+
   </section>
+
 </main>
 
 <!-- SIDE DRAWER -->
-<div 
+
+<div
   class="side-drawer"
-  [class.side-drawer--open]="isDrawerOpen"
-  [@slideInOut]
->
-  <div class="drawer-content" *ngIf="selectedRequest">
+  [class.side-drawer--open]="
+    isDrawerOpen
+  "
+  [@slideInOut]>
+
+  <div
+    class="drawer-content"
+    *ngIf="selectedRequest">
+
+    <!-- HEADER -->
+
     <header class="drawer-header">
+
       <div>
-        <span class="drawer-id">Request ID: {{ selectedRequest.id }}</span>
-        <h2 class="drawer-title">Request Details</h2>
+
+        <span class="drawer-id">
+
+          Request ID:
+          {{ selectedRequest.requestCode }}
+
+        </span>
+
+        <h2 class="drawer-title">
+          Request Details
+        </h2>
+
       </div>
-      <button class="icon-btn" (click)="closeDrawer()">
-        <span class="icon">close</span>
+
+      <button
+        class="icon-btn"
+        (click)="closeDrawer()">
+
+        <span class="icon">
+          close
+        </span>
+
       </button>
+
     </header>
 
-    <!-- Employee Info -->
+    <!-- EMPLOYEE PROFILE -->
+
     <div class="employee-profile">
-      <img 
-        [src]="selectedRequest.employee.avatar || defaultAvatar" 
-        [alt]="selectedRequest.employee.name"
+
+      <img
+        [src]="defaultAvatar"
         class="profile-image"
-      />
+        alt="employee" />
+
       <div class="profile-info">
-        <h4 class="profile-name">{{ selectedRequest.employee.name }}</h4>
+
+        <h4 class="profile-name">
+
+          {{ selectedRequest.employeeName }}
+
+        </h4>
+
         <span class="profile-subtitle">
-          {{ selectedRequest.employee.position }} • {{ selectedRequest.employee.office }}
+
+          Corporate Employee
+
         </span>
-        <span class="profile-badge">{{ selectedRequest.employee.tier }}</span>
+
+        <span class="profile-badge">
+
+          Business Travel
+
+        </span>
+
       </div>
+
     </div>
 
-    <!-- Travel Info -->
+    <!-- TRAVEL INFO -->
+
     <div class="travel-info">
-      <div class="info-row">
-        <span class="icon">travel_explore</span>
-        <div>
-          <span class="info-label">Destination</span>
-          <span class="info-value">{{ selectedRequest.travelDetails?.destination }}</span>
-        </div>
-      </div>
 
       <div class="info-row">
-        <span class="icon">calendar_today</span>
-        <div>
-          <span class="info-label">Duration</span>
-          <span class="info-value">{{ selectedRequest.travelDetails?.duration }}</span>
-        </div>
-      </div>
 
-      <div class="info-row">
-        <span class="icon">flight</span>
-        <div>
-          <span class="info-label">Transport & Stay</span>
-          <span class="info-value">{{ selectedRequest.travelDetails?.transport }}</span>
-          <span class="info-sub">{{ selectedRequest.travelDetails?.accommodation }}</span>
-        </div>
-      </div>
-    </div>
+        <span class="icon">
+          travel_explore
+        </span>
 
-    <!-- Financial Breakdown -->
-    <div class="financial-breakdown">
-      <h3 class="section-title">Financial Breakdown</h3>
-      <div class="breakdown-list">
-        <div 
-          *ngFor="let item of selectedRequest.breakdown" 
-          class="breakdown-item"
-        >
-          <span class="breakdown-label">{{ item.label }}</span>
-          <span class="breakdown-value">{{ item.value | currency }}</span>
-        </div>
-        <div class="breakdown-item breakdown-item--total">
-          <span class="breakdown-label">Total Requested</span>
-          <span class="breakdown-value breakdown-value--primary">
-            {{ selectedRequest.budget | currency }}
+        <div>
+
+          <span class="info-label">
+            Destination
           </span>
+
+          <span class="info-value">
+
+            {{ selectedRequest.destination }}
+
+          </span>
+
         </div>
+
       </div>
+
+      <div class="info-row">
+
+        <span class="icon">
+          calendar_today
+        </span>
+
+        <div>
+
+          <span class="info-label">
+            Travel Dates
+          </span>
+
+          <span class="info-value">
+
+            {{ selectedRequest.startDate }}
+            -
+            {{ selectedRequest.endDate }}
+
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="info-row">
+
+        <span class="icon">
+          payments
+        </span>
+
+        <div>
+
+          <span class="info-label">
+            Budget
+          </span>
+
+          <span class="info-value">
+
+            {{
+              selectedRequest.estimatedBudget
+              | currency:'INR'
+            }}
+
+          </span>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Decision Panel -->
+    <!-- DECISION PANEL -->
+
     <div class="decision-panel">
-      <h3 class="panel-title">Finance Decision Panel</h3>
-      
+
+      <h3 class="panel-title">
+        Finance Decision Panel
+      </h3>
+
       <div class="form-group">
-        <label>Final Approved Amount</label>
-        <input 
-          type="number" 
+
+        <label>
+          Approved Amount
+        </label>
+
+        <input
+          type="number"
           [(ngModel)]="approvedAmount"
-          class="form-input"
-        />
+          class="form-input" />
+
       </div>
 
       <div class="form-group">
-        <label>Mandatory Remarks (For Rejection/Hold)</label>
-        <textarea 
+
+        <label>
+          Remarks
+        </label>
+
+        <textarea
           [(ngModel)]="decisionRemarks"
-          placeholder="Explain the reason for adjustment or rejection..."
           rows="3"
           class="form-textarea"
-        ></textarea>
+          placeholder="Write remarks...">
+        </textarea>
+
       </div>
 
       <div class="decision-actions">
-        <button class="btn btn--outline-light" (click)="putOnHold()">
+
+        <button
+          class="btn btn--outline"
+          (click)="putOnHold()">
+
           Put on Hold
+
         </button>
-        <button class="btn btn--light" (click)="approveRequest()">
+
+        <button
+          class="btn btn--primary"
+          (click)="approveRequest()">
+
           Approve
+
         </button>
+
       </div>
 
-      <button class="btn btn--reject-full" (click)="rejectRequest()">
+      <button
+        class="btn btn--reject-full"
+        (click)="rejectRequest()">
+
         Reject Request
+
       </button>
+
     </div>
 
-    <!-- Approval Flow -->
-    <div class="approval-flow">
-      <h3 class="flow-title">Approval Flow</h3>
-      <div class="timeline">
-        <div 
-          *ngFor="let step of selectedRequest.approvalFlow"
-          class="timeline-step"
-          [class.timeline-step--pending]="step.status === 'pending'"
-        >
-          <div 
-            class="timeline-dot"
-            [class.timeline-dot--completed]="step.status === 'completed'"
-            [class.timeline-dot--pending]="step.status === 'pending'"
-          ></div>
-          <div class="timeline-content">
-            <span class="timeline-title">{{ step.title }}</span>
-            <span class="timeline-timestamp">{{ step.timestamp }}</span>
-            <p *ngIf="step.comment" class="timeline-comment">
-              "{{ step.comment }}"
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
+
 </div>
 
-<!-- Overlay for drawer -->
-<div 
+<!-- OVERLAY -->
+
+<div
   class="drawer-overlay"
   *ngIf="isDrawerOpen"
-  (click)="closeDrawer()"
-></div>
+  (click)="closeDrawer()">
+</div>

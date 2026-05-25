@@ -1,71 +1,100 @@
-import { Injectable } from '@angular/core';
-
 import { HttpClient } from '@angular/common/http';
-
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TravelRequestService {
 
-  private apiUrl = 'http://localhost:8080/api/requests';
+  // =========================================
+  // BASE URL
+  // =========================================
 
-  constructor(private http: HttpClient) {}
+  private baseUrl =
+    'http://localhost:8080/api/requests';
 
-    cancelRequest(id: number) {
+  constructor(
+    private http: HttpClient
+  ) {}
 
-  return this.http.put(
+  // =========================================
+  // EMPLOYEE
+  // =========================================
 
-    `${this.apiUrl}/cancel/${id}`,
+  createRequest(data: any) {
 
-    {}
-
-  );
-}
+    return this.http.post(
+      `${this.baseUrl}`,
+      data
+    );
+  }
 
   getEmployeeRequests(employeeId: number) {
 
-  return this.http.get(
-
-    `${this.apiUrl}/employee/${employeeId}`
-  );
-}
-
-  createRequest(payload: any): Observable<any> {
-
-    return this.http.post(this.apiUrl, payload);
+    return this.http.get(
+      `${this.baseUrl}/employee/${employeeId}`
+    );
   }
+
+  cancelRequest(id: number) {
+
+    return this.http.put(
+      `${this.baseUrl}/cancel/${id}`,
+      {}
+    );
+  }
+
+  // =========================================
+  // MANAGER
+  // =========================================
 
   getManagerRequests(managerId: number) {
 
-  return this.http.get(
+    return this.http.get(
+      `${this.baseUrl}/manager/${managerId}`
+    );
+  }
 
-    `${this.apiUrl}/manager/${managerId}`
+  approveRequest(id: number) {
 
-  );
-}
+    return this.http.put(
+      `${this.baseUrl}/approve/${id}`,
+      {}
+    );
+  }
 
-approveRequest(id: number) {
+  rejectRequest(id: number) {
 
-  return this.http.put(
+    return this.http.put(
+      `${this.baseUrl}/reject/${id}`,
+      {}
+    );
+  }
 
-    `${this.apiUrl}/approve/${id}`,
+  // =========================================
+  // FINANCE
+  // =========================================
 
-    {}
+  getFinanceRequests() {
 
-  );
-}
+    return this.http.get(
+      `${this.baseUrl}/finance`
+    );
+  }
 
-rejectRequest(id: number) {
+  financeApproveRequest(id: number) {
 
-  return this.http.put(
+    return this.http.put(
+      `${this.baseUrl}/finance/approve/${id}`,
+      {}
+    );
+  }
 
-    `${this.apiUrl}/reject/${id}`,
+  financeRejectRequest(id: number) {
 
-    {}
-
-  );
-}
-
+    return this.http.put(
+      `${this.baseUrl}/finance/reject/${id}`,
+      {}
+    );
+  }
 }
