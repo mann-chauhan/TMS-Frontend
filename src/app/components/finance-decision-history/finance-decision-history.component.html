@@ -1,0 +1,247 @@
+<!-- Side Navigation -->
+    <app-finance></app-finance>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar__search">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        type="text"
+        placeholder="Search employee, department, request ID..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+      />
+    </div>
+    <div class="topbar__right">
+      <button class="icon-btn" (click)="openNotifications()">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="notif-dot"></span>
+      </button>
+      <button class="icon-btn" (click)="openHelp()">
+        <span class="material-symbols-outlined">help</span>
+      </button>
+      <div class="divider"></div>
+      <div class="user-info">
+        <div class="user-info__text">
+          <p class="user-name">{{ currentUser.name }}</p>
+          <p class="user-role">{{ currentUser.role }}</p>
+        </div>
+        <div class="user-avatar">
+          <img [src]="currentUser.avatar" [alt]="currentUser.name" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content Canvas -->
+  <div class="canvas">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <p class="page-eyebrow">Finance Management</p>
+      <h2 class="page-title">Decision History</h2>
+      <p class="page-desc">
+        Review all approved, rejected, reimbursed, and audited travel finance requests
+        across the organization. Access granular audit trails and receipt archives for compliance oversight.
+      </p>
+    </div>
+
+    <!-- Analytics Cards -->
+    <div class="analytics-grid">
+      <div class="analytics-card" *ngFor="let card of analyticsCards">
+        <div class="analytics-card__top">
+          <div class="analytics-card__icon" [ngStyle]="{ background: card.iconBg }">
+            <span class="material-symbols-outlined" [ngStyle]="{ color: card.iconColor }">{{ card.icon }}</span>
+          </div>
+          <span *ngIf="card.badge" class="analytics-card__badge" [ngStyle]="{ color: card.badgeColor }">
+            {{ card.badge }}
+          </span>
+        </div>
+        <p class="analytics-card__label">{{ card.label }}</p>
+        <p class="analytics-card__value">{{ card.value }}</p>
+      </div>
+    </div>
+
+    <!-- Filters Row -->
+    <div class="filters-row">
+      <select [(ngModel)]="filters.status" (change)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="pending">Pending</option>
+        <option value="reimbursed">Reimbursed</option>
+      </select>
+
+      <select [(ngModel)]="filters.department" (change)="applyFilters()">
+        <option value="">All Departments</option>
+        <option value="Engineering">Engineering</option>
+        <option value="Marketing">Marketing</option>
+        <option value="Sales">Sales</option>
+        <option value="Finance">Finance</option>
+        <option value="Executive">Executive</option>
+      </select>
+
+      <input type="date" [(ngModel)]="filters.date" (change)="applyFilters()" />
+
+      <button class="btn-primary" (click)="exportReports()">
+        <span class="material-symbols-outlined">download</span>
+        Export Reports
+      </button>
+      <button class="btn-outline" (click)="resetFilters()">Reset Filters</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Employee</th>
+            <th>Dept</th>
+            <th>Destination</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of displayedRows"
+            (click)="openDrawer(row)"
+            (mouseenter)="row['hovered'] = true"
+            (mouseleave)="row['hovered'] = false"
+            [style.transform]="row['hovered'] ? 'translateY(-2px)' : 'translateY(0)'"
+          >
+            <td><strong>{{ row.id }}</strong></td>
+            <td>
+              <div class="employee-cell">
+                <div class="avatar-initials">{{ row.initials }}</div>
+                <span>{{ row.employee }}</span>
+              </div>
+            </td>
+            <td class="muted">{{ row.department }}</td>
+            <td>{{ row.destination }}</td>
+            <td><strong>{{ row.amount | currency:'INR' }}</strong></td>
+            <td class="muted">{{ row.date }}</td>
+            <td>
+              <span class="status-pill" [ngClass]="'status-pill--' + row.status">
+                {{ row.statusLabel }}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn" (click)="openDrawer(row); $event.stopPropagation()">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="table-footer">
+        <p class="table-count">Showing {{ displayedRows.length }} of {{ totalRows }} entries</p>
+        <div class="pagination">
+          <button class="page-btn" [disabled]="currentPage === 1" (click)="prevPage()">Previous</button>
+          <button class="page-btn page-btn--active" (click)="nextPage()">Next</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="page-footer">
+    <div class="footer-left">
+      <span class="material-symbols-outlined">verified</span>
+      Financial Security Layer Active
+    </div>
+    <div>Voyage Elite Finance Systems v4.2.0</div>
+  </footer>
+
+</main>
+
+<!-- Side Detail Drawer -->
+<div class="drawer" [class.drawer--open]="isDrawerOpen" *ngIf="selectedRow">
+
+  <div class="drawer__header">
+    <div>
+      <p class="drawer__eyebrow">Detailed Review</p>
+      <h3 class="drawer__title">Request {{ selectedRow.id }}</h3>
+    </div>
+    <button class="icon-btn" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <div class="drawer__body">
+
+    <!-- Employee Profile -->
+    <div class="drawer-profile">
+      <img [src]="selectedRow.avatarUrl || defaultAvatar" [alt]="selectedRow.employee" class="drawer-avatar" />
+      <div>
+        <h4 class="drawer-name">{{ selectedRow.employee }}</h4>
+        <p class="drawer-role">{{ selectedRow.roleTitle }}</p>
+        <div class="drawer-tags">
+          <span class="tag">Tier 1 Elite</span>
+          <span class="tag">EU Resident</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expense Breakdown -->
+    <div class="drawer-section">
+      <p class="section-label">Expense Breakdown</p>
+      <div class="breakdown-list">
+        <div class="breakdown-row" *ngFor="let item of selectedRow.breakdown">
+          <span class="breakdown-label">{{ item.label }}</span>
+          <strong>{{ item.value | currency:'INR' }}</strong>
+        </div>
+        <div class="breakdown-row breakdown-row--total">
+          <span>Total Reimbursement</span>
+          <span class="breakdown-total">{{ selectedRow.amount | currency:'INR' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approval Timeline -->
+    <div class="drawer-section">
+      <p class="section-label">Approval Timeline</p>
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let step of selectedRow.timeline; let last = last">
+          <div class="timeline-dot" [class.timeline-dot--complete]="step.done">
+            <span class="material-symbols-outlined">{{ step.done ? 'check' : 'account_balance' }}</span>
+          </div>
+          <div class="timeline-line" *ngIf="!last"></div>
+          <div class="timeline-content">
+            <p class="timeline-title">{{ step.title }}</p>
+            <p class="timeline-meta">{{ step.by }} — {{ step.date }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentation -->
+    <div class="drawer-section">
+      <p class="section-label">Documentation</p>
+      <div class="docs-grid">
+        <div class="doc-thumb" *ngFor="let doc of selectedRow.docs">
+          <img [src]="doc.preview" [alt]="doc.name" />
+          <div class="doc-label">{{ doc.name }}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="drawer__footer">
+    <button class="btn-primary" (click)="downloadAudit()">Download Full Audit</button>
+    <button class="btn-outline" (click)="printSummary()">Print Summary</button>
+  </div>
+
+</div>
+
+<!-- Overlay -->
+<div class="overlay" *ngIf="isDrawerOpen" (click)="closeDrawer()"></div>

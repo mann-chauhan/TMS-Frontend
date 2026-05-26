@@ -97,4 +97,11 @@ export class TravelRequestService {
       {}
     );
   }
+
+  getFinanceDecisionHistory() {
+
+  return this.http.get(
+    `${this.baseUrl}/finance/history`
+  );
+}
 }

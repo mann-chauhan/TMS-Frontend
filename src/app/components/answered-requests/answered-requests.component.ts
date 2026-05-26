@@ -4,14 +4,23 @@
  */
 
 import { Component, OnInit } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
 
-import { ManagerComponent } from '../manager/manager.component';
+import {
+  Router,
+  RouterModule
+} from '@angular/router';
 
-import { TravelRequestService }
-from '../../services/travel-request.service';
+import {
+  ManagerComponent
+} from '../manager/manager.component';
+
+import {
+  TravelRequestService
+} from '../../services/travel-request.service';
 
 // ================================================
 // INTERFACE
@@ -67,15 +76,22 @@ interface NavItem {
 
 @Component({
   selector: 'app-answered-requests',
+
   standalone: true,
+
   imports: [
     CommonModule,
     FormsModule,
     RouterModule,
     ManagerComponent
   ],
-  templateUrl: './answered-requests.component.html',
-  styleUrls: ['./answered-requests.component.scss']
+
+  templateUrl:
+    './answered-requests.component.html',
+
+  styleUrls: [
+    './answered-requests.component.scss'
+  ]
 })
 
 export class AnsweredRequestsComponent
@@ -121,7 +137,7 @@ implements OnInit {
   // ================================================
 
   profileImage =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBcF2cK-8D23AMj2Qi54mwPJhpBx6qZKIbVjJ2brJdvWlHeUO1hUKgUVFlb8gEZEv1vnrXFM4ePdly6cetz1yVsOlT4f42fDPZ8T8czoDuMN-74iuIQPHWZgy7VQJ5QYieeo5ExDuZCHAT-4E1WrRl1lnzmAk4vbAhj4Q_WeqB4eTxpmzPm-IWdmz82lv0By4PJfXdu7O-Ij7KqmhEqhrarF0YoDYVNspLHNx5nodipdgVNdvV30jS0ESbrgeRCGixjIkvZfjgFWRnW';
+    'https://i.pravatar.cc/150?img=12';
 
   // ================================================
   // DATA
@@ -131,7 +147,8 @@ implements OnInit {
 
   filteredRequests: TravelRequest[] = [];
 
-  selectedRequest: TravelRequest | null = null;
+  selectedRequest:
+    TravelRequest | null = null;
 
   searchTerm = '';
 
@@ -139,12 +156,16 @@ implements OnInit {
 
   rejectedCount = 0;
 
+  // ================================================
+  // CONSTRUCTOR
+  // ================================================
+
   constructor(
 
     private router: Router,
 
     private travelRequestService:
-    TravelRequestService
+      TravelRequestService
 
   ) {}
 
@@ -169,7 +190,10 @@ implements OnInit {
 
         next: (response: any) => {
 
-          console.log(response);
+          console.log(
+            'ANSWERED REQUESTS',
+            response
+          );
 
           this.answeredRequests =
 
@@ -177,14 +201,18 @@ implements OnInit {
 
               (request: any) =>
 
-                request.status === 'MANAGER_APPROVED'
+                request.status ===
+                  'MANAGER_APPROVED'
+
                 ||
 
-                request.status === 'REJECTED'
+                request.status ===
+                  'REJECTED'
             );
 
           this.filteredRequests =
-            this.answeredRequests;
+
+            [...this.answeredRequests];
 
           this.updateCounts();
         },
@@ -206,7 +234,9 @@ implements OnInit {
 
       this.answeredRequests.filter(
 
-        r => r.status === 'MANAGER_APPROVED'
+        r =>
+          r.status ===
+          'MANAGER_APPROVED'
 
       ).length;
 
@@ -214,7 +244,9 @@ implements OnInit {
 
       this.answeredRequests.filter(
 
-        r => r.status === 'REJECTED'
+        r =>
+          r.status ===
+          'REJECTED'
 
       ).length;
   }
@@ -227,27 +259,30 @@ implements OnInit {
 
     const searchLower =
 
-      this.searchTerm.toLowerCase();
+      this.searchTerm
+        .toLowerCase();
 
     this.filteredRequests =
 
-      this.answeredRequests.filter(request =>
+      this.answeredRequests.filter(
 
-        request.requestCode
-          ?.toLowerCase()
-          .includes(searchLower)
+        request =>
 
-        ||
+          request.requestCode
+            ?.toLowerCase()
+            .includes(searchLower)
 
-        request.employeeName
-          ?.toLowerCase()
-          .includes(searchLower)
+          ||
 
-        ||
+          request.employeeName
+            ?.toLowerCase()
+            .includes(searchLower)
 
-        request.destination
-          ?.toLowerCase()
-          .includes(searchLower)
+          ||
+
+          request.destination
+            ?.toLowerCase()
+            .includes(searchLower)
       );
   }
 
@@ -275,7 +310,9 @@ implements OnInit {
   formatStatus(status: string): string {
 
     return status
+
       .replace('_', ' ')
+
       .toUpperCase();
   }
 
@@ -283,9 +320,19 @@ implements OnInit {
   // VIEW DETAILS
   // ================================================
 
-  viewDetails(request: TravelRequest): void {
+  viewDetails(
+    request: TravelRequest,
+    event?: Event
+  ): void {
+
+    event?.stopPropagation();
 
     this.selectedRequest = request;
+
+    console.log(
+      'VIEW REQUEST',
+      request
+    );
   }
 
   // ================================================
@@ -301,13 +348,17 @@ implements OnInit {
   // DELETE REQUEST
   // ================================================
 
-  deleteRequest(requestId: number): void {
+  deleteRequest(
+    requestId: number
+  ): void {
 
     const confirmed = confirm(
       'Are you sure you want to delete this request?'
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     this.answeredRequests =
 
@@ -334,7 +385,9 @@ implements OnInit {
       'Are you sure you want to clear all answered requests?'
     );
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
 
     this.answeredRequests = [];
 
@@ -352,39 +405,48 @@ implements OnInit {
     const headers = [
 
       'Request Code',
+
       'Employee Name',
+
       'Destination',
+
       'Start Date',
+
       'End Date',
+
       'Budget',
+
       'Status'
     ];
 
     const rows =
 
-      this.answeredRequests.map(req => [
+      this.answeredRequests.map(
 
-        req.requestCode,
+        req => [
 
-        req.employeeName,
+          req.requestCode,
 
-        req.destination,
+          req.employeeName,
 
-        req.startDate,
+          req.destination,
 
-        req.endDate,
+          req.startDate,
 
-        req.estimatedBudget,
+          req.endDate,
 
-        req.status
-      ]);
+          req.estimatedBudget,
+
+          req.status
+        ]
+      );
 
     const csvContent = [
 
       headers.join(','),
 
-      ...rows.map(row =>
-        row.join(',')
+      ...rows.map(
+        row => row.join(',')
       )
 
     ].join('\n');
@@ -395,7 +457,7 @@ implements OnInit {
 
       {
         type:
-        'text/csv;charset=utf-8;'
+          'text/csv;charset=utf-8;'
       }
     );
 
@@ -405,7 +467,10 @@ implements OnInit {
     const url =
       URL.createObjectURL(blob);
 
-    link.setAttribute('href', url);
+    link.setAttribute(
+      'href',
+      url
+    );
 
     link.setAttribute(
 
@@ -418,7 +483,8 @@ implements OnInit {
       }.csv`
     );
 
-    link.style.visibility = 'hidden';
+    link.style.visibility =
+      'hidden';
 
     document.body.appendChild(link);
 
@@ -441,7 +507,9 @@ implements OnInit {
 
     if (confirmed) {
 
-      this.router.navigate(['/login']);
+      this.router.navigate([
+        '/login'
+      ]);
     }
   }
 
@@ -450,8 +518,11 @@ implements OnInit {
   // ================================================
 
   trackByNavLabel(
+
     index: number,
+
     item: NavItem
+
   ): string {
 
     return item.label;

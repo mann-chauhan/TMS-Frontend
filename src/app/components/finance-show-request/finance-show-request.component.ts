@@ -191,107 +191,119 @@ export class FinanceApprovalCenterComponent
 
   ngOnInit(): void {
 
+  setTimeout(() => {
+
     this.loadRequests();
-  }
+
+  }, 100);
+}
 
   // =========================================
   // LOAD REQUESTS
   // =========================================
 
-  private loadRequests(): void {
+private loadRequests(): void {
 
-    this.travelRequestService
-      .getFinanceRequests()
-      .subscribe({
+  this.travelRequestService
+    .getFinanceRequests()
+    .subscribe({
 
-        next: (response: any) => {
+      next: (response: any) => {
 
-          console.log(response);
+        console.log(
+          'FINANCE API RESPONSE',
+          response
+        );
 
-          this.allRequests =
-            response.data || response;
+        this.allRequests =
+          response.data || [];
 
-          this.displayedRequests =
-            [...this.allRequests];
+        this.displayedRequests = [
+          ...this.allRequests
+        ];
 
-          this.totalRequests =
-            this.displayedRequests.length;
+        this.totalRequests =
+          this.displayedRequests.length;
 
-          this.updateKpiCards();
-        },
-
-        error: (error: any) => {
-
-          console.log(error);
-        }
-      });
-  }
-
-  // =========================================
-  // KPI UPDATE
-  // =========================================
-
-  updateKpiCards(): void {
-
-    const approved =
-      this.allRequests.filter(
-        r => r.status === 'FINANCE_APPROVED'
-      ).length;
-
-    const rejected =
-      this.allRequests.filter(
-        r => r.status === 'REJECTED'
-      ).length;
-
-    this.kpiCards = [
-
-      {
-        label: 'Total Requests',
-        value: this.allRequests.length.toString()
+        // IMPORTANT
+        this.updateKpiCards();
       },
 
-      {
-        label: 'Pending Finance',
-        value: this.allRequests.length.toString()
-      },
+      error: (error) => {
 
-      {
-        label: 'Approved',
-        value: approved.toString()
-      },
-
-      {
-        label: 'Rejected',
-        value: rejected.toString()
+        console.log(error);
       }
-    ];
-  }
+    });
+}
 
-  // =========================================
+  // KPI UPDATE
+
+
+updateKpiCards(): void {
+
+  const approved =
+    this.allRequests.filter(
+      r => r.status === 'FINANCE_APPROVED'
+    ).length;
+
+  const rejected =
+    this.allRequests.filter(
+      r => r.status === 'REJECTED'
+    ).length;
+
+  const pending =
+    this.allRequests.filter(
+      r => r.status === 'MANAGER_APPROVED'
+    ).length;
+
+  this.kpiCards = [
+
+    {
+      label: 'Total Requests',
+      value: this.allRequests.length.toString()
+    },
+
+    {
+      label: 'Pending Finance',
+      value: pending.toString()
+    },
+
+    {
+      label: 'Approved',
+      value: approved.toString()
+    },
+
+    {
+      label: 'Rejected',
+      value: rejected.toString()
+    }
+  ];
+}
+ 
   // SEARCH
-  // =========================================
+
 
   onSearch(): void {
 
-    const q =
-      this.searchQuery
-        .trim()
-        .toLowerCase();
+  const q =
+    this.searchQuery
+      .trim()
+      .toLowerCase();
 
-    this.displayedRequests =
-      this.allRequests.filter(r =>
+  this.displayedRequests =
+    this.allRequests.filter(r =>
 
-        r.requestCode
-          ?.toLowerCase()
-          .includes(q)
+      r.requestCode
+        ?.toLowerCase()
+        .includes(q)
 
-        ||
+      ||
 
-        r.employeeName
-          ?.toLowerCase()
-          .includes(q)
-      );
-  }
+      r.employeeName
+        ?.toLowerCase()
+        .includes(q)
+    );
+}
 
   // =========================================
   // FILTERS

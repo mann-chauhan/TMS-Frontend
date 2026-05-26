@@ -11,7 +11,7 @@ export const routes: Routes = [
   },
   {
     path: 'finance',
-    loadComponent: () => import('./components/finance/finance.component').then(m => m.FinanceComponent)
+    loadComponent: () => import('./components/finance-dashboard/finance-dashboard.component').then(m => m.FinanceDashboardComponent)
   },
   {
     path: 'new-request',
@@ -70,10 +70,6 @@ export const routes: Routes = [
     loadComponent: () => import('./components/finance-show-request/finance-show-request.component').then(m => m.FinanceApprovalCenterComponent)
   },
   {
-    path: 'finance-acknowledged',
-    loadComponent: () => import('./components/finance-acknowledged/finance-acknowledged.component').then(m => m.FinanceAcknowledgedComponent)
-  },
-  {
     path: 'finance-show-accountabilities',
     loadComponent: () => import('./components/finance-show-accountabilities/finance-show-accountabilities.component').then(m => m.FinanceShowAccountabilitiesComponent)
   },
@@ -96,6 +92,10 @@ export const routes: Routes = [
   {
     path: 'admin-profile',
     loadComponent: () => import('./components/admin-profile/admin-profile.component').then(m => m.AdminProfileComponent)
+  },
+    {
+    path: 'finance-decision-history',
+    loadComponent: () => import('./components/finance-decision-history/finance-decision-history.component').then(m => m.FinanceDecisionHistoryComponent)
   },
   {
     path: '**',

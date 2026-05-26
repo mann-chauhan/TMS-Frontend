@@ -24,8 +24,8 @@ export class FinanceComponent {
     this.router.navigate(['/finance-show-requests']);
   }
 
-  navigateToAcknowledged() {
-    this.router.navigate(['/finance-acknowledged']);
+   navigateToDecisionHistory() {
+    this.router.navigate(['/finance-decision-history']);
   }
 
   navigateToShowAccountabilities() {

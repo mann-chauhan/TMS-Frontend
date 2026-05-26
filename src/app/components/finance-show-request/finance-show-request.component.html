@@ -1,57 +1,80 @@
 <app-finance></app-finance>
 
-<!-- TOP BAR -->
-<header class="topbar">
+<!-- MODERN HEADER -->
 
-  <div class="topbar__search">
-    <span class="icon">search</span>
 
-    <input
-      type="text"
-      placeholder="Search by Request ID or Employee..."
-      [(ngModel)]="searchQuery"
-      (input)="onSearch()" />
-  </div>
+<header class="modern-header">
 
-  <div class="topbar__actions">
+  <div class="header-left">
 
-    <div class="topbar__icons">
+    <div class="header-title-group">
 
-      <button
-        class="icon-btn"
-        (click)="openNotifications()">
+      <h1 class="header-title">
+        Finance Approval
+      </h1>
 
-        <span class="icon">
-          notifications
-        </span>
-
-      </button>
-
-      <button
-        class="icon-btn"
-        (click)="openHelp()">
-
-        <span class="icon">
-          help
-        </span>
-
-      </button>
+      <p class="header-subtitle">
+        Review, verify and manage travel approvals
+      </p>
 
     </div>
 
-    <div class="topbar__user">
+    <!-- NOTE BADGE -->
 
-      <span class="user-name">
-        {{ currentUser.name }}
+    <div class="header-note">
+
+      <span class="icon">
+        info
       </span>
 
-      <div class="user-avatar">
+      <span>
+        12 requests require immediate review
+      </span>
 
-        <img
-          [src]="currentUser.avatar"
-          [alt]="currentUser.name" />
+    </div>
 
-      </div>
+  </div>
+
+  <!-- RIGHT -->
+
+  <div class="header-right">
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+      <span class="icon">
+        search
+      </span>
+
+      <input type="text" placeholder="Search requests..." [(ngModel)]="searchQuery" (input)="onSearch()" />
+
+    </div>
+
+
+    <!-- ACTIONS -->
+
+    <button class="header-btn">
+
+      <span class="icon">
+        notifications
+      </span>
+
+    </button>
+
+    <button class="header-btn">
+
+      <span class="icon">
+        tune
+      </span>
+
+    </button>
+
+    <!-- USER -->
+
+    <div class="header-user">
+
+      <img [src]="currentUser.avatar" [alt]="currentUser.name" />
 
     </div>
 
@@ -59,290 +82,23 @@
 
 </header>
 
-<!-- MAIN CONTENT -->
+<!-- MAIN -->
 
 <main class="main-content">
 
-  <!-- PAGE HEADER -->
+  <!-- KPI -->
 
-  <section class="page-header">
+  <section class="stats-grid">
 
-    <div class="header-info">
+    <div *ngFor="let kpi of kpiCards" class="stat-card">
 
-      <h1 class="page-title">
-        Finance Approval Center
-      </h1>
-
-      <p class="page-description">
-        Review, verify and approve corporate travel requests.
-      </p>
-
-    </div>
-
-    <div class="header-actions">
-
-      <button
-        class="btn btn--outline"
-        (click)="exportData()">
-
-        <span class="icon">
-          file_download
-        </span>
-
-        Export
-
-      </button>
-
-      <button
-        class="btn btn--outline"
-        (click)="openFilters()">
-
-        <span class="icon">
-          filter_list
-        </span>
-
-        Filter
-
-      </button>
-
-      <button
-        class="btn btn--primary"
-        (click)="openReports()">
-
-        <span class="icon">
-          assessment
-        </span>
-
-        Reports
-
-      </button>
-
-    </div>
-
-  </section>
-
-  <!-- KPI CARDS -->
-
-  <section class="kpi-grid">
-
-    <div
-      *ngFor="let kpi of kpiCards"
-      class="kpi-card"
-      [@fadeIn]>
-
-      <span class="kpi-card__label">
+      <span class="stat-label">
         {{ kpi.label }}
       </span>
 
-      <div class="kpi-card__content">
-
-        <span class="kpi-card__value">
-          {{ kpi.value }}
-        </span>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- FILTERS -->
-
-  <section class="filters-bar">
-
-    <div class="filter-group">
-
-      <label>Status</label>
-
-      <select
-        [(ngModel)]="filters.status"
-        (change)="applyFilters()">
-
-        <option value="">
-          All Statuses
-        </option>
-
-        <option value="MANAGER_APPROVED">
-          MANAGER APPROVED
-        </option>
-
-        <option value="FINANCE_APPROVED">
-          FINANCE APPROVED
-        </option>
-
-        <option value="REJECTED">
-          REJECTED
-        </option>
-
-      </select>
-
-    </div>
-
-    <div class="filter-group">
-
-      <label>Budget Range</label>
-
-      <div class="budget-range">
-
-        <input
-          type="number"
-          placeholder="Min"
-          [(ngModel)]="filters.budgetMin" />
-
-        <input
-          type="number"
-          placeholder="Max"
-          [(ngModel)]="filters.budgetMax" />
-
-      </div>
-
-    </div>
-
-    <button
-      class="btn btn--primary"
-      (click)="applyFilters()">
-
-      Apply Filters
-
-    </button>
-
-  </section>
-
-  <!-- DASHBOARD -->
-
-  <section class="dashboard-grid">
-
-    <!-- ALERTS -->
-
-    <div class="policy-alerts">
-
-      <div class="card">
-
-        <h3 class="card__title">
-
-          <span class="icon icon--warning">
-            warning
-          </span>
-
-          Policy Alerts
-
-        </h3>
-
-        <div class="alerts-list">
-
-          <div
-            *ngFor="let alert of policyAlerts"
-            class="alert-item"
-            (click)="viewAlert(alert)">
-
-            <span class="alert-item__title">
-              {{ alert.title }}
-            </span>
-
-            <span class="alert-item__description">
-              {{ alert.description }}
-            </span>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- CHARTS -->
-
-    <div class="visualizations">
-
-      <!-- BAR CHART -->
-
-      <div class="chart-card chart-card--bar">
-
-        <h3 class="card__title">
-          Monthly Spending
-        </h3>
-
-        <div class="bar-chart">
-
-          <div
-            *ngFor="let bar of barChartData"
-            class="bar"
-            [class.bar--active]="bar.isActive"
-            [style.height.%]="
-              (bar.value / maxBarValue) * 100
-            ">
-
-            <div class="bar__tooltip">
-              {{ bar.tooltip }}
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="chart-labels">
-
-          <span *ngFor="let bar of barChartData">
-            {{ bar.month }}
-          </span>
-
-        </div>
-
-      </div>
-
-      <!-- DOUGHNUT -->
-
-      <div class="chart-card">
-
-        <h3 class="card__title">
-          Budget Usage
-        </h3>
-
-        <div class="doughnut-chart">
-
-          <div class="chart-visual">
-
-            <div class="chart-center">
-
-              <span class="chart-value">
-                {{ doughnutValue }}%
-              </span>
-
-              <span class="chart-label">
-                Used
-              </span>
-
-            </div>
-
-          </div>
-
-          <div class="chart-legend">
-
-            <div
-              *ngFor="let item of doughnutLegend"
-              class="legend-item">
-
-              <span
-                class="legend-dot"
-                [style.background-color]="item.color">
-              </span>
-
-              <span>
-                {{ item.label }}
-              </span>
-
-              <span class="legend-value">
-                {{ item.value }}%
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
+      <h2 class="stat-value">
+        {{ kpi.value }}
+      </h2>
 
     </div>
 
@@ -350,274 +106,188 @@
 
   <!-- TABLE -->
 
-  <section class="data-table-section">
+  <section class="table-section">
 
-    <div class="card card--table">
+    <div class="table-header">
 
-      <div class="card__header">
+      <h2>
+        Pending Requests
+      </h2>
 
-        <h3 class="card__title">
-          Pending Travel Requests
-        </h3>
+      <span>
+        {{ displayedRequests.length }}
+        Requests
+      </span>
 
-        <span class="table-count">
+    </div>
 
-          Showing
-          {{ displayedRequests.length }}
-          Requests
+    <div class="table-wrapper">
 
-        </span>
+      <table class="data-table">
 
-      </div>
+        <thead>
 
-      <div class="table-wrapper">
+          <tr>
 
-        <table class="data-table">
+            <th>ID</th>
+            <th>Employee</th>
+            <th>Destination</th>
+            <th>Dates</th>
+            <th>Budget</th>
+            <th>Status</th>
+            <th>Actions</th>
 
-          <thead>
+          </tr>
 
-            <tr>
+        </thead>
 
-              <th>ID</th>
-              <th>Employee</th>
-              <th>Destination</th>
-              <th>Dates</th>
-              <th>Budget</th>
-              <th>Status</th>
-              <th>Finance</th>
-              <th class="text-right">
-                Actions
-              </th>
+        <tbody>
 
-            </tr>
+          <tr *ngFor="
+              let request of displayedRequests
+            ">
 
-          </thead>
+            <!-- ID -->
 
-          <tbody>
+            <td>
 
-            <tr
-              *ngFor="
-                let request of displayedRequests
-              "
-              (click)="openDrawer(request)">
+              <strong>
+                {{ request.requestCode }}
+              </strong>
 
-              <!-- REQUEST CODE -->
+            </td>
 
-              <td>
+            <!-- EMPLOYEE -->
 
-                <strong>
-                  {{ request.requestCode }}
-                </strong>
+            <td>
 
-              </td>
+              <div class="employee-cell">
 
-              <!-- EMPLOYEE -->
+                <img [src]="defaultAvatar" class="employee-avatar" alt="employee" />
 
-              <td>
+                <div>
 
-                <div class="employee-cell">
+                  <div class="employee-name">
 
-                  <div class="employee-avatar">
-
-                    <img
-                      [src]="defaultAvatar"
-                      alt="employee" />
+                    {{ request.employeeName }}
 
                   </div>
 
-                  <div class="employee-info">
+                  <span class="employee-dept">
 
-                    <span class="employee-name">
+                    {{ request.department }}
 
-                      {{ request.employeeName }}
+                  </span>
 
-                    </span>
-
-                    <span class="employee-dept">
-
-                      Finance Department
-
-                    </span>
-
+                  <div class="employee-role">
+                    Corporate Employee
                   </div>
 
                 </div>
 
-              </td>
+              </div>
 
-              <!-- DESTINATION -->
+            </td>
 
-              <td>
-                {{ request.destination }}
-              </td>
+            <!-- DESTINATION -->
 
-              <!-- DATES -->
+            <td>
+              {{ request.destination }}
+            </td>
 
-              <td class="date-cell">
+            <!-- DATES -->
 
-                {{ request.startDate }}
-                -
-                {{ request.endDate }}
+            <td>
 
-              </td>
+              {{ request.startDate }}
+              -
+              {{ request.endDate }}
 
-              <!-- BUDGET -->
+            </td>
 
-              <td>
+            <!-- BUDGET -->
 
-                <strong>
+            <td>
 
-                  {{
-                    request.estimatedBudget
-                    | currency:'INR'
-                  }}
+              {{
+              request.estimatedBudget
+              | currency:'INR'
+              }}
 
-                </strong>
+            </td>
 
-              </td>
+            <!-- STATUS -->
 
-              <!-- STATUS -->
+            <td>
 
-              <td>
+              <span class="status-badge">
 
-                <span class="status-badge">
+                {{ request.status }}
 
-                  {{ request.status }}
+              </span>
 
-                </span>
+            </td>
 
-              </td>
+            <!-- ACTIONS -->
 
-              <!-- FINANCE -->
+            <td>
 
-              <td>
+              <div class="table-actions">
 
-                <span class="status-badge">
+                <!-- VIEW -->
 
-                  PENDING
+                <button class="icon-btn" (click)="
+                    viewDetails(
+                      request,
+                      $event
+                    )
+                  ">
 
-                </span>
+                  <span class="icon">
+                    visibility
+                  </span>
 
-              </td>
+                </button>
 
-              <!-- ACTIONS -->
+                <!-- APPROVE -->
 
-              <td class="text-right">
+                <button class="icon-btn approve-btn" (click)="
+                    quickApprove(
+                      request,
+                      $event
+                    )
+                  ">
 
-                <div class="table-actions">
+                  <span class="icon">
+                    check
+                  </span>
 
-                  <!-- VIEW -->
+                </button>
 
-                  <button
-                    class="action-btn"
-                    (click)="
-                      viewDetails(
-                        request,
-                        $event
-                      )
-                    ">
+                <!-- REJECT -->
 
-                    <span class="icon">
-                      visibility
-                    </span>
+                <button class="icon-btn reject-btn" (click)="
+                    quickReject(
+                      request,
+                      $event
+                    )
+                  ">
 
-                  </button>
+                  <span class="icon">
+                    close
+                  </span>
 
-                  <!-- APPROVE -->
+                </button>
 
-                  <button
-                    class="action-btn action-btn--approve"
-                    (click)="
-                      quickApprove(
-                        request,
-                        $event
-                      )
-                    ">
+              </div>
 
-                    <span class="icon">
-                      check_circle
-                    </span>
+            </td>
 
-                  </button>
+          </tr>
 
-                  <!-- REJECT -->
+        </tbody>
 
-                  <button
-                    class="action-btn action-btn--reject"
-                    (click)="
-                      quickReject(
-                        request,
-                        $event
-                      )
-                    ">
-
-                    <span class="icon">
-                      cancel
-                    </span>
-
-                  </button>
-
-                </div>
-
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-      <!-- PAGINATION -->
-
-      <div class="table-footer">
-
-        <button
-          class="pagination-btn"
-          [disabled]="currentPage === 1"
-          (click)="previousPage()">
-
-          <span class="icon">
-            arrow_back
-          </span>
-
-          Previous
-
-        </button>
-
-        <div class="pagination-numbers">
-
-          <button
-            *ngFor="let page of visiblePages"
-            class="page-number"
-            [class.page-number--active]="
-              page === currentPage
-            "
-            (click)="goToPage(page)">
-
-            {{ page }}
-
-          </button>
-
-        </div>
-
-        <button
-          class="pagination-btn"
-          [disabled]="
-            currentPage === totalPages
-          "
-          (click)="nextPage()">
-
-          Next
-
-          <span class="icon">
-            arrow_forward
-          </span>
-
-        </button>
-
-      </div>
+      </table>
 
     </div>
 
@@ -625,41 +295,33 @@
 
 </main>
 
-<!-- SIDE DRAWER -->
+<!-- DRAWER -->
 
-<div
-  class="side-drawer"
-  [class.side-drawer--open]="
+<div class="side-drawer" [class.side-drawer--open]="
     isDrawerOpen
-  "
-  [@slideInOut]>
+  ">
 
-  <div
-    class="drawer-content"
-    *ngIf="selectedRequest">
+  <div class="drawer-content" *ngIf="selectedRequest">
 
     <!-- HEADER -->
 
-    <header class="drawer-header">
+    <div class="drawer-header">
 
       <div>
 
         <span class="drawer-id">
 
-          Request ID:
           {{ selectedRequest.requestCode }}
 
         </span>
 
-        <h2 class="drawer-title">
+        <h2>
           Request Details
         </h2>
 
       </div>
 
-      <button
-        class="icon-btn"
-        (click)="closeDrawer()">
+      <button class="icon-btn" (click)="closeDrawer()">
 
         <span class="icon">
           close
@@ -667,179 +329,96 @@
 
       </button>
 
-    </header>
+    </div>
 
-    <!-- EMPLOYEE PROFILE -->
+    <!-- DETAILS -->
 
-    <div class="employee-profile">
+    <div class="drawer-body">
 
-      <img
-        [src]="defaultAvatar"
-        class="profile-image"
-        alt="employee" />
+      <div class="detail-item">
 
-      <div class="profile-info">
+        <label>
+          Employee
+        </label>
 
-        <h4 class="profile-name">
-
+        <p>
           {{ selectedRequest.employeeName }}
+        </p>
 
-        </h4>
+      </div>
 
-        <span class="profile-subtitle">
+      <div class="detail-item">
 
-          Corporate Employee
+        <label>
+          Destination
+        </label>
 
-        </span>
+        <p>
+          {{ selectedRequest.destination }}
+        </p>
 
-        <span class="profile-badge">
+      </div>
 
-          Business Travel
+      <div class="detail-item">
 
-        </span>
+        <label>
+          Travel Dates
+        </label>
+
+        <p>
+
+          {{ selectedRequest.startDate }}
+          -
+          {{ selectedRequest.endDate }}
+
+        </p>
+
+      </div>
+
+      <div class="detail-item">
+
+        <label>
+          Budget
+        </label>
+
+        <p>
+
+          {{
+          selectedRequest.estimatedBudget
+          | currency:'INR'
+          }}
+
+        </p>
+
+      </div>
+
+      <div class="detail-item">
+
+        <label>
+          Purpose
+        </label>
+
+        <p>
+          {{ selectedRequest.purpose }}
+        </p>
 
       </div>
 
     </div>
 
-    <!-- TRAVEL INFO -->
+    <!-- ACTIONS -->
 
-    <div class="travel-info">
+    <div class="drawer-actions">
 
-      <div class="info-row">
+      <button class="reject-full-btn" (click)="rejectRequest()">
 
-        <span class="icon">
-          travel_explore
-        </span>
+        Reject
 
-        <div>
+      </button>
 
-          <span class="info-label">
-            Destination
-          </span>
+      <button class="approve-full-btn" (click)="approveRequest()">
 
-          <span class="info-value">
-
-            {{ selectedRequest.destination }}
-
-          </span>
-
-        </div>
-
-      </div>
-
-      <div class="info-row">
-
-        <span class="icon">
-          calendar_today
-        </span>
-
-        <div>
-
-          <span class="info-label">
-            Travel Dates
-          </span>
-
-          <span class="info-value">
-
-            {{ selectedRequest.startDate }}
-            -
-            {{ selectedRequest.endDate }}
-
-          </span>
-
-        </div>
-
-      </div>
-
-      <div class="info-row">
-
-        <span class="icon">
-          payments
-        </span>
-
-        <div>
-
-          <span class="info-label">
-            Budget
-          </span>
-
-          <span class="info-value">
-
-            {{
-              selectedRequest.estimatedBudget
-              | currency:'INR'
-            }}
-
-          </span>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- DECISION PANEL -->
-
-    <div class="decision-panel">
-
-      <h3 class="panel-title">
-        Finance Decision Panel
-      </h3>
-
-      <div class="form-group">
-
-        <label>
-          Approved Amount
-        </label>
-
-        <input
-          type="number"
-          [(ngModel)]="approvedAmount"
-          class="form-input" />
-
-      </div>
-
-      <div class="form-group">
-
-        <label>
-          Remarks
-        </label>
-
-        <textarea
-          [(ngModel)]="decisionRemarks"
-          rows="3"
-          class="form-textarea"
-          placeholder="Write remarks...">
-        </textarea>
-
-      </div>
-
-      <div class="decision-actions">
-
-        <button
-          class="btn btn--outline"
-          (click)="putOnHold()">
-
-          Put on Hold
-
-        </button>
-
-        <button
-          class="btn btn--primary"
-          (click)="approveRequest()">
-
-          Approve
-
-        </button>
-
-      </div>
-
-      <button
-        class="btn btn--reject-full"
-        (click)="rejectRequest()">
-
-        Reject Request
+        Approve
 
       </button>
 
@@ -851,8 +430,5 @@
 
 <!-- OVERLAY -->
 
-<div
-  class="drawer-overlay"
-  *ngIf="isDrawerOpen"
-  (click)="closeDrawer()">
+<div class="drawer-overlay" *ngIf="isDrawerOpen" (click)="closeDrawer()">
 </div>
