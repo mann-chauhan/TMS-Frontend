@@ -123,6 +123,7 @@ export class FinanceDecisionHistoryComponent implements OnInit {
 
   searchQuery = '';
   isDrawerOpen = false;
+  selectedRequest: any = null;
   selectedRow: TravelRow | null = null;
   defaultAvatar = AVATAR_SVG;
 

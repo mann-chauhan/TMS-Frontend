@@ -101,21 +101,31 @@ getManagerRequestHistory(
     );
   }
 
-  financeApproveRequest(id: number) {
+financeApproveRequest(
+  id: number,
+  remarks: string
+) {
 
-    return this.http.put(
-      `${this.baseUrl}/finance/approve/${id}`,
-      {}
-    );
-  }
+  return this.http.put(
+    `${this.baseUrl}/finance/approve/${id}`,
+    {
+      remarks: remarks
+    }
+  );
+}
 
-  financeRejectRequest(id: number) {
+financeRejectRequest(
+  id: number,
+  remarks: string
+) {
 
-    return this.http.put(
-      `${this.baseUrl}/finance/reject/${id}`,
-      {}
-    );
-  }
+  return this.http.put(
+    `${this.baseUrl}/finance/reject/${id}`,
+    {
+      remarks: remarks
+    }
+  );
+}
 
   getFinanceDecisionHistory() {
 

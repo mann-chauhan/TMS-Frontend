@@ -428,7 +428,8 @@ export class FinanceApprovalCenterComponent
 
     this.travelRequestService
       .financeApproveRequest(
-        this.selectedRequest.id
+        this.selectedRequest.id,
+        this.decisionRemarks
       )
       .subscribe({
 
@@ -463,9 +464,10 @@ export class FinanceApprovalCenterComponent
     }
 
     this.travelRequestService
-      .financeRejectRequest(
-        this.selectedRequest.id
-      )
+.financeRejectRequest(
+  this.selectedRequest.id,
+  this.decisionRemarks
+)
       .subscribe({
 
         next: () => {

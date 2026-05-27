@@ -200,8 +200,9 @@ html {
 
 .form-title {
   font-family:'Times New Roman', Times, serif;
+
   font-size: 3rem;
-  font-weight: 400;
+  font-weight: Bolder;
   line-height: 1.1;
   color: #0a0a0a;
   letter-spacing: -0.02em;
@@ -817,6 +818,7 @@ select {
 }
 
 .main-layout {
+  margin-left: 200px; /* Width of the sidebar */
   display: flex;
 }
 
