@@ -8,19 +8,19 @@
 // TOKENS
 // ============================================
 
-$sidebar-w:   280px;
-$topbar-h:    80px;
+$sidebar-w:   260px;
+$topbar-h:    64px;
 $drawer-w:    480px;
 
 $black:       #000000;
 $white:       #ffffff;
 $gray-50:     #f9f9f9;
-$gray-100:    #f3f3f3;
-$gray-200:    #e8e8e8;
-$gray-300:    #dfe0e0;
-$gray-400:    #cfc4c5;
-$gray-500:    #7e7576;
-$gray-600:    #4c4546;
+$gray-100:    #f5f5f5;
+$gray-200:    #e5e5e5;
+$gray-300:    #d4d4d4;
+$gray-400:    #a3a3a3;
+$gray-500:    #737373;
+$gray-600:    #525252;
 $gray-800:    #303030;
 $gray-900:    #1b1b1b;
 
@@ -45,13 +45,6 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-family: $font-sans;
-}
-
-@mixin glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
 @mixin transition($p: all, $d: 200ms) {
@@ -112,13 +105,12 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
   right: 0;
   width: calc(100% - #{$sidebar-w});
   height: $topbar-h;
-  background: rgba($gray-50, 0.85);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid $gray-400;
+  background: $white;
+  border-bottom: 1px solid $gray-200;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 32px;
+  padding: 0 24px;
   z-index: 40;
 
   &__search {
@@ -137,16 +129,16 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 
     input {
       width: 100%;
-      background: $gray-100;
-      border: none;
-      border-radius: 999px;
+      background: $gray-50;
+      border: 1px solid $gray-200;
+      border-radius: 8px;
       padding: 10px 16px 10px 42px;
       font: inherit;
       font-size: 14px;
       color: $gray-900;
 
       &::placeholder { color: $gray-500; }
-      &:focus { outline: none; box-shadow: 0 0 0 2px $gray-400; }
+      &:focus { outline: none; border-color: $black; box-shadow: 0 0 0 1px rgba($black, 0.08); }
     }
   }
 
@@ -232,7 +224,7 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 
 .canvas {
   margin-top: $topbar-h;
-  padding: 48px 64px;
+  padding: 32px 40px 40px;
   flex: 1;
 }
 
@@ -241,7 +233,7 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 // ============================================
 
 .page-header {
-  margin-bottom: 48px;
+  margin-bottom: 28px;
 }
 
 .page-eyebrow {
@@ -254,8 +246,8 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 
 .page-title {
   font-family: $font-serif;
-  font-size: 36px;
-  font-weight: 400;
+  font-size: 34px;
+  font-weight: 600;
   color: $black;
   margin: 0 0 16px;
   letter-spacing: -0.02em;
@@ -277,43 +269,40 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-bottom: 48px;
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .analytics-card {
-  @include glass;
-  padding: 24px;
-  border-radius: 24px;
-  @include transition(transform);
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  @include transition(border-color);
   cursor: default;
 
-  &:hover { transform: scale(1.02); }
+  &:hover { border-color: $gray-400; }
 
   &__top {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    margin-bottom: 18px;
   }
 
   &__icon {
     width: 40px;
     height: 40px;
-    border-radius: 12px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    .material-symbols-outlined { font-size: 20px; }
-  }
+    background: $gray-100;
+    color: $black;
 
-  &__badge {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 8px;
-    background: $gray-200;
-    border-radius: 999px;
+    .material-symbols-outlined { font-size: 20px; }
   }
 
   &__label {
@@ -326,10 +315,30 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
   &__value {
     font-family: $font-serif;
     font-size: 30px;
-    font-weight: 400;
+    font-weight: 700;
     color: $black;
     margin: 0;
     line-height: 1;
+  }
+
+  &--dark .analytics-card__icon {
+    background: $black;
+    color: $white;
+  }
+
+  &--success .analytics-card__icon {
+    background: $success-bg;
+    color: $success;
+  }
+
+  &--danger .analytics-card__icon {
+    background: $error-bg;
+    color: $error;
+  }
+
+  &--neutral .analytics-card__icon {
+    background: $warning-bg;
+    color: $warning;
   }
 }
 
@@ -338,20 +347,21 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 // ============================================
 
 .filters-row {
-  @include glass;
+  background: $white;
+  border: 1px solid $gray-200;
   padding: 16px;
-  border-radius: 24px;
+  border-radius: 8px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-  margin-bottom: 32px;
+  margin-bottom: 24px;
 
   select, input[type="date"] {
     flex: 1;
     min-width: 160px;
     background: $white;
-    border: 1px solid $gray-400;
+    border: 1px solid $gray-200;
     border-radius: 8px;
     padding: 9px 14px;
     font: inherit;
@@ -413,9 +423,11 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
 // ============================================
 
 .table-card {
-  @include glass;
-  border-radius: 24px;
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 
 .data-table {
@@ -429,7 +441,7 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
     th {
       @include caps;
       font-size: 10px;
-      padding: 20px 24px;
+      padding: 16px 18px;
       text-align: left;
       color: $white;
       white-space: nowrap;
@@ -447,7 +459,7 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     td {
-      padding: 20px 24px;
+      padding: 16px 18px;
       color: $gray-900;
 
       &.muted { color: $gray-500; }
@@ -502,13 +514,37 @@ $ease:       cubic-bezier(0.4, 0, 0.2, 1);
   .material-symbols-outlined { font-size: 20px; }
 }
 
+.empty-state {
+  padding: 48px 24px !important;
+  text-align: center;
+  color: $gray-500 !important;
+
+  .material-symbols-outlined {
+    display: block;
+    margin: 0 auto 12px;
+    font-size: 32px;
+    color: $gray-400;
+  }
+
+  strong {
+    display: block;
+    color: $black;
+    margin-bottom: 6px;
+  }
+
+  span:last-child {
+    display: block;
+    font-size: 13px;
+  }
+}
+
 // Table Footer
 .table-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: $gray-100;
+  background: $gray-50;
   border-top: 1px solid $gray-200;
 }
 

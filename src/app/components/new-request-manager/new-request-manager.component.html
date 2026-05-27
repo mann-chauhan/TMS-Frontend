@@ -1,237 +1,248 @@
 <div class="main-layout">
-    <app-manager></app-manager>
-    <div class="shell">
-      <main class="form-main">
-  
-        <header class="form-header">
-          <div class="form-header-inner">
-            <h1 class="form-title">New Travel <em>Request</em></h1>
-            <p class="form-subtitle">Submit this form to initiate the travel approval workflow. Your details will be reviewed by finance team.</p>
+  <app-manager></app-manager>
+  <div class="shell">
+    <main class="form-main">
+
+      <header class="form-header">
+        <div class="form-header-inner">
+          <h1 class="form-title">New Travel <em>Request</em></h1>
+          <p class="form-subtitle">Submit this form to initiate the travel approval workflow. Your details will be
+            reviewed by finance team.</p>
+        </div>
+        <div class="header-rule"></div>
+      </header>
+
+      <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
+
+        <!-- 01 TRAVEL DETAILS -->
+        <section class="form-section" id="travel-details">
+          <div class="section-title-row">
+            <span class="section-num">01</span>
+            <div class="section-title-block">
+              <h2>Travel Details</h2>
+              <p>Origin, destination, and the reason for travel</p>
+            </div>
           </div>
-          <div class="header-rule"></div>
-        </header>
-  
-        <form [formGroup]="requestForm" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
-  
-          <!-- 01 TRAVEL DETAILS -->
-          <section class="form-section" id="travel-details">
-            <div class="section-title-row">
-              <span class="section-num">01</span>
-              <div class="section-title-block">
-                <h2>Travel Details</h2>
-                <p>Origin, destination, and the reason for travel</p>
-              </div>
-            </div>
-  
-            <div class="field-grid two-col">
-              <div class="field-wrap full">
-                <label>Destination <span class="req">*</span></label>
-                <input type="text" formControlName="destination" placeholder="e.g. New Delhi, NCR">
-                <span class="err-msg"
-                  *ngIf="requestForm.get('destination')?.touched && requestForm.get('destination')?.hasError('required')">
-                  Destination is required.
-                </span>
-              </div>
-  
-              <div class="field-wrap full">
-                <label>Purpose of Travel <span class="req">*</span></label>
-                <textarea formControlName="purpose" rows="4"
-                  placeholder="Describe the business objective and expected outcomes of this trip..."></textarea>
-                <span class="err-msg"
-                  *ngIf="requestForm.get('purpose')?.touched && requestForm.get('purpose')?.hasError('required')">
-                  Purpose is required.
-                </span>
-              </div>
-            </div>
-          </section>
-  
-          <!-- 02 SCHEDULE -->
-          <section class="form-section" id="schedule">
-            <div class="section-title-row">
-              <span class="section-num">02</span>
-              <div class="section-title-block">
-                <h2>Schedule</h2>
-                <p>Travel start and end dates</p>
-              </div>
-            </div>
-  
-            <div class="field-grid two-col">
-              <div class="field-wrap">
-                <label>Start Date <span class="req">*</span></label>
-                <input type="date" formControlName="startDate">
-                <span class="err-msg"
-                  *ngIf="requestForm.get('startDate')?.touched && requestForm.get('startDate')?.hasError('required')">
-                  Start date is required.
-                </span>
-              </div>
-  
-              <div class="field-wrap">
-                <label>End Date <span class="req">*</span></label>
-                <input type="date" formControlName="endDate">
-                <span class="err-msg"
-                  *ngIf="requestForm.get('endDate')?.touched && requestForm.get('endDate')?.hasError('required')">
-                  End date is required.
-                </span>
-              </div>
-            </div>
-          </section>
-  
-          <!-- 03 TRANSPORT -->
-          <section class="form-section" id="transport">
-            <div class="section-title-row">
-              <span class="section-num">03</span>
-              <div class="section-title-block">
-                <h2>Transport</h2>
-                <p>Preferred mode of travel</p>
-              </div>
-            </div>
-  
-            <div class="field-wrap">
-              <label>Mode of Transport <span class="req">*</span></label>
-  
-              <div class="radio-row">
-                <label class="radio-card">
-                  <input type="radio" formControlName="transport" value="TRAIN">
-                  <span class="radio-box"><span>Train</span></span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" formControlName="transport" value="ROAD">
-                  <span class="radio-box"><span>Road</span></span>
-                </label>
-                <label class="radio-card">
-                  <input type="radio" formControlName="transport" value="AIR">
-                  <span class="radio-box"><span>Air</span></span>
-                </label>
-              </div>
-  
+
+          <div class="field-grid two-col">
+            <div class="field-wrap full">
+              <label>Destination <span class="req">*</span></label>
+              <input type="text" formControlName="destination" placeholder="e.g. New Delhi, NCR">
               <span class="err-msg"
-                *ngIf="requestForm.get('transport')?.touched && requestForm.get('transport')?.hasError('required')">
-                Transport mode is required.
+                *ngIf="requestForm.get('destination')?.touched && requestForm.get('destination')?.hasError('required')">
+                Destination is required.
               </span>
             </div>
-  
-            <!-- ✅ FLIGHT CLASS - only shows when AIR is selected -->
-            <div class="field-wrap flight-class-wrap" *ngIf="isAir">
-              <label>Flight Class <span class="req">*</span></label>
-              <select formControlName="flightClass">
-                <option value="">Select Class</option>
-                <option value="ECONOMY">Economy</option>
-                <option value="BUSINESS">Business</option>
-              </select>
+
+            <div class="field-wrap full">
+              <label>Purpose of Travel <span class="req">*</span></label>
+              <textarea formControlName="purpose" rows="4"
+                placeholder="Describe the business objective and expected outcomes of this trip..."></textarea>
               <span class="err-msg"
-                *ngIf="requestForm.get('flightClass')?.touched && requestForm.get('flightClass')?.hasError('required')">
-                Flight class is required.
+                *ngIf="requestForm.get('purpose')?.touched && requestForm.get('purpose')?.hasError('required')">
+                Purpose is required.
               </span>
             </div>
-          </section>
-  
-          <!-- 04 ACCOMMODATION -->
-          <section class="form-section" id="accommodation">
-            <div class="section-title-row">
-              <span class="section-num">04</span>
-              <div class="section-title-block">
-                <h2>Accommodation</h2>
-                <p>Hotel requirements and preferences</p>
-              </div>
+          </div>
+        </section>
+
+        <!-- 02 SCHEDULE -->
+        <section class="form-section" id="schedule">
+          <div class="section-title-row">
+            <span class="section-num">02</span>
+            <div class="section-title-block">
+              <h2>Schedule</h2>
+              <p>Travel start and end dates</p>
             </div>
-  
+          </div>
+
+          <div class="field-grid two-col">
             <div class="field-wrap">
+              <label>Start Date <span class="req">*</span></label>
+              <input type="date" formControlName="startDate">
+              <span class="err-msg"
+                *ngIf="requestForm.get('startDate')?.touched && requestForm.get('startDate')?.hasError('required')">
+                Start date is required.
+              </span>
+            </div>
+
+            <div class="field-wrap">
+              <label>End Date <span class="req">*</span></label>
+              <input type="date" formControlName="endDate">
+              <span class="err-msg"
+                *ngIf="requestForm.get('endDate')?.touched && requestForm.get('endDate')?.hasError('required')">
+                End date is required.
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 03 TRANSPORT -->
+        <section class="form-section" id="transport">
+          <div class="section-title-row">
+            <span class="section-num">03</span>
+            <div class="section-title-block">
+              <h2>Transport</h2>
+              <p>Preferred mode of travel</p>
+            </div>
+          </div>
+
+          <div class="field-wrap">
+            <label>Mode of Transport <span class="req">*</span></label>
+
+            <div class="radio-row">
+              <label class="radio-card">
+                <input type="radio" formControlName="transport" value="TRAIN">
+                <span class="radio-box"><span>Train</span></span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" formControlName="transport" value="ROAD">
+                <span class="radio-box"><span>Road</span></span>
+              </label>
+              <label class="radio-card">
+                <input type="radio" formControlName="transport" value="AIR">
+                <span class="radio-box"><span>Air</span></span>
+              </label>
+            </div>
+
+            <span class="err-msg"
+              *ngIf="requestForm.get('transport')?.touched && requestForm.get('transport')?.hasError('required')">
+              Transport mode is required.
+            </span>
+          </div>
+
+          <!-- ✅ FLIGHT CLASS - only shows when AIR is selected -->
+          <div class="field-wrap flight-class-wrap" *ngIf="isAir">
+            <label>Flight Class <span class="req">*</span></label>
+            <select formControlName="flightClass">
+              <option value="">Select Class</option>
+              <option value="ECONOMY">Economy</option>
+              <option value="BUSINESS">Business</option>
+            </select>
+            <span class="err-msg"
+              *ngIf="requestForm.get('flightClass')?.touched && requestForm.get('flightClass')?.hasError('required')">
+              Flight class is required.
+            </span>
+          </div>
+        </section>
+
+        <!-- 04 ACCOMMODATION -->
+        <section class="form-section" id="accommodation">
+          <div class="section-title-row">
+            <span class="section-num">04</span>
+            <div class="section-title-block">
+              <h2>Accommodation</h2>
+              <p>Hotel requirements and preferences</p>
+            </div>
+          </div>
+
+          <div class="field-wrap">
+            <label class="check-toggle">
+              <input type="checkbox" formControlName="hotelRequired">
+              <span class="check-box"></span>
+              <span class="check-label">Hotel accommodation required</span>
+            </label>
+          </div>
+
+          <div class="field-wrap" *ngIf="requestForm.get('hotelRequired')?.value === true">
+            <label>Hotel Preference <span class="optional">(optional)</span></label>
+            <input type="text" formControlName="hotelPreference"
+              placeholder="e.g. 4-star, near conference venue, specific brand...">
+          </div>
+        </section>
+
+        <!-- 05 EXPENSE -->
+        <section class="form-section" id="expense">
+          <div class="section-title-row">
+            <span class="section-num">05</span>
+            <div class="section-title-block">
+              <h2>Expense</h2>
+              <p>Budget estimate and payment requirements</p>
+            </div>
+          </div>
+
+          <div class="field-grid two-col">
+            <div class="field-wrap">
+              <label>Estimated Budget (INR) <span class="req">*</span></label>
+              <div class="input-prefix-wrap">
+                <span class="prefix-symbol">&#8377;</span>
+                <input type="number" formControlName="estimatedBudget" placeholder="Minimum 100" min="100">
+              </div>
+              <span class="err-msg"
+                *ngIf="requestForm.get('estimatedBudget')?.touched && requestForm.get('estimatedBudget')?.hasError('required')">
+                Budget is required.
+              </span>
+              <span class="err-msg"
+                *ngIf="requestForm.get('estimatedBudget')?.touched && requestForm.get('estimatedBudget')?.hasError('min')">
+                Budget must be at least &#8377;100.
+              </span>
+            </div>
+
+            <div class="field-wrap center-v">
               <label class="check-toggle">
-                <input type="checkbox" formControlName="hotelRequired">
+                <input type="checkbox" formControlName="advanceRequired">
                 <span class="check-box"></span>
-                <span class="check-label">Hotel accommodation required</span>
+                <span class="check-label">Advance payment required</span>
               </label>
             </div>
-  
-            <div class="field-wrap" *ngIf="requestForm.get('hotelRequired')?.value === true">
-              <label>Hotel Preference <span class="optional">(optional)</span></label>
-              <input type="text" formControlName="hotelPreference"
-                placeholder="e.g. 4-star, near conference venue, specific brand...">
-            </div>
-          </section>
-  
-          <!-- 05 EXPENSE -->
-          <section class="form-section" id="expense">
-            <div class="section-title-row">
-              <span class="section-num">05</span>
-              <div class="section-title-block">
-                <h2>Expense</h2>
-                <p>Budget estimate and payment requirements</p>
-              </div>
-            </div>
-  
-            <div class="field-grid two-col">
-              <div class="field-wrap">
-                <label>Estimated Budget (INR) <span class="req">*</span></label>
-                <div class="input-prefix-wrap">
-                  <span class="prefix-symbol">&#8377;</span>
-                  <input type="number" formControlName="estimatedBudget" placeholder="Minimum 100" min="100">
-                </div>
-                <span class="err-msg"
-                  *ngIf="requestForm.get('estimatedBudget')?.touched && requestForm.get('estimatedBudget')?.hasError('required')">
-                  Budget is required.
-                </span>
-                <span class="err-msg"
-                  *ngIf="requestForm.get('estimatedBudget')?.touched && requestForm.get('estimatedBudget')?.hasError('min')">
-                  Budget must be at least &#8377;100.
-                </span>
-              </div>
-  
-              <div class="field-wrap center-v">
-                <label class="check-toggle">
-                  <input type="checkbox" formControlName="advanceRequired">
-                  <span class="check-box"></span>
-                  <span class="check-label">Advance payment required</span>
-                </label>
-              </div>
-            </div>
-          </section>
-  
-          <!-- 06 DECLARATION -->
-          <section class="form-section" id="declaration">
-            <div class="section-title-row">
-              <span class="section-num">06</span>
-              <div class="section-title-block">
-                <h2>Declaration</h2>
-                <p>Acknowledgement of company travel policy</p>
-              </div>
-            </div>
-  
-            <div class="policy-box">
-              <div class="policy-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
-                </svg>
-              </div>
-              <p>By submitting this request, I confirm that the proposed travel is necessary for official business purposes and complies fully with the company Travel and Expense Policy. I acknowledge that any deviation from the approved itinerary or budget must be disclosed and justified to the finance team.</p>
-            </div>
-  
-            <div class="field-wrap">
-              <label class="check-toggle policy-check">
-                <input type="checkbox" formControlName="agreePolicy">
-                <span class="check-box"></span>
-                <span class="check-label">I have read and agree to the Travel and Expense Policy <span class="req">*</span></span>
-              </label>
-              <span class="err-msg"
-                *ngIf="requestForm.get('agreePolicy')?.touched && requestForm.get('agreePolicy')?.errors">
-                You must agree to the policy before submitting.
-              </span>
-            </div>
-          </section>
-  
-          <!-- ACTIONS -->
-          <div class="form-actions">
-            <button type="button" class="btn-ghost" (click)="requestForm.reset()">Clear Form</button>
-            <button type="submit" class="btn-primary">
-              Submit Request
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/>
-              </svg>
-            </button>
           </div>
-  
-        </form>
-  
-      </main>
-    </div>
+        </section>
+
+        <!-- 06 DECLARATION -->
+        <section class="form-section" id="declaration">
+          <div class="section-title-row">
+            <span class="section-num">06</span>
+            <div class="section-title-block">
+              <h2>Declaration</h2>
+              <p>Acknowledgement of company travel policy</p>
+            </div>
+          </div>
+
+          <div class="policy-box">
+            <div class="policy-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path
+                  d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <p>By submitting this request, I confirm that the proposed travel is necessary for official business
+              purposes and complies fully with the company Travel and Expense Policy. I acknowledge that any deviation
+              from the approved itinerary or budget must be disclosed and justified to the finance team.</p>
+          </div>
+
+          <div class="field-wrap">
+            <label class="check-toggle policy-check">
+              <input type="checkbox" formControlName="agreePolicy">
+              <span class="check-box"></span>
+              <span class="check-label">I have read and agree to the Travel and Expense Policy <span
+                  class="req">*</span></span>
+            </label>
+            <span class="err-msg"
+              *ngIf="requestForm.get('agreePolicy')?.touched && requestForm.get('agreePolicy')?.errors">
+              You must agree to the policy before submitting.
+            </span>
+          </div>
+        </section>
+
+        <!-- ACTIONS -->
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="resetForm()">
+
+            Clear Form
+
+          </button>
+          <button type="submit" class="btn-primary">
+            Submit Request
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+      </form>
+
+    </main>
   </div>
+</div>

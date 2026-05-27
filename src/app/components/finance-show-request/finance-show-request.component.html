@@ -173,6 +173,20 @@
 
                   </div>
 
+                  <div class="request-meta">
+
+                    <span class="role-chip">
+                      {{ request.roleTitle }}
+                    </span>
+
+                    <span class="flow-chip" [class.flow-chip--manager]="
+      request.requesterRole === 'MANAGER'
+    ">
+                      {{ getRoleBadge(request.requesterRole) }}
+                    </span>
+
+                  </div>
+
                   <span class="employee-dept">
 
                     {{ request.department }}

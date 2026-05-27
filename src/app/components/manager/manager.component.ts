@@ -35,6 +35,10 @@ export class ManagerComponent {
     this.router.navigate(['/manager-profile']);
   }
 
+  navigateToManagerRequestHistory() {
+    this.router.navigate(['/manager-request-history']);
+  }
+
     navigateToManagerDashboard() {
     this.router.navigate(['/manager-dashboard']);
   }

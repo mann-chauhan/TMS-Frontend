@@ -29,6 +29,25 @@ export class TravelRequestService {
     );
   }
 
+  createManagerRequest(data: any) {
+
+  return this.http.post(
+
+    `${this.baseUrl}/manager/create`,
+
+    data
+  );
+}
+
+getManagerRequestHistory(
+  managerId: number
+) {
+
+  return this.http.get(
+    `${this.baseUrl}/manager/history/${managerId}`
+  );
+}
+
   getEmployeeRequests(employeeId: number) {
 
     return this.http.get(
@@ -104,4 +123,7 @@ export class TravelRequestService {
     `${this.baseUrl}/finance/history`
   );
 }
+
+
+
 }

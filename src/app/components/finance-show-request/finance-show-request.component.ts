@@ -74,7 +74,7 @@ export class FinanceApprovalCenterComponent
   constructor(
     private travelRequestService:
       TravelRequestService
-  ) {}
+  ) { }
 
   currentUser = {
     name: 'Finance Admin',
@@ -191,119 +191,131 @@ export class FinanceApprovalCenterComponent
 
   ngOnInit(): void {
 
-  setTimeout(() => {
+    setTimeout(() => {
 
-    this.loadRequests();
+      this.loadRequests();
 
-  }, 100);
-}
+    }, 100);
+  }
 
   // =========================================
   // LOAD REQUESTS
   // =========================================
 
-private loadRequests(): void {
+  private loadRequests(): void {
 
-  this.travelRequestService
-    .getFinanceRequests()
-    .subscribe({
+    this.travelRequestService
+      .getFinanceRequests()
+      .subscribe({
 
-      next: (response: any) => {
+        next: (response: any) => {
 
-        console.log(
-          'FINANCE API RESPONSE',
-          response
-        );
+          console.log(
+            'FINANCE API RESPONSE',
+            response
+          );
 
-        this.allRequests =
-          response.data || [];
+          this.allRequests =
+            (response.data || []).map((r: any) => ({
 
-        this.displayedRequests = [
-          ...this.allRequests
-        ];
+              ...r,
 
-        this.totalRequests =
-          this.displayedRequests.length;
+              roleTitle:
+                r.roleTitle || 'Manager',
 
-        // IMPORTANT
-        this.updateKpiCards();
-      },
+              requesterRole:
 
-      error: (error) => {
+                r.employeeName === r.managerName
+                  ? 'MANAGER'
+                  : 'EMPLOYEE'
+            }));
 
-        console.log(error);
-      }
-    });
-}
+          this.displayedRequests = [
+            ...this.allRequests
+          ];
+
+          this.totalRequests =
+            this.displayedRequests.length;
+
+          // IMPORTANT
+          this.updateKpiCards();
+        },
+
+        error: (error) => {
+
+          console.log(error);
+        }
+      });
+  }
 
   // KPI UPDATE
 
 
-updateKpiCards(): void {
+  updateKpiCards(): void {
 
-  const approved =
-    this.allRequests.filter(
-      r => r.status === 'FINANCE_APPROVED'
-    ).length;
+    const approved =
+      this.allRequests.filter(
+        r => r.status === 'FINANCE_APPROVED'
+      ).length;
 
-  const rejected =
-    this.allRequests.filter(
-      r => r.status === 'REJECTED'
-    ).length;
+    const rejected =
+      this.allRequests.filter(
+        r => r.status === 'REJECTED'
+      ).length;
 
-  const pending =
-    this.allRequests.filter(
-      r => r.status === 'MANAGER_APPROVED'
-    ).length;
+    const pending =
+      this.allRequests.filter(
+        r => r.status === 'MANAGER_APPROVED'
+      ).length;
 
-  this.kpiCards = [
+    this.kpiCards = [
 
-    {
-      label: 'Total Requests',
-      value: this.allRequests.length.toString()
-    },
+      {
+        label: 'Total Requests',
+        value: this.allRequests.length.toString()
+      },
 
-    {
-      label: 'Pending Finance',
-      value: pending.toString()
-    },
+      {
+        label: 'Pending Finance',
+        value: pending.toString()
+      },
 
-    {
-      label: 'Approved',
-      value: approved.toString()
-    },
+      {
+        label: 'Approved',
+        value: approved.toString()
+      },
 
-    {
-      label: 'Rejected',
-      value: rejected.toString()
-    }
-  ];
-}
- 
+      {
+        label: 'Rejected',
+        value: rejected.toString()
+      }
+    ];
+  }
+
   // SEARCH
 
 
   onSearch(): void {
 
-  const q =
-    this.searchQuery
-      .trim()
-      .toLowerCase();
+    const q =
+      this.searchQuery
+        .trim()
+        .toLowerCase();
 
-  this.displayedRequests =
-    this.allRequests.filter(r =>
+    this.displayedRequests =
+      this.allRequests.filter(r =>
 
-      r.requestCode
-        ?.toLowerCase()
-        .includes(q)
+        r.requestCode
+          ?.toLowerCase()
+          .includes(q)
 
-      ||
+        ||
 
-      r.employeeName
-        ?.toLowerCase()
-        .includes(q)
-    );
-}
+        r.employeeName
+          ?.toLowerCase()
+          .includes(q)
+      );
+  }
 
   // =========================================
   // FILTERS
@@ -524,9 +536,18 @@ updateKpiCards(): void {
     return [1];
   }
 
-  previousPage(): void {}
+  previousPage(): void { }
 
-  nextPage(): void {}
+  nextPage(): void { }
 
-  goToPage(page: number): void {}
+  goToPage(page: number): void { }
+
+  getRoleBadge(role: string): string {
+
+  if (role === 'MANAGER') {
+    return 'Manager Request';
+  }
+
+  return 'Employee Request';
+}
 }

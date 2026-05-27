@@ -98,6 +98,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/finance-decision-history/finance-decision-history.component').then(m => m.FinanceDecisionHistoryComponent)
   },
   {
+    path: 'manager-request-history',
+    loadComponent: () => import('./manager-request-history/manager-request-history.component').then(m => m.ManagerRequestHistoryComponent)
+  },
+  {
     path: '**',
     loadComponent: () => import('./components/login-two/login-two.component').then(m => m.LoginComponentTwo)
   }

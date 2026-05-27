@@ -51,14 +51,11 @@
 
     <!-- Analytics Cards -->
     <div class="analytics-grid">
-      <div class="analytics-card" *ngFor="let card of analyticsCards">
+      <div class="analytics-card" [ngClass]="'analytics-card--' + card.tone" *ngFor="let card of analyticsCards">
         <div class="analytics-card__top">
-          <div class="analytics-card__icon" [ngStyle]="{ background: card.iconBg }">
-            <span class="material-symbols-outlined" [ngStyle]="{ color: card.iconColor }">{{ card.icon }}</span>
+          <div class="analytics-card__icon">
+            <span class="material-symbols-outlined">{{ card.icon }}</span>
           </div>
-          <span *ngIf="card.badge" class="analytics-card__badge" [ngStyle]="{ color: card.badgeColor }">
-            {{ card.badge }}
-          </span>
         </div>
         <p class="analytics-card__label">{{ card.label }}</p>
         <p class="analytics-card__value">{{ card.value }}</p>
@@ -67,24 +64,23 @@
 
     <!-- Filters Row -->
     <div class="filters-row">
-      <select [(ngModel)]="filters.status" (change)="applyFilters()">
+      <select [(ngModel)]="filters.status" (change)="onFilterChange()">
         <option value="">All Statuses</option>
         <option value="approved">Approved</option>
         <option value="rejected">Rejected</option>
         <option value="pending">Pending</option>
         <option value="reimbursed">Reimbursed</option>
+        <option value="audited">Audited</option>
       </select>
 
-      <select [(ngModel)]="filters.department" (change)="applyFilters()">
+      <select [(ngModel)]="filters.department" (change)="onFilterChange()">
         <option value="">All Departments</option>
-        <option value="Engineering">Engineering</option>
-        <option value="Marketing">Marketing</option>
-        <option value="Sales">Sales</option>
-        <option value="Finance">Finance</option>
-        <option value="Executive">Executive</option>
+        <option *ngFor="let department of departments" [value]="department">
+          {{ department }}
+        </option>
       </select>
 
-      <input type="date" [(ngModel)]="filters.date" (change)="applyFilters()" />
+      <input type="date" [(ngModel)]="filters.date" (change)="onFilterChange()" />
 
       <button class="btn-primary" (click)="exportReports()">
         <span class="material-symbols-outlined">download</span>
@@ -126,7 +122,7 @@
             <td class="muted">{{ row.department }}</td>
             <td>{{ row.destination }}</td>
             <td><strong>{{ row.amount | currency:'INR' }}</strong></td>
-            <td class="muted">{{ row.date }}</td>
+            <td class="muted">{{ row.date | date:'mediumDate' }}</td>
             <td>
               <span class="status-pill" [ngClass]="'status-pill--' + row.status">
                 {{ row.statusLabel }}
@@ -138,14 +134,24 @@
               </button>
             </td>
           </tr>
+          <tr *ngIf="displayedRows.length === 0">
+            <td class="empty-state" colspan="8">
+              <span class="material-symbols-outlined">manage_search</span>
+              <strong>No finance decisions found</strong>
+              <span>Try changing the search text, status, department, or date filter.</span>
+            </td>
+          </tr>
         </tbody>
       </table>
 
       <div class="table-footer">
-        <p class="table-count">Showing {{ displayedRows.length }} of {{ totalRows }} entries</p>
+        <p class="table-count">
+          Showing {{ displayedRows.length }} of {{ totalRows }} entries
+          <span *ngIf="totalPages > 1">• Page {{ currentPage }} of {{ totalPages }}</span>
+        </p>
         <div class="pagination">
           <button class="page-btn" [disabled]="currentPage === 1" (click)="prevPage()">Previous</button>
-          <button class="page-btn page-btn--active" (click)="nextPage()">Next</button>
+          <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">Next</button>
         </div>
       </div>
     </div>

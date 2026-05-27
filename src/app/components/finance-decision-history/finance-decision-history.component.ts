@@ -4,6 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { FinanceComponent } from "../finance/finance.component";
 import { TravelRequestService }
 from '../../services/travel-request.service';
+import {
+  trigger,
+  transition,
+  style,
+  animate
+} from '@angular/animations';
 
 // ============================================
 // INTERFACES
@@ -17,10 +23,7 @@ interface User {
 
 interface AnalyticsCard {
   icon: string;
-  iconBg: string;
-  iconColor: string;
-  badge?: string;
-  badgeColor?: string;
+  tone: 'dark' | 'success' | 'danger' | 'neutral';
   label: string;
   value: string;
 }
@@ -66,6 +69,8 @@ interface Filters {
   date: string;
 }
 
+type FinanceStatus = TravelRow['status'];
+
 // ============================================
 // PLACEHOLDER SVG AVATAR
 // ============================================
@@ -86,7 +91,29 @@ const AVATAR_SVG =
   standalone: true,
   imports: [CommonModule, FormsModule, CurrencyPipe, FinanceComponent],
   templateUrl: './finance-decision-history.component.html',
-  styleUrls: ['./finance-decision-history.component.scss']
+  styleUrls: ['./finance-decision-history.component.scss'],
+  animations: [
+
+  trigger('progressAnimation', [
+
+    transition(':enter', [
+
+      style({
+        width: '0%'
+      }),
+
+      animate(
+        '800ms ease',
+        style({
+          width: '*'
+        })
+      )
+
+    ])
+
+  ])
+
+]
 })
 export class FinanceDecisionHistoryComponent implements OnInit {
 
@@ -107,49 +134,16 @@ export class FinanceDecisionHistoryComponent implements OnInit {
 
   filters: Filters = { status: '', department: '', date: '' };
 
-  analyticsCards: AnalyticsCard[] = [
-    {
-      icon: 'all_inbox',
-      iconBg: '#000',
-      iconColor: '#fff',
-      badge: '+12%',
-      badgeColor: '#000',
-      label: 'Total Requests',
-      value: '1,284'
-    },
-    {
-      icon: 'check_circle',
-      iconBg: '#e2e2e2',
-      iconColor: '#1b1b1b',
-      badge: '+5.2%',
-      badgeColor: '#454747',
-      label: 'Approved',
-      value: '892'
-    },
-    {
-      icon: 'cancel',
-      iconBg: '#ffdad6',
-      iconColor: '#ba1a1a',
-      badge: '-2.4%',
-      badgeColor: '#ba1a1a',
-      label: 'Rejected',
-      value: '143'
-    },
-    {
-      icon: 'hourglass_empty',
-      iconBg: '#e2e2e2',
-      iconColor: '#1b1b1b',
-      label: 'Pending Audit',
-      value: '249'
-    }
-  ];
+  analyticsCards: AnalyticsCard[] = [];
 
   allRows: TravelRow[] = [];
-
+  filteredRows: TravelRow[] = [];
   displayedRows: TravelRow[] = [];
-  totalRows = 1284;
+  departments: string[] = [];
+  totalRows = 0;
   currentPage = 1;
-  totalPages = 5;
+  totalPages = 1;
+  readonly pageSize = 10;
 
   constructor(
   private travelRequestService:
@@ -178,77 +172,23 @@ loadFinanceHistory(): void {
           response
         );
 
-        const data =
-          response.data || [];
+        const data = Array.isArray(response)
+          ? response
+          : response.data || [];
 
-        this.displayedRows =
-          data.map((item: any) => ({
+        this.allRows = data.map((item: any) =>
+          this.toTravelRow(item)
+        );
+        this.departments = Array.from(
+          new Set(
+            this.allRows
+              .map(row => row.department)
+              .filter(Boolean)
+          )
+        ).sort();
 
-            id:
-              item.requestCode,
-
-            initials:
-              item.employeeName
-                ?.split(' ')
-                .map((n: string) => n[0])
-                .join(''),
-
-            employee:
-              item.employeeName,
-
-            department:
-              item.department,
-
-            destination:
-              item.destination,
-
-            amount:
-              item.estimatedBudget,
-
-            date:
-              item.startDate,
-
-            status:
-              this.mapStatus(item.status),
-
-            statusLabel:
-              item.status,
-
-            avatarUrl:
-              this.defaultAvatar,
-
-            roleTitle:
-              item.department +
-
-              ' Employee',
-
-            breakdown: [
-              {
-                label: 'Travel Budget',
-                value: item.estimatedBudget
-              }
-            ],
-
-            timeline: [
-              {
-                title:
-                  'Request Submitted',
-
-                by:
-                  item.employeeName,
-
-                date:
-                  item.startDate,
-
-                done: true
-              }
-            ],
-
-            docs: []
-          }));
-
-        this.totalRows =
-          this.displayedRows.length;
+        this.updateAnalytics();
+        this.applyFilters();
       },
 
       error: (error) => {
@@ -258,24 +198,88 @@ loadFinanceHistory(): void {
     });
 }
 
-mapStatus(status: string):
-  'approved'
-  | 'rejected'
-  | 'pending'
-  | 'reimbursed'
-  | 'audited' {
+  private toTravelRow(item: any): TravelRow {
+    const status = this.mapStatus(item.status);
+    const employee = item.employeeName || 'Unknown Employee';
+    const department = item.department || 'Unassigned';
+    const requestDate = item.financeDecisionDate || item.updatedAt || item.startDate || '';
+
+    return {
+      id: item.requestCode || String(item.id || 'N/A'),
+      initials: this.getInitials(employee),
+      employee,
+      department,
+      destination: item.destination || item.toLocation || 'Not specified',
+      amount: Number(item.estimatedBudget || item.amount || 0),
+      date: requestDate,
+      status,
+      statusLabel: this.getStatusLabel(status),
+      avatarUrl: this.defaultAvatar,
+      roleTitle: `${department} Employee`,
+      breakdown: [
+        {
+          label: 'Travel Budget',
+          value: Number(item.estimatedBudget || item.amount || 0)
+        }
+      ],
+      timeline: this.buildTimeline(item, status, requestDate),
+      docs: []
+    };
+  }
+
+  private buildTimeline(item: any, status: FinanceStatus, requestDate: string): TimelineStep[] {
+    const employee = item.employeeName || 'Employee';
+    const managerDate = item.managerDecisionDate || item.startDate || requestDate;
+
+    return [
+      {
+        title: 'Request Submitted',
+        by: employee,
+        date: item.startDate || requestDate,
+        done: true
+      },
+      {
+        title: 'Manager Approved',
+        by: item.managerName || 'Manager',
+        date: managerDate,
+        done: true
+      },
+      {
+        title: this.getStatusLabel(status),
+        by: item.financeName || 'Finance Team',
+        date: requestDate,
+        done: status !== 'pending'
+      }
+    ];
+  }
+
+  private getInitials(name: string): string {
+    return name
+      .split(' ')
+      .filter(Boolean)
+      .map(part => part[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() || 'NA';
+  }
+
+mapStatus(status: string): FinanceStatus {
 
   switch(status) {
 
     case 'FINANCE_APPROVED':
+    case 'APPROVED':
       return 'approved';
 
+    case 'FINANCE_REJECTED':
     case 'REJECTED':
       return 'rejected';
 
+    case 'REIMBURSED':
     case 'BOOKED':
       return 'reimbursed';
 
+    case 'AUDITED':
     case 'COMPLETED':
       return 'audited';
 
@@ -283,35 +287,143 @@ mapStatus(status: string):
       return 'pending';
   }
 }
+
+  private getStatusLabel(status: FinanceStatus): string {
+    const labels: Record<FinanceStatus, string> = {
+      approved: 'Approved',
+      rejected: 'Rejected',
+      pending: 'Pending',
+      reimbursed: 'Reimbursed',
+      audited: 'Audited'
+    };
+
+    return labels[status];
+  }
+
+  private updateAnalytics(): void {
+    const counts = this.allRows.reduce(
+      (acc, row) => {
+        acc.total++;
+        acc[row.status]++;
+        return acc;
+      },
+      {
+        total: 0,
+        approved: 0,
+        rejected: 0,
+        pending: 0,
+        reimbursed: 0,
+        audited: 0
+      }
+    );
+
+    this.analyticsCards = [
+      {
+        icon: 'all_inbox',
+        tone: 'dark',
+        label: 'Total Requests',
+        value: counts.total.toString()
+      },
+      {
+        icon: 'check_circle',
+        tone: 'success',
+        label: 'Approved',
+        value: counts.approved.toString()
+      },
+      {
+        icon: 'cancel',
+        tone: 'danger',
+        label: 'Rejected',
+        value: counts.rejected.toString()
+      },
+      {
+        icon: 'pending_actions',
+        tone: 'neutral',
+        label: 'Pending',
+        value: counts.pending.toString()
+      }
+    ];
+  }
+
+  private normalizeDate(value: string): string {
+    if (!value) {
+      return '';
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value.slice(0, 10);
+    }
+
+    return date.toISOString().slice(0, 10);
+  }
+
+  private refreshDisplayedRows(): void {
+    this.totalRows = this.filteredRows.length;
+    this.totalPages = Math.max(1, Math.ceil(this.totalRows / this.pageSize));
+
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+
+    const start = (this.currentPage - 1) * this.pageSize;
+    this.displayedRows = this.filteredRows.slice(start, start + this.pageSize);
+  }
   // ============================================
   // SEARCH
   // ============================================
 
   onSearch(): void {
-    const q = this.searchQuery.trim().toLowerCase();
-    this.displayedRows = q
-      ? this.allRows.filter(r =>
-          r.id.toLowerCase().includes(q) ||
-          r.employee.toLowerCase().includes(q) ||
-          r.department.toLowerCase().includes(q))
-      : [...this.allRows];
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
   // ============================================
   // FILTERS
   // ============================================
 
+  onFilterChange(): void {
+    this.currentPage = 1;
+    this.applyFilters();
+  }
+
   applyFilters(): void {
-    this.displayedRows = this.allRows.filter(r => {
-      if (this.filters.status     && r.status     !== this.filters.status)             return false;
-      if (this.filters.department && r.department !== this.filters.department)         return false;
+    const q = this.searchQuery.trim().toLowerCase();
+
+    this.filteredRows = this.allRows.filter(r => {
+      if (q && ![
+        r.id,
+        r.employee,
+        r.department,
+        r.destination,
+        r.statusLabel
+      ].some(value => value.toLowerCase().includes(q))) {
+        return false;
+      }
+
+      if (this.filters.status && r.status !== this.filters.status) {
+        return false;
+      }
+
+      if (this.filters.department && r.department !== this.filters.department) {
+        return false;
+      }
+
+      if (this.filters.date && this.normalizeDate(r.date) !== this.filters.date) {
+        return false;
+      }
+
       return true;
     });
+
+    this.refreshDisplayedRows();
   }
 
   resetFilters(): void {
     this.filters = { status: '', department: '', date: '' };
-    this.displayedRows = [...this.allRows];
+    this.searchQuery = '';
+    this.currentPage = 1;
+    this.applyFilters();
   }
 
   // ============================================
@@ -332,11 +444,17 @@ mapStatus(status: string):
   // ============================================
 
   prevPage(): void {
-    if (this.currentPage > 1) { this.currentPage--; }
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.refreshDisplayedRows();
+    }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages) { this.currentPage++; }
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.refreshDisplayedRows();
+    }
   }
 
   // ============================================

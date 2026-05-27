@@ -1,0 +1,312 @@
+<!-- SIDEBAR -->
+<app-manager></app-manager>
+
+<!-- MAIN -->
+<main class="main-content">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar__search">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        type="text"
+        placeholder="Search history, employees, or trips..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+      />
+    </div>
+    <div class="topbar__right">
+      <button class="icon-btn" (click)="openNotifications()">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="notif-dot"></span>
+      </button>
+      <button class="icon-btn" (click)="openHelp()">
+        <span class="material-symbols-outlined">help_outline</span>
+      </button>
+      <div class="divider"></div>
+      <div class="user-chip">
+        <div class="user-chip__text">
+          <p class="user-name">{{ currentUser.name }}</p>
+          <p class="user-role">{{ currentUser.role }}</p>
+        </div>
+        <div class="user-avatar">
+          <img [src]="currentUser.avatar" [alt]="currentUser.name" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CANVAS -->
+  <div class="canvas">
+
+    <!-- PAGE HEADER -->
+    <section class="page-header">
+      <nav class="breadcrumb">
+        <span>MANAGER OPERATIONS</span>
+        <span class="material-symbols-outlined">chevron_right</span>
+        <span class="breadcrumb--active">REQUEST HISTORY</span>
+      </nav>
+      <h1 class="page-title">
+        Travel Request <em class="page-title__italic">Archive</em>
+      </h1>
+      <p class="page-desc">
+        Comprehensive audit trail of corporate travel expenditures, approvals,
+        and accountability logs for the current fiscal quarter.
+      </p>
+    </section>
+
+    <!-- ANALYTICS BENTO GRID -->
+    <section class="analytics-grid">
+      <div class="analytics-card" [ngClass]="'analytics-card--' + card.tone" *ngFor="let card of analyticsCards">
+        <div class="analytics-card__top">
+          <div class="analytics-card__icon">
+            <span class="material-symbols-outlined">{{ card.icon }}</span>
+          </div>
+          <span class="analytics-card__badge" *ngIf="card.badge">{{ card.badge }}</span>
+        </div>
+        <p class="analytics-card__label">{{ card.label }}</p>
+        <p class="analytics-card__value">{{ card.value }}</p>
+        <div class="progress-line">
+          <div class="progress-fill" [style.width]="card.progress"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABLE CONTROLS -->
+    <section class="table-controls">
+      <div class="table-controls__left">
+        <div class="select-wrap">
+          <select [(ngModel)]="filters.department" (change)="onFilterChange()">
+            <option value="">ALL DEPARTMENTS</option>
+            <option *ngFor="let department of departments" [value]="department">
+              {{ department | uppercase }}
+            </option>
+          </select>
+          <span class="material-symbols-outlined">expand_more</span>
+        </div>
+        <div class="select-wrap">
+          <select [(ngModel)]="filters.status" (change)="onFilterChange()">
+            <option value="">ALL STATUSES</option>
+            <option value="approved">APPROVED</option>
+            <option value="pending">PENDING</option>
+            <option value="rejected">REJECTED</option>
+            <option value="escalated">ESCALATED</option>
+          </select>
+          <span class="material-symbols-outlined">expand_more</span>
+        </div>
+        <button class="btn-outline" (click)="resetFilters()">
+          RESET FILTERS
+        </button>
+      </div>
+      <button class="btn-primary" (click)="exportReport()">
+        <span class="material-symbols-outlined">download</span>
+        EXPORT REPORT
+      </button>
+    </section>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>REQUEST ID</th>
+            <th>EMPLOYEE</th>
+            <th>DEPARTMENT</th>
+            <th>DESTINATION</th>
+            <th>DATES</th>
+            <th class="text-right">BUDGET</th>
+            <th class="text-center">STATUS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let row of displayedRows"
+            (click)="openDrawer(row)"
+            [class.row--hovered]="row['hovered']"
+            (mouseenter)="row['hovered'] = true"
+            (mouseleave)="row['hovered'] = false"
+          >
+            <td><span class="request-id">{{ row.id }}</span></td>
+            <td>
+              <div class="employee-cell">
+                <div class="avatar-initials">{{ row.initials }}</div>
+                <div>
+                  <p class="employee-name">{{ row.employee }}</p>
+                  <p class="employee-role">{{ row.roleTitle }}</p>
+                </div>
+              </div>
+            </td>
+            <td>{{ row.department }}</td>
+            <td>
+              <div class="destination-cell">
+                <span class="material-symbols-outlined">location_on</span>
+                <span>{{ row.destination }}</span>
+              </div>
+            </td>
+            <td>
+              <p class="date-primary">{{ row.dates }}</p>
+              <p class="date-sub">{{ row.nights }} NIGHTS</p>
+            </td>
+            <td class="text-right"><strong>{{ row.budget | currency:'INR' }}</strong></td>
+            <td class="text-center">
+              <span class="status-badge" [ngClass]="'status-badge--' + row.status">
+                {{ row.statusLabel }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="displayedRows.length === 0">
+            <td class="empty-state" colspan="7">
+              <span class="material-symbols-outlined">manage_search</span>
+              <strong>No manager requests found</strong>
+              <span>Try another search term, department, or status.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="table-footer">
+        <p class="table-count">
+          SHOWING {{ displayedRows.length }} OF {{ totalRows }} REQUESTS
+          <span *ngIf="totalPages > 1">• PAGE {{ currentPage }} OF {{ totalPages }}</span>
+        </p>
+        <div class="pagination">
+          <button class="page-arrow" [disabled]="currentPage === 1" (click)="prevPage()">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <span class="page-num">{{ currentPage }} / {{ totalPages }}</span>
+          <button class="page-arrow" [disabled]="currentPage === totalPages" (click)="nextPage()">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT ACTIVITY + EFFICIENCY -->
+    <section class="bottom-grid">
+
+      <!-- Activity Feed -->
+      <div class="activity-panel">
+        <h3 class="section-title">Recent System Activity</h3>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let item of activityFeed"
+               [ngClass]="'activity-item--' + item.type">
+            <span class="material-symbols-outlined">{{ item.icon }}</span>
+            <div>
+              <p class="activity-title">{{ item.title }}</p>
+              <p class="activity-desc">{{ item.description }}</p>
+              <p class="activity-time" [ngClass]="'activity-time--' + item.type">{{ item.time }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Efficiency Card -->
+      <div class="efficiency-card">
+        <div>
+          <p class="efficiency-label">QUARTERLY EFFICIENCY</p>
+          <p class="efficiency-value">96.4<span class="efficiency-unit">%</span></p>
+          <p class="efficiency-desc">
+            Your approval speed is 18% faster than the department average.
+            Maintain this velocity for VIP access tier.
+          </p>
+        </div>
+        <div class="efficiency-footer">
+          <div class="avatar-stack">
+            <div class="avatar-stack__item" *ngFor="let a of avatarStack">{{ a }}</div>
+          </div>
+          <span class="material-symbols-outlined trend-icon">trending_up</span>
+        </div>
+      </div>
+
+    </section>
+
+  </div><!-- /canvas -->
+
+  <!-- PAGE FOOTER -->
+  <footer class="page-footer">
+    <div class="footer-left">
+      <span class="status-dot"></span>
+      <span>Manager Access Layer Active</span>
+      <span class="sep">•</span>
+      <span>Encrypted Connection (TLS 1.3)</span>
+    </div>
+    <div>Voyage Elite Management Systems | v4.2.0-STABLE</div>
+  </footer>
+
+</main>
+
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" [class.drawer-overlay--active]="isDrawerOpen" (click)="closeDrawer()"></div>
+
+<!-- SIDE DRAWER -->
+<aside class="drawer" [class.drawer--open]="isDrawerOpen">
+
+  <header class="drawer__header">
+    <div>
+      <p class="drawer__eyebrow">REQUEST DOSSIER</p>
+      <h2 class="drawer__title">{{ selectedRow?.id }}</h2>
+    </div>
+    <button class="icon-btn" (click)="closeDrawer()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </header>
+
+  <div class="drawer__body" *ngIf="selectedRow">
+
+    <!-- Employee Card -->
+    <div class="drawer-employee">
+      <div class="drawer-employee__avatar">{{ selectedRow.initials }}</div>
+      <div>
+        <h3 class="drawer-employee__name">{{ selectedRow.employee }}</h3>
+        <p class="drawer-employee__role">{{ selectedRow.roleTitle }}</p>
+        <div class="drawer-employee__meta">
+          <span class="material-symbols-outlined">military_tech</span>
+          <span>Level 4 Professional</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Budget Breakdown -->
+    <div class="drawer-section">
+      <h4 class="drawer-section__label">BUDGET BREAKDOWN</h4>
+      <div class="breakdown-list">
+        <div class="breakdown-row" *ngFor="let item of selectedRow.breakdown">
+          <span>{{ item.label }}</span>
+          <strong>{{ item.value | currency:'INR' }}</strong>
+        </div>
+        <div class="breakdown-divider"></div>
+        <div class="breakdown-row breakdown-row--total">
+          <span>Total Liability</span>
+          <span class="breakdown-total">{{ selectedRow.budget | currency:'INR' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approval Timeline -->
+    <div class="drawer-section">
+      <h4 class="drawer-section__label">APPROVAL JOURNEY</h4>
+      <div class="timeline">
+        <div class="timeline__line"></div>
+        <div
+          class="timeline-step"
+          *ngFor="let step of selectedRow.timeline"
+          [class.timeline-step--pending]="!step.done"
+        >
+          <div class="timeline-dot" [class.timeline-dot--done]="step.done"></div>
+          <div class="timeline-content">
+            <p class="timeline-title">{{ step.title }}</p>
+            <p class="timeline-desc">{{ step.description }}</p>
+            <p class="timeline-time" *ngIf="step.time">{{ step.time }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="drawer__footer">
+    <button class="btn-outline" (click)="modifyRequest()">MODIFY REQUEST</button>
+    <button class="btn-primary" (click)="printDossier()">PRINT DOSSIER</button>
+  </footer>
+
+</aside>
