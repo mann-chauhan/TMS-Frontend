@@ -1,268 +1,201 @@
-<div class="layout">
-
+<div class="dashboard-layout">
   <app-employee></app-employee>
 
-  <!-- HEADER -->
+  <header class="topbar">
+    <h2 class="topbar-title">My <span>Requests</span></h2>
 
-  <div class="topbar">
-
-    <h2>
-      My <span>Requests</span>
-    </h2>
-
-    <input
-      type="text"
-      placeholder="Search by ID or destination..."
-      [(ngModel)]="searchText"
-    />
-
-  </div>
-
-  <!-- STATS -->
-
-  <div class="stats">
-
-    <div class="card">
-      <p>Total Requests</p>
-      <h3>{{ total }}</h3>
+    <div class="search-box">
+      <span class="material-symbols-outlined">search</span>
+      <input
+        type="text"
+        placeholder="Search by ID or destination..."
+        [(ngModel)]="searchText"
+        (ngModelChange)="onFiltersChanged()"
+      />
     </div>
+  </header>
 
-    <div class="card pending">
-      <p>Pending</p>
-      <h3>{{ pending }}</h3>
-    </div>
+  <main class="main-wrapper">
+    <section class="page-header">
+      <p class="page-label">Travel History</p>
+      <h1 class="page-title">Request Archive</h1>
+      <p class="page-description">
+        Track your submitted trips, approvals, budgets, and booking progress in one place.
+      </p>
+    </section>
 
-    <div class="card approved">
-      <p>Approved</p>
-      <h3>{{ approved }}</h3>
-    </div>
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <span>Total Requests</span>
+        <strong>{{ total }}</strong>
+      </div>
+      <div class="kpi-card pending">
+        <span>Pending</span>
+        <strong>{{ pending }}</strong>
+      </div>
+      <div class="kpi-card approved">
+        <span>Approved</span>
+        <strong>{{ approved }}</strong>
+      </div>
+      <div class="kpi-card rejected">
+        <span>Rejected / Cancelled</span>
+        <strong>{{ rejected }}</strong>
+      </div>
+    </section>
 
-    <div class="card rejected">
-      <p>Rejected</p>
-      <h3>{{ rejected }}</h3>
-    </div>
-
-  </div>
-
-  <!-- FILTERS -->
-
-  <div class="actions">
-
-    <select [(ngModel)]="filterStatus">
-
-      <option value="">
-        All Statuses
-      </option>
-
-      <option value="DRAFT">
-        Draft
-      </option>
-
-      <option value="PENDING_MANAGER">
-        Pending Manager
-      </option>
-
-      <option value="MANAGER_APPROVED">
-        Manager Approved
-      </option>
-
-      <option value="FINANCE_APPROVED">
-        Finance Approved
-      </option>
-
-      <option value="BOOKED">
-        Booked
-      </option>
-
-      <option value="COMPLETED">
-        Completed
-      </option>
-
-      <option value="REJECTED">
-        Rejected
-      </option>
-
-      <option value="CANCELLED">
-        Cancelled
-      </option>
-
-    </select>
-
-    <button class="create-btn">
-      + Create New Request
-    </button>
-
-  </div>
-
-  <!-- LOADING -->
-
-  <div *ngIf="isLoading" class="loading">
-
-    Loading requests...
-
-  </div>
-
-  <!-- ERROR -->
-
-  <div *ngIf="errorMessage" class="error">
-
-    {{ errorMessage }}
-
-  </div>
-
-  <!-- EMPTY STATE -->
-
-  <div
-    *ngIf="
-      !isLoading &&
-      filteredRequests().length === 0
-    "
-    class="empty-state"
-  >
-
-    No travel requests found.
-
-  </div>
-
-  <!-- TABLE -->
-
-  <div
-    class="table-container"
-    *ngIf="
-      !isLoading &&
-      filteredRequests().length > 0
-    "
-  >
-
-    <table>
-
-      <thead>
-
-        <tr>
-
-          <th>Request ID</th>
-
-          <th>Destination</th>
-
-          <th>Travel Dates</th>
-
-          <th>Budget</th>
-
-          <th>Status</th>
-
-          <th class="right">
-            Actions
-          </th>
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-  <tr *ngFor="let r of filteredRequests()">
-
-    <!-- REQUEST CODE -->
-
-    <td>
-
-      {{ r.requestCode }}
-
-    </td>
-
-    <!-- DESTINATION -->
-
-    <td>
-
-      <div class="destination">
-
-        <strong>
-
-          {{ r.destination }}
-
-        </strong>
-
-        <small>
-
-          {{ r.purpose }}
-
-        </small>
-
+    <section class="toolbar">
+      <div>
+        <h3>Request History</h3>
+        <p>{{ filteredRequests().length }} records found</p>
       </div>
 
-    </td>
+      <select
+        [(ngModel)]="filterStatus"
+        (ngModelChange)="onFiltersChanged()"
+        aria-label="Filter requests by status"
+      >
+        <option value="">All Statuses</option>
+        <option value="DRAFT">Draft</option>
+        <option value="PENDING_MANAGER">Pending Manager</option>
+        <option value="MANAGER_APPROVED">Manager Approved</option>
+        <option value="FINANCE_APPROVED">Finance Approved</option>
+        <option value="BOOKED">Booked</option>
+        <option value="COMPLETED">Completed</option>
+        <option value="REJECTED">Rejected</option>
+        <option value="CANCELLED">Cancelled</option>
+      </select>
+    </section>
 
-    <!-- DATES -->
+    <div *ngIf="isLoading" class="state-card">Loading requests...</div>
+    <div *ngIf="errorMessage" class="state-card error">{{ errorMessage }}</div>
 
-    <td>
+    <div *ngIf="!isLoading && filteredRequests().length === 0" class="state-card">
+      No travel requests found.
+    </div>
 
-      {{ r.startDate }}
-      -
-      {{ r.endDate }}
+    <section *ngIf="!isLoading && filteredRequests().length > 0" class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Destination</th>
+            <th>Travel Dates</th>
+            <th>Budget</th>
+            <th>Status</th>
+            <th class="right">Actions</th>
+          </tr>
+        </thead>
 
-    </td>
+        <tbody>
+          <tr *ngFor="let r of pagedRequests()">
+            <td><span class="request-code">{{ r.requestCode }}</span></td>
+            <td>
+              <div class="destination">
+                <strong>{{ r.destination }}</strong>
+                <small>{{ r.purpose || 'Business travel' }}</small>
+              </div>
+            </td>
+            <td>{{ r.startDate }} - {{ r.endDate }}</td>
+            <td>{{ formatBudget(r.estimatedBudget) }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="statusClass(r.status)">
+                {{ formatStatus(r.status) }}
+              </span>
+            </td>
+            <td class="right action-cell">
+              <button class="icon-action" type="button" title="View request" (click)="view(r)">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+              <button
+                *ngIf="r.status === 'DRAFT'"
+                class="text-action"
+                type="button"
+                (click)="edit(r)"
+              >
+                Edit
+              </button>
+              <button
+                *ngIf="r.status === 'DRAFT'"
+                class="text-action danger"
+                type="button"
+                (click)="cancel(r)"
+              >
+                Cancel
+              </button>
+              <button
+                *ngIf="r.status === 'REJECTED'"
+                class="text-action"
+                type="button"
+                (click)="resubmit(r)"
+              >
+                Resubmit
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- BUDGET -->
+      <div class="pagination">
+        <span>Page {{ page }} of {{ totalPages }}</span>
+        <div>
+          <button type="button" [disabled]="page === 1" (click)="goToPage(page - 1)">
+            Previous
+          </button>
+          <button type="button" [disabled]="page === totalPages" (click)="goToPage(page + 1)">
+            Next
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
 
-    <td>
+<div class="modal-backdrop" *ngIf="selectedRequest" (click)="closeView()">
+  <section class="details-modal" (click)="$event.stopPropagation()">
+    <button class="close-btn" type="button" title="Close" (click)="closeView()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
 
-      ₹{{ r.estimatedBudget }}
+    <p class="page-label">Request Details</p>
+    <h2>{{ selectedRequest.requestCode }}</h2>
 
-    </td>
+    <div class="modal-status-row">
+      <span class="status-badge" [ngClass]="statusClass(selectedRequest.status)">
+        {{ formatStatus(selectedRequest.status) }}
+      </span>
+      <strong>{{ formatBudget(selectedRequest.estimatedBudget) }}</strong>
+    </div>
 
-    <!-- STATUS -->
+    <div class="detail-grid">
+      <div>
+        <span>Destination</span>
+        <strong>{{ selectedRequest.destination }}</strong>
+      </div>
+      <div>
+        <span>Purpose</span>
+        <strong>{{ selectedRequest.purpose || 'Business travel' }}</strong>
+      </div>
+      <div>
+        <span>Start Date</span>
+        <strong>{{ selectedRequest.startDate }}</strong>
+      </div>
+      <div>
+        <span>End Date</span>
+        <strong>{{ selectedRequest.endDate }}</strong>
+      </div>
+      <div>
+        <span>Transport</span>
+        <strong>{{ selectedRequest.transportMode || selectedRequest.transport || 'Not provided' }}</strong>
+      </div>
+      <div>
+        <span>Hotel Required</span>
+        <strong>{{ selectedRequest.hotelRequired ? 'Yes' : 'No' }}</strong>
+      </div>
+    </div>
 
-    <td>
-
-      {{ r.status }}
-
-    </td>
-
-    <!-- ACTIONS -->
-<td class="right">
-
-  <!-- VIEW -->
-
-  <button (click)="view(r)">
-    View
-  </button>
-
-  <!-- EDIT ONLY IN DRAFT -->
-
-  <button
-    *ngIf="r.status === 'DRAFT'"
-    (click)="edit(r)"
-  >
-    Edit
-  </button>
-
-  <!-- CANCEL ONLY IN DRAFT -->
-
-  <button
-    *ngIf="r.status === 'DRAFT'"
-    class="danger"
-    (click)="cancel(r)"
-  >
-    Cancel
-  </button>
-
-  <!-- RESUBMIT ONLY IF REJECTED -->
-
-  <button
-    *ngIf="r.status === 'REJECTED'"
-    (click)="resubmit(r)"
-  >
-    Resubmit
-  </button>
-
-</td>
-
-  </tr>
-
-</tbody>
-
-    </table>
-
-  </div>
-
+    <div class="notes">
+      <span>Additional Notes</span>
+      <p>{{ selectedRequest.additionalNotes || 'No additional notes added.' }}</p>
+    </div>
+  </section>
 </div>

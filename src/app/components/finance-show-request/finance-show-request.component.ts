@@ -108,6 +108,9 @@ export class FinanceApprovalCenterComponent
 
   decisionRemarks = '';
 
+  // Per-row remark drafts keyed by request id (fixes shared ngModel across the table).
+  remarksById: Record<number, string> = {};
+
   defaultAvatar =
     'https://i.pravatar.cc/150?img=3';
 
@@ -376,6 +379,9 @@ export class FinanceApprovalCenterComponent
 
     this.selectedRequest = request;
 
+    this.decisionRemarks =
+      this.remarksById[request.id] || '';
+
     this.approveRequest();
   }
 
@@ -387,6 +393,9 @@ export class FinanceApprovalCenterComponent
     event.stopPropagation();
 
     this.selectedRequest = request;
+
+    this.decisionRemarks =
+      this.remarksById[request.id] || '';
 
     this.rejectRequest();
   }

@@ -1,212 +1,316 @@
-/**
- * SIGN IN COMPONENT - Angular 18
- * 
- * Features:
- * - Reactive form with validation
- * - Password visibility toggle
- * - Error handling
- * - Loading states
- * - Mock authentication
- */
-
-// Email	                     Password
-// user@travelconcierge.com	   Password@123
-// employee@tms.com        	   Employee@123
-// admin@travelconcierge.com   Admin@123
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators
+} from '@angular/forms';
+
 import { Router } from '@angular/router';
 
-type UserRole = 'employee' | 'manager' | 'finance' | 'admin';
-
-interface LoginUser {
-  email: string;
-  password: string;
-  route: string;
-}
+import { AuthService }
+from '../../services/auth.service';
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './login-two.component.html',
   styleUrls: ['./login-two.component.scss']
 })
-export class LoginComponentTwo implements OnInit, OnDestroy {
+export class LoginComponentTwo
+  implements OnInit, OnDestroy {
+
   private readonly timeoutIds: number[] = [];
 
-  /* ============ FORM STATE ============ */
-  loginForm!: FormGroup;
-  isLoading: boolean = false;
-  showPassword: boolean = false;
-  showError: boolean = false;
+  // =====================================
+  // FORM STATE
+  // =====================================
 
-  /* ============ MOCK CREDENTIALS ============ */
-  private credentials: Record<UserRole, LoginUser> = {
-    employee: {
-      email: 'employee@gmail.com',
-      password: 'Employee@123',
-      route: '/employee'
-    },
-    manager: {
-      email: 'manager@gmail.com',
-      password: 'Manager@123',
-      route: '/manager'
-    },
-    finance: {
-      email: 'finance@gmail.com',
-      password: 'Finance@123',
-      route: '/finance'
-    },
-    admin: {
-      email: 'admin@travelconcierge.com',
-      password: 'Admin@123',
-      route: '/admin'
-    }
-  };
+  loginForm!: FormGroup;
+
+  isLoading = false;
+
+  showPassword = false;
+
+  showError = false;
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+
     this.initializeForm();
   }
 
   ngOnDestroy(): void {
-    this.timeoutIds.forEach(timeoutId => window.clearTimeout(timeoutId));
+
+    this.timeoutIds.forEach(
+      timeoutId =>
+        window.clearTimeout(timeoutId)
+    );
   }
 
-  /**
-   * Initialize reactive form with validation
-   */
+  // =====================================
+  // INITIALIZE FORM
+  // =====================================
+
   private initializeForm(): void {
+
     this.loginForm = this.fb.group({
-      email: ['', [
-        Validators.required,
-        Validators.email
-      ]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(6)
-      ]]
+
+      email: [
+
+        '',
+
+        [
+          Validators.required,
+          Validators.email
+        ]
+      ],
+
+      password: [
+
+        '',
+
+        [
+          Validators.required,
+          Validators.minLength(6)
+        ]
+      ]
     });
   }
 
-  /**
-   * Check if field is invalid and touched
-   */
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.loginForm.get(fieldName);
-    return !!(field && field.invalid && (field.dirty || field.touched));
+  // =====================================
+  // FIELD VALIDATION
+  // =====================================
+
+  isFieldInvalid(
+    fieldName: string
+  ): boolean {
+
+    const field =
+      this.loginForm.get(fieldName);
+
+    return !!(
+
+      field &&
+
+      field.invalid &&
+
+      (
+        field.dirty ||
+        field.touched
+      )
+    );
   }
 
-  /**
-   * Handle form submission
-   */
+  // =====================================
+  // LOGIN
+  // =====================================
+
   onSubmit(): void {
+
     if (!this.loginForm.valid) {
-      this.markFormGroupTouched(this.loginForm);
+
+      this.markFormGroupTouched(
+        this.loginForm
+      );
+
       return;
     }
 
     this.isLoading = true;
+
     this.showError = false;
 
-    // Simulate API call
-    this.setManagedTimeout(() => {
-      this.authenticateUser();
-    }, 800);
+    this.authService
+
+      .login(
+        this.loginForm.value
+      )
+
+      .subscribe({
+
+        next: (response: any) => {
+
+          console.log(
+            'LOGIN SUCCESS',
+            response
+          );
+
+          this.authService.saveUser(
+
+            response.token,
+
+            response.role,
+
+            response.name
+          );
+
+          this.isLoading = false;
+
+          this.redirectByRole(
+            response.role
+          );
+        },
+
+        error: (error: any) => {
+
+          console.log(error);
+
+          this.isLoading = false;
+
+          this.showError = true;
+
+          this.loginForm.patchValue({
+
+            password: ''
+          });
+
+          this.setManagedTimeout(() => {
+
+            this.showError = false;
+
+          }, 4000);
+        }
+      });
   }
 
-  private authenticateUser(): void {
-    const { email, password } = this.loginForm.value;
-    const roles = Object.keys(this.credentials) as UserRole[];
-    const matchedRole = roles.find(role => {
-      const creds = this.credentials[role];
-      return creds.email === email && creds.password === password;
-    });
+  // =====================================
+  // ROLE REDIRECT
+  // =====================================
 
-    if (matchedRole) {
-      this.handleSuccessfulLogin(this.credentials[matchedRole], matchedRole);
-    } else {
-      this.handleFailedLogin();
+  private redirectByRole(
+    role: string
+  ): void {
+
+    switch (role) {
+
+      case 'EMPLOYEE':
+
+        this.router.navigate([
+          '/employee'
+        ]);
+
+        break;
+
+      case 'MANAGER':
+
+        this.router.navigate([
+          '/manager'
+        ]);
+
+        break;
+
+      case 'FINANCE':
+
+        this.router.navigate([
+          '/finance'
+        ]);
+
+        break;
+
+      case 'ADMIN':
+
+        this.router.navigate([
+          '/admin'
+        ]);
+
+        break;
+
+      default:
+
+        this.router.navigate([
+          '/login'
+        ]);
     }
   }
 
-  /**
-   * Handle successful login
-   */
-  private handleSuccessfulLogin(user: LoginUser, role: UserRole): void {
-    this.isLoading = false;
-  
-    console.log('✅ Login success:', role);
-  
-    // store session
-    sessionStorage.setItem('user_role', role);
-    sessionStorage.setItem('authenticated', 'true');
-  
-    // 🔥 ROUTE FROM OLD LOGIN LOGIC
-    this.setManagedTimeout(() => {
-      this.router.navigate([user.route]);
-    }, 300);
+  // =====================================
+  // TIMEOUT HELPER
+  // =====================================
+
+  private setManagedTimeout(
+    callback: () => void,
+    delay: number
+  ): void {
+
+    const timeoutId =
+      window.setTimeout(() => {
+
+        this.timeoutIds.splice(
+
+          this.timeoutIds.indexOf(
+            timeoutId
+          ),
+
+          1
+        );
+
+        callback();
+
+      }, delay);
+
+    this.timeoutIds.push(
+      timeoutId
+    );
   }
 
-  /**
-   * Handle failed login
-   */
-  private handleFailedLogin(): void {
-    this.isLoading = false;
-    this.showError = true;
+  // =====================================
+  // TOUCH FORM
+  // =====================================
 
-    // Reset password
-    this.loginForm.patchValue({ password: '' });
+  private markFormGroupTouched(
+    formGroup: FormGroup
+  ): void {
 
-    // Auto-hide error
-    this.setManagedTimeout(() => {
-      this.showError = false;
-    }, 4000);
-  }
+    Object.keys(
+      formGroup.controls
+    ).forEach(key => {
 
-  private setManagedTimeout(callback: () => void, delay: number): void {
-    const timeoutId = window.setTimeout(() => {
-      this.timeoutIds.splice(this.timeoutIds.indexOf(timeoutId), 1);
-      callback();
-    }, delay);
+      const control =
+        formGroup.get(key);
 
-    this.timeoutIds.push(timeoutId);
-  }
-
-  /**
-   * Mark all fields as touched
-   */
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
       control?.markAsTouched();
 
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
+      if (
+        control instanceof FormGroup
+      ) {
+
+        this.markFormGroupTouched(
+          control
+        );
       }
     });
   }
 
-  /**
-   * Handle SSO login
-   */
+  // =====================================
+  // SSO
+  // =====================================
+
   handleSSO(): void {
-    console.log('Opening SSO login');
-    alert('SSO (Single Sign-On) functionality would be implemented here.\n\nSupported providers:\n- Google\n- Microsoft\n- SAML');
+
+    alert(
+      'SSO functionality will be implemented here.'
+    );
   }
 
-  /**
-   * Contact support
-   */
+  // =====================================
+  // SUPPORT
+  // =====================================
+
   contactSupport(): void {
-    console.log('Opening support');
-    alert('Support Information:\n\nEmail: support@travelconcierge.com\nPhone: +1 (800) 123-4567\nLive Chat: 24/7 Available');
+
+    alert(
+      'Support:\n\nEmail: support@travelconcierge.com'
+    );
   }
 }

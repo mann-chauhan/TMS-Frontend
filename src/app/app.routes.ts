@@ -1,16 +1,38 @@
 import { Routes } from '@angular/router';
+import { authGuard }
+  from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: 'employee',
+    canActivate: [authGuard],
+
+    data: {
+
+      role: 'EMPLOYEE'
+
+    },
     loadComponent: () => import('./components/employee-dashboard/employee-dashboard.component').then(m => m.employeeDashboardComponent)
   },
   {
     path: 'manager',
+    canActivate: [authGuard],
+    data: {
+      role: 'MANAGER'
+    },
     loadComponent: () => import('./components/manager-dashboard/manager-dashboard.component').then(m => m.ManagerDashboardComponent)
   },
   {
     path: 'finance',
+
+
+    canActivate: [authGuard],
+
+    data: {
+
+      role: 'FINANCE'
+
+    },
     loadComponent: () => import('./components/finance-dashboard/finance-dashboard.component').then(m => m.FinanceDashboardComponent)
   },
   {
@@ -75,6 +97,13 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
+    canActivate: [authGuard],
+
+    data: {
+
+      role: 'ADMIN'
+
+    },
     loadComponent: () => import('./components/admin-add-user/admin-add-user.component').then(m => m.AddUserComponent)
   },
   {
@@ -93,7 +122,7 @@ export const routes: Routes = [
     path: 'admin-profile',
     loadComponent: () => import('./components/admin-profile/admin-profile.component').then(m => m.AdminProfileComponent)
   },
-    {
+  {
     path: 'finance-decision-history',
     loadComponent: () => import('./components/finance-decision-history/finance-decision-history.component').then(m => m.FinanceDecisionHistoryComponent)
   },

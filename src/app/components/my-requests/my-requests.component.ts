@@ -23,7 +23,13 @@ export class MyRequestsComponent implements OnInit {
 
   filterStatus = '';
 
+  page = 1;
+
+  pageSize = 5;
+
   requests: any[] = [];
+
+  selectedRequest: any | null = null;
 
   isLoading = false;
 
@@ -122,18 +128,21 @@ export class MyRequestsComponent implements OnInit {
   filteredRequests() {
 
     return this.requests.filter(r => {
+      const query = this.searchText.trim().toLowerCase();
 
       const search =
 
+        !query ||
+
         r.requestCode
           ?.toLowerCase()
-          .includes(this.searchText.toLowerCase())
+          .includes(query)
 
         ||
 
         r.destination
           ?.toLowerCase()
-          .includes(this.searchText.toLowerCase());
+          .includes(query);
 
       const status =
 
@@ -147,13 +156,59 @@ export class MyRequestsComponent implements OnInit {
     });
   }
 
+  pagedRequests() {
+
+    const start = (this.page - 1) * this.pageSize;
+
+    return this.filteredRequests().slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+
+    return Math.max(1, Math.ceil(this.filteredRequests().length / this.pageSize));
+  }
+
+  goToPage(page: number) {
+
+    this.page = Math.min(Math.max(page, 1), this.totalPages);
+  }
+
+  onFiltersChanged() {
+
+    this.page = 1;
+  }
+
   // =========================
   // ACTIONS
   // =========================
 
   view(r: any) {
 
-    console.log('VIEW REQUEST', r);
+    this.selectedRequest = r;
+  }
+
+  closeView() {
+
+    this.selectedRequest = null;
+  }
+
+  formatStatus(status: string = ''): string {
+
+    return status.replace(/_/g, ' ');
+  }
+
+  statusClass(status: string = ''): string {
+
+    return status.toLowerCase().replace(/_/g, '-');
+  }
+
+  formatBudget(value: number | string): string {
+
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(Number(value || 0));
   }
 
   edit(r: any) {

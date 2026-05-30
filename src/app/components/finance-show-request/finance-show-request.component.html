@@ -266,10 +266,15 @@
                 <div class="remarks-section">
 
                   <label class="remarks-label">
-                    Finance Remarks
+                    Remarks
                   </label>
 
-                  <textarea [(ngModel)]="decisionRemarks" placeholder="Write approval or rejection remarks..." rows="4">
+                  <textarea
+                    [(ngModel)]="remarksById[request.id]"
+                    [ngModelOptions]="{ standalone: true }"
+                    placeholder="Remark..."
+                    rows="4"
+                  >
   </textarea>
 
                 </div>

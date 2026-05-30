@@ -691,6 +691,49 @@ $font: 'Inter', sans-serif;
 }
 
 // ============================================
+// REMARKS (TABLE ROW)
+// ============================================
+
+.remarks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 200px;
+}
+
+.remarks-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: $text-light;
+  letter-spacing: 0.02em;
+}
+
+.remarks-section textarea {
+  width: 100%;
+  min-height: 38px;
+  max-height: 90px;
+  resize: vertical;
+
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid $border;
+  background: #fff;
+
+  font-family: $font;
+  font-size: 13px;
+  color: $text;
+  line-height: 1.25;
+
+  transition: border-color .15s ease, box-shadow .15s ease;
+
+  &:focus {
+    outline: none;
+    border-color: rgba(17, 24, 39, 0.35);
+    box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+  }
+}
+
+// ============================================
 // DRAWER
 // ============================================
 
